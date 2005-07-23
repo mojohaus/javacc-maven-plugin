@@ -1,0 +1,48 @@
+org.apache.maven.cli.MavenCli
+args[0] = install
+|--------------------------
+| Command Line[0]: install
+|--------------------------
+[INFO] ----------------------------------------------------------------------------
+[INFO] Building Maven Mojo Archetype
+[INFO] ----------------------------------------------------------------------------
+[INFO] maven-surefire-plugin: using locally installed snapshot
+[INFO] [plugin:descriptor]
+[INFO] [resources:resources]
+[INFO] [compiler:compile]
+Compiling 1 source file to C:\ECLIPSE\eclipse\workspace\maven-javacc-plugin\target\classes
+[INFO] [resources:testResources]
+[INFO] [compiler:testCompile]
+Compiling 1 source file to C:\ECLIPSE\eclipse\workspace\maven-javacc-plugin\target\test-classes
+[INFO] [surefire:test]
+[INFO] Setting reports dir: C:\ECLIPSE\eclipse\workspace\maven-javacc-plugin\target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Java Compiler Compiler Version 3.2 (Parser Generator)
+(type "javacc" with no arguments for help)
+Reading from file C:\ECLIPSE\eclipse\workspace\maven-javacc-plugin\src\test\resources\SelectorParser.jj . . .
+Note: UNICODE_INPUT option is specified. Please make sure you create the parser/lexer usig a Reader with the correct character encoding.
+File "TokenMgrError.java" does not exist.  Will create one.
+File "ParseException.java" does not exist.  Will create one.
+File "Token.java" does not exist.  Will create one.
+File "SimpleCharStream.java" does not exist.  Will create one.
+Parser generated with 0 errors and 4 warnings.
+[surefire] Running org.apache.maven.javacc.JavaccPluginTest
+[surefire] Tests run: 34, Failures: 0, Errors: 0, Time elapsed: 0 sec
+
+Results :
+[surefire] Tests run: 34, Failures: 0, Errors: 0
+
+[INFO] [jar:jar]
+[INFO] Building jar: C:\ECLIPSE\eclipse\workspace\maven-javacc-plugin\target\maven-javacc-plugin-1.0-SNAPSHOT.jar
+[INFO] [install:install]
+[INFO] Installing C:\ECLIPSE\eclipse\workspace\maven-javacc-plugin\target\maven-javacc-plugin-1.0-SNAPSHOT.jar to C:\Documents and Settings\user\.m2\repository\org\apache\maven\plugins\maven-javacc-plugin\1.0-SNAPSHOT\maven-javacc-plugin-1.0-SNAPSHOT.jar
+[INFO] ----------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ----------------------------------------------------------------------------
+[INFO] Total time: 8 seconds
+[INFO] Finished at: Fri Jul 08 15:10:29 CST 2005
+[INFO] Final Memory: 3M/9M
+[INFO] ----------------------------------------------------------------------------
