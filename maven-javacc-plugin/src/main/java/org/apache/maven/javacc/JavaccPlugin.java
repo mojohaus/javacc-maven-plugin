@@ -24,7 +24,6 @@ import org.javacc.parser.Main;
 
 
 /**
- * @author mergere@exist.com
  * @goal override-generate
  * @phase generate-sources
  * @description Goal which parse a JJ file and transform it to Java Source Files.

@@ -28,12 +28,7 @@ import junit.framework.TestCase;
 import org.apache.maven.javacc.JavaccPlugin;
 import org.apache.maven.plugin.MojoExecutionException;
 
-/**
- * @author Exist Mergere Team
- *
-*
-*
- */
+
 public class JavaccPluginTest extends TestCase {
 
    JavaccPlugin p;
