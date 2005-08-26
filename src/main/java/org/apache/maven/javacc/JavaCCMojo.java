@@ -65,109 +65,109 @@ public class JavaCCMojo
      * @parameter expression="true"
      * @required
      */
-    private String isStatic;
+    private boolean isStatic;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String debugParser;
+    private boolean debugParser;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String debugLookAhead;
+    private boolean debugLookAhead;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String debugTokenManager;
+    private boolean debugTokenManager;
 
     /**
      * @parameter expression="true"
      * @required
      */
-    private String optimizeTokenManager;
+    private boolean optimizeTokenManager;
 
     /**
      * @parameter expression="true"
      * @required
      */
-    private String errorReporting;
+    private boolean errorReporting;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String javaUnicodeEscape;
+    private boolean javaUnicodeEscape;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String unicodeInput;
+    private boolean unicodeInput;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String ignoreCase;
+    private boolean ignoreCase;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String commonTokenAction;
+    private boolean commonTokenAction;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String userTokenManager;
+    private boolean userTokenManager;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String userCharStream;
+    private boolean userCharStream;
 
     /**
      * @parameter expression="true"
      * @required
      */
-    private String buildParser;
+    private boolean buildParser;
 
     /**
      * @parameter expression="true"
      * @required
      */
-    private String buildTokenManager;
+    private boolean buildTokenManager;
 
     /**
      * @parameter expression="true"
      * @required
      */
-    private String sanityCheck;
+    private boolean sanityCheck;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String forceLaCheck;
+    private boolean forceLaCheck;
 
     /**
      * @parameter expression="false"
      * @required
      */
-    private String cacheTokens;
+    private boolean cacheTokens;
 
     /**
      * @parameter expression="true"
      * @required
      */
-    private String keepLineColumn;
+    private boolean keepLineColumn;
     
     /**
      * Directory where the JJ file(s) are located.
