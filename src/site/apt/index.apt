@@ -1,0 +1,89 @@
+ ------
+ Maven 2 JavaCC plugin 
+ ------
+ <jruiz@exist.com>
+ 
+ Jesse McConnell
+ <jesse.mcconnell@gmail.com>
+ ------
+ July 27 2005
+
+ Maven 2 JavaCC plugin
+
+ This plugin is for processing javacc files into java sources.
+
+ http://www.javacc.org
+
+ This plugin will process all *.jj files in the sourceDirectory into a 
+ common generated sources output directory.  This will occur during the 
+ generate-resources phase and the sources directory will be added to the project
+ for the compile phase.
+ 
+ Available Configuration Options: (param - default value)
+ 
+ * sourceDirectory - src/main/javacc
+ 
+ * outputDirectory - target/generated-sources/javacc
+ 
+ * timestampDirectory - target (used so grammers are not constantly regenerated)
+ 
+ * lookAhead - 1
+
+ * choiceAmbiguityCheck - 2
+
+ * otherAmbiguityCheck - 1
+
+ * isStatic - true
+
+ * debugParser - false
+
+ * debugLookAhead - false
+
+ * debugTokenManager - false
+
+ * optimizeTokenManager - true
+
+ * errorReporting - true
+
+ * javaUnicodeEscape - false
+
+ * unicodeInput - false
+
+ * ignoreCase - false
+
+ * commonTokenAction - false
+
+ * userTokenManager - false
+
+ * userCharStream - false
+
+ * buildParser - true
+
+ * buildTokenManager - true
+
+ * sanityCheck - true
+
+ * forceLaCheck - false
+
+ * cacheTokens - false
+
+ * keepLineColumn - true
+ 
+ []
+ 
+-------------------
+<project>
+   ...
+      <build>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-javacc-plugin</artifactId>
+               <version>1.0</version>
+            </plugin>
+         </plugins>
+         ...
+      </build>
+   ...
+</project>
+-------------------
