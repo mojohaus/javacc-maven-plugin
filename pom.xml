@@ -1,11 +1,15 @@
 <project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.maven.plugins</groupId>
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <artifactId>mojo</artifactId>
+      <groupId>org.apache.maven.plugins</groupId>
+      <version>1.0.1</version>
+   </parent>
   <artifactId>maven-javacc-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>1.0</version>
+  <version>1.0-SNAPSHOT</version>
   <name>Maven Javacc Plugin</name>
-  <url>http://maven.apache.org</url>
+  <url>http://mojo.codehaus.org</url>
   
      <ciManagement>
         <system>Maven Javacc Plugin</system>
@@ -23,9 +27,24 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>2.0-alpha-3</version>
-    </dependency>
-    <dependency>
+      <version>2.0-beta-1-SNAPSHOT</version>
+   </dependency>
+   <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>2.0-beta-1-SNAPSHOT</version>
+   </dependency>
+   <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-compiler-api</artifactId>
+      <version>1.4</version>
+   </dependency>
+   <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.0.1-SNAPSHOT</version>
+   </dependency>
+   <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
@@ -37,15 +56,4 @@
       <version>3.2</version>
     </dependency>
   </dependencies>
-  
-  <build>
-	<testSourceDirectory>
-		src/test/java
-	</testSourceDirectory>
-  </build>
-    <scm>
-    <connection>scm:svn:http://svn.exist.com/repos/mergere-maven/plugins/maven-javacc-plugin/</connection>
-    <developerConnection>scm:svn:http://svn.exist.com/repos/mergere-maven/plugins/maven-javacc-plugin/</developerConnection>
-    <url>scm:svn:http://svn.exist.com/repos/mergere-maven/plugins/maven-javacc-plugin/</url>
-  </scm>
 </project>
