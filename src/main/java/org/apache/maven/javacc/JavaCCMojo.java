@@ -38,7 +38,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @description Goal which parse a JJ file and transform it to Java Source Files.
  * @author jruiz@exist.com
  * @author jesse <jesse.mcconnell@gmail.com>
- * @version $Id:$
+ * @version $Id$
  */
 public class JavaCCMojo
     extends AbstractMojo
