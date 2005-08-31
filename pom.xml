@@ -9,20 +9,7 @@
   <packaging>maven-plugin</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Maven Javacc Plugin</name>
-  <url>http://mojo.codehaus.org</url>
-  
-     <ciManagement>
-        <system>Maven Javacc Plugin</system>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <configuration>
-                    <address>jruiz@exist.com</address>
-                </configuration>
-            </notifier>
-      </notifiers>
-    </ciManagement>
-    
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -50,7 +37,7 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-	<dependency>
+    <dependency>
       <groupId>javacc</groupId>
       <artifactId>javacc</artifactId>
       <version>3.2</version>
