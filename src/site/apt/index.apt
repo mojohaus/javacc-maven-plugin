@@ -2,13 +2,12 @@
  Maven 2 JavaCC plugin 
  ------
  <jruiz@exist.com>
- 
- Jesse McConnell
- <jesse.mcconnell@gmail.com>
+ Jesse McConnell <jesse.mcconnell@gmail.com>
  ------
  July 27 2005
+ ------
 
- Maven 2 JavaCC plugin
+Maven 2 JavaCC plugin
 
  This plugin is for processing javacc files into java sources.
 
@@ -19,7 +18,7 @@
  generate-resources phase and the sources directory will be added to the project
  for the compile phase.
  
- Available Configuration Options: (param - default value)
+Available Configuration Options: (param - default value)
  
  * sourceDirectory - src/main/javacc
  
@@ -71,6 +70,8 @@
  
  []
  
+Usage:
+
 -------------------
 <project>
    ...
