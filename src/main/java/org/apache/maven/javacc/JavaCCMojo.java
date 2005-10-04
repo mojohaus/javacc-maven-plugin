@@ -221,8 +221,12 @@ public class JavaCCMojo
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info( "Nothing to process - all grammars are up to date" );
-            return;
+           getLog().info( "Nothing to process - all grammars are up to date" );
+           if ( project != null )
+           {
+              project.addCompileSourceRoot( outputDirectory );
+           }
+           return;
         }
 
         for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
