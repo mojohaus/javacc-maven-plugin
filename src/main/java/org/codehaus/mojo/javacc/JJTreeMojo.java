@@ -1,4 +1,4 @@
-package org.apache.maven.javacc;
+package org.codehaus.mojo.javacc;
 
 /*
  * Copyright 2001-2005 The Codehaus.
