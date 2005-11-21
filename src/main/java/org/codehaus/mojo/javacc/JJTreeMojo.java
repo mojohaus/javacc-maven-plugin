@@ -182,7 +182,7 @@ public class JJTreeMojo
     }
     
 
-    private String[] generateArgumentList(String javaccInput) {
+    private String[] generateArgumentList(String jjTreeFilename) {
 
         ArrayList argsList = new ArrayList();
         
@@ -242,6 +242,8 @@ public class JJTreeMojo
         }
         
         argsList.add( "-OUTPUT_DIRECTORY=" + outputDirectory);
+        
+        argsList.add( jjTreeFilename );
         
         getLog().debug("argslist: " + argsList.toString());
         
