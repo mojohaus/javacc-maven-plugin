@@ -33,7 +33,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 
 /**
- * @goal generate
+ * @goal javacc
  * @phase generate-sources
  * @description Goal which parse a JJ file and transform it to Java Source Files.
  * @author jruiz@exist.com
