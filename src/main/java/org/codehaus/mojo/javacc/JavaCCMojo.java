@@ -30,6 +30,7 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 
 /**
@@ -170,6 +171,11 @@ public class JavaCCMojo
     private boolean keepLineColumn;
     
     /**
+     * @parameter expression="${packageName}"
+     */
+    private String packageName;
+    
+    /**
      * Directory where the JJ file(s) are located.
      * @parameter expression="${basedir}/src/main/javacc"
      * @required
@@ -207,9 +213,22 @@ public class JavaCCMojo
     public void execute()
         throws MojoExecutionException
     {
+        // check packageName for . vs /
+        if ( packageName != null )
+        {
+            packageName = StringUtils.replace(packageName, '.', File.separatorChar);
+        }
+        
         if ( !FileUtils.fileExists( outputDirectory ) )
         {
-            FileUtils.mkdir( outputDirectory );
+            if ( packageName != null )
+            {
+                FileUtils.mkdir( outputDirectory  + File.separator + packageName );
+            } 
+            else 
+            {
+                FileUtils.mkdir( outputDirectory );   
+            }
         }
         
         if ( !FileUtils.fileExists( timestampDirectory ) )
@@ -276,7 +295,11 @@ public class JavaCCMojo
         argsList.add("-FORCE_LA_CHECK=" + forceLaCheck);
         argsList.add("-CACHE_TOKENS=" + cacheTokens);
         argsList.add("-KEEP_LINE_COLUMN=" + keepLineColumn);
-        argsList.add("-OUTPUT_DIRECTORY:" + outputDirectory); 
+        
+        if ( packageName != null )
+        {
+            argsList.add("-OUTPUT_DIRECTORY:" + outputDirectory + File.separator + packageName );
+        }
         argsList.add(javaccInput);
      
         getLog().debug("argslist: " + argsList.toString());
