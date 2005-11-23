@@ -45,130 +45,109 @@ public class JavaCCMojo
     extends AbstractMojo
 {      
     /**
-     * @parameter expression=1
-     * @required
+     * @parameter expression=${lookAhead}"
      */
-    private int lookAhead;
+    private Integer lookAhead;
     
     /**
-     * @parameter expression=2
-     * @required
+     * @parameter expression="${choiceAmbiguityCheck}"
      */
-    private int choiceAmbiguityCheck;
+    private Integer choiceAmbiguityCheck;
 
     /**
-     * @parameter expression=1
-     * @required
+     * @parameter expression=${otherAmbiguityCheck}"
      */
-    private int otherAmbiguityCheck;
+    private Integer otherAmbiguityCheck;
     
     /**
-     * @parameter expression="true"
-     * @required
+     * @parameter expression=${isStatic}"
      */
-    private boolean isStatic;
+    private Boolean isStatic;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${debugParser}"
      */
-    private boolean debugParser;
+    private Boolean debugParser;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${debugLookAhead}"
      */
-    private boolean debugLookAhead;
+    private Boolean debugLookAhead;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${debugTokenManager}"
      */
-    private boolean debugTokenManager;
+    private Boolean debugTokenManager;
 
     /**
-     * @parameter expression="true"
-     * @required
+     * @parameter expression="${optimizeTokenManager}"
      */
-    private boolean optimizeTokenManager;
+    private Boolean optimizeTokenManager;
 
     /**
-     * @parameter expression="true"
-     * @required
+     * @parameter expression="${errorReporting}"
      */
-    private boolean errorReporting;
+    private Boolean errorReporting;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${javaUnicodeEscape}"
      */
-    private boolean javaUnicodeEscape;
+    private Boolean javaUnicodeEscape;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${unicodeInput}"
      */
-    private boolean unicodeInput;
+    private Boolean unicodeInput;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${ignoreCase}"
      */
-    private boolean ignoreCase;
+    private Boolean ignoreCase;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${commonTokenAction}"
      */
-    private boolean commonTokenAction;
+    private Boolean commonTokenAction;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${userTokenManager}"
      */
-    private boolean userTokenManager;
+    private Boolean userTokenManager;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${userCharStream}"
      */
-    private boolean userCharStream;
+    private Boolean userCharStream;
 
     /**
-     * @parameter expression="true"
-     * @required
+     * @parameter expression="${buildParser}"
      */
-    private boolean buildParser;
+    private Boolean buildParser;
 
     /**
-     * @parameter expression="true"
-     * @required
+     * @parameter expression="${buildTokenManager}"
      */
-    private boolean buildTokenManager;
+    private Boolean buildTokenManager;
 
     /**
-     * @parameter expression="true"
-     * @required
+     * @parameter expression="${sanityCheck}"
      */
-    private boolean sanityCheck;
+    private Boolean sanityCheck;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${forceLaCheck}"
      */
-    private boolean forceLaCheck;
+    private Boolean forceLaCheck;
 
     /**
-     * @parameter expression="false"
-     * @required
+     * @parameter expression="${cacheTokens}"
      */
-    private boolean cacheTokens;
+    private Boolean cacheTokens;
 
     /**
-     * @parameter expression="true"
-     * @required
+     * @parameter expression="${keepLineColumn}"
      */
-    private boolean keepLineColumn;
+    private Boolean keepLineColumn;
     
     /**
      * @parameter expression="${packageName}"
@@ -274,27 +253,110 @@ public class JavaCCMojo
 
         ArrayList argsList = new ArrayList();
         
-        argsList.add("-LOOKAHEAD=" + lookAhead);
-        argsList.add("-CHOICE_AMBIGUITY_CHECK=" + choiceAmbiguityCheck);
-        argsList.add("-OTHER_AMBIGUITY_CHECK=" + otherAmbiguityCheck);        
-        argsList.add("-STATIC=" + isStatic);
-        argsList.add("-DEBUG_PARSER=" + debugParser);
-        argsList.add("-DEBUG_LOOKAHEAD=" + debugLookAhead);
-        argsList.add("-DEBUG_TOKEN_MANAGER=" + debugTokenManager);
-        argsList.add("-OPTIMIZE_TOKEN_MANAGER=" + optimizeTokenManager);
-        argsList.add("-ERROR_REPORTING="+ errorReporting);
-        argsList.add("-JAVA_UNICODE_ESCAPE=" + javaUnicodeEscape);
-        argsList.add("-UNICODE_INPUT=" + unicodeInput);
-        argsList.add("-IGNORE_CASE=" + ignoreCase);
-        argsList.add("-COMMON_TOKEN_ACTION=" + commonTokenAction);
-        argsList.add("-USER_TOKEN_MANAGER=" + userTokenManager);
-        argsList.add("-USER_CHAR_STREAM=" + userCharStream);
-        argsList.add("-BUILD_PARSER=" + buildParser);
-        argsList.add("-BUILD_TOKEN_MANAGER=" + buildTokenManager);
-        argsList.add("-SANITY_CHECK=" + sanityCheck);
-        argsList.add("-FORCE_LA_CHECK=" + forceLaCheck);
-        argsList.add("-CACHE_TOKENS=" + cacheTokens);
-        argsList.add("-KEEP_LINE_COLUMN=" + keepLineColumn);
+        if ( lookAhead != null )
+        {
+            argsList.add("-LOOKAHEAD=" + lookAhead);
+        }
+        
+        if ( choiceAmbiguityCheck != null)
+        {
+            argsList.add("-CHOICE_AMBIGUITY_CHECK=" + choiceAmbiguityCheck);
+        }
+        
+        if ( otherAmbiguityCheck != null )
+        {
+            argsList.add("-OTHER_AMBIGUITY_CHECK=" + otherAmbiguityCheck);
+        }
+        
+        if ( isStatic != null )
+        {
+            argsList.add("-STATIC=" + isStatic);
+        }
+        
+        if ( debugParser != null )
+        {
+            argsList.add("-DEBUG_PARSER=" + debugParser);
+        }
+        
+        if ( debugLookAhead != null )
+        {
+            argsList.add("-DEBUG_LOOKAHEAD=" + debugLookAhead);
+        }
+        
+        if ( debugTokenManager != null ) 
+        {
+            argsList.add("-DEBUG_TOKEN_MANAGER=" + debugTokenManager);
+        }
+        
+        if ( optimizeTokenManager != null )
+        {
+            argsList.add("-OPTIMIZE_TOKEN_MANAGER=" + optimizeTokenManager);
+        }
+        
+        if ( errorReporting != null )
+        {
+            argsList.add("-ERROR_REPORTING="+ errorReporting);
+        }
+        
+        if ( javaUnicodeEscape != null )
+        {
+            argsList.add("-JAVA_UNICODE_ESCAPE=" + javaUnicodeEscape);
+        }
+        
+        if ( unicodeInput != null )
+        {
+            argsList.add("-UNICODE_INPUT=" + unicodeInput);
+        }
+        
+        if ( ignoreCase != null )
+        {
+            argsList.add("-IGNORE_CASE=" + ignoreCase);
+        }
+        
+        if ( commonTokenAction != null )
+        {
+            argsList.add("-COMMON_TOKEN_ACTION=" + commonTokenAction);
+        }
+        
+        if ( userTokenManager != null )
+        {
+            argsList.add("-USER_TOKEN_MANAGER=" + userTokenManager);
+        }
+        
+        if ( userCharStream != null )
+        {
+            argsList.add("-USER_CHAR_STREAM=" + userCharStream);
+        }
+        
+        if ( buildParser != null )
+        {
+            argsList.add("-BUILD_PARSER=" + buildParser);
+        }
+        
+        if ( buildTokenManager != null )
+        {
+            argsList.add("-BUILD_TOKEN_MANAGER=" + buildTokenManager);
+        }
+        
+        if ( sanityCheck != null )
+        {
+            argsList.add("-SANITY_CHECK=" + sanityCheck);
+        }
+        
+        if ( forceLaCheck != null )
+        {
+            argsList.add("-FORCE_LA_CHECK=" + forceLaCheck);
+        }
+        
+        if ( cacheTokens != null ) 
+        {
+            argsList.add("-CACHE_TOKENS=" + cacheTokens);
+        }
+        
+        if ( keepLineColumn != null )
+        {
+            argsList.add("-KEEP_LINE_COLUMN=" + keepLineColumn);
+        }
         
         if ( packageName != null )
         {
