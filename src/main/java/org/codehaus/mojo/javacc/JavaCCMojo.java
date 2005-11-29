@@ -361,7 +361,12 @@ public class JavaCCMojo
         if ( packageName != null )
         {
             argsList.add("-OUTPUT_DIRECTORY:" + outputDirectory + File.separator + packageName );
+        } 
+        else 
+        {
+           argsList.add("-OUTPUT_DIRECTORY:" + outputDirectory );
         }
+        
         argsList.add(javaccInput);
      
         getLog().debug("argslist: " + argsList.toString());
