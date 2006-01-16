@@ -3,7 +3,7 @@
   <parent>
     <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>5</version>
+    <version>6</version>
   </parent>
   <artifactId>javacc-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
