@@ -1,4 +1,5 @@
 <project>
+
   <parent>
     <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
