@@ -7,8 +7,8 @@
   </parent>
   <artifactId>javacc-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>0.6.1-SNAPSHOT</version>
-  <name>Maven Javacc Plugin</name>
+  <version>2.0-SNAPSHOT</version>
+  <name>Maven 2 Javacc Plugin</name>
   <dependencies>
    <dependency>
       <groupId>org.apache.maven</groupId>
