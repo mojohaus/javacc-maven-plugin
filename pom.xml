@@ -1,34 +1,34 @@
 <project>
-  <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>mojo</artifactId>
     <groupId>org.codehaus.mojo</groupId>
     <version>6</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>javacc-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>2.0-SNAPSHOT</version>
   <name>Maven 2 Javacc Plugin</name>
+  <version>2.0</version>
   <dependencies>
-   <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.0</version>
-   </dependency>
-   <dependency>
+    <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-compiler-api</artifactId>
       <version>1.5.1</version>
-   </dependency>
-   <dependency>
-      <groupId>plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>1.0.1</version>
-   </dependency>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>2.0</version>
+    </dependency>
     <dependency>
       <groupId>javacc</groupId>
       <artifactId>javacc</artifactId>
       <version>3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.0.1</version>
     </dependency>
   </dependencies>
 </project>
