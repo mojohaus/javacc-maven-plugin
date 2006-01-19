@@ -7,8 +7,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>javacc-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Maven 2 Javacc Plugin</name>
-  <version>2.0</version>
+  <name>Maven 2  Javacc Plugin</name>
+  <version>2.0-SNAPSHOT</version>
   <dependencies>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
