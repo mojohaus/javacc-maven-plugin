@@ -171,7 +171,7 @@ public class JavaCCMojo
     /**
      * the directory to store the processed .jj files
      * 
-     * @parameter expression="${basedir}/target"
+     * @parameter expression="${project.build.directory}/generated-sources/javacc-timestamp"
      */
     private String timestampDirectory;
 
