@@ -155,8 +155,16 @@ public class JTBMojo extends AbstractMojo
      * The number of milliseconds after which a grammar is considered stale.
      * @parameter expression="${project}"
      * @required
+     * @readonly
      */
     private MavenProject project;
+    
+    /**
+     * @parameter expression="${basedir}"
+     * @required
+     * @readonly
+     */
+    private File baseDir;
 
     public void execute( ) throws MojoExecutionException
     {
@@ -164,6 +172,8 @@ public class JTBMojo extends AbstractMojo
         {
             packagePath = StringUtils.replace( packageName, '.',
                     File.separatorChar );
+            
+            getLog().debug("Using packagePath: " + packagePath);
         }
         else
         {
@@ -171,11 +181,16 @@ public class JTBMojo extends AbstractMojo
             {
                 visitorPackagePath = StringUtils.replace( visitorPackageName,
                         '.', File.separatorChar );
+                
+                getLog().debug("Using visitorPackagePath: " + visitorPackagePath);
             }
+            
             if ( nodePackageName != null )
             {
-                nodePackagePath = StringUtils.replace( visitorPackageName, '.',
+                nodePackagePath = StringUtils.replace( nodePackageName, '.',
                         File.separatorChar );
+                
+                getLog().debug("Using nodePackagePath: " + nodePackagePath);
             }
         }
         if ( !FileUtils.fileExists( outputDirectory ) )
@@ -198,6 +213,7 @@ public class JTBMojo extends AbstractMojo
             }
             return;
         }
+        
         for ( Iterator i = staleGrammars.iterator( ); i.hasNext( ); )
         {
             File jtbFile = (File) i.next( );
@@ -215,47 +231,67 @@ public class JTBMojo extends AbstractMojo
                 File newDir;
                 if ( packagePath != null )
                 {
-                    tempDir = new File( "syntaxtree" );
+                    tempDir = new File( baseDir, "syntaxtree" );
                     newDir = new File( outputDirectory + File.separator
                             + packagePath + File.separator + "syntaxtree" );
+                    newDir.mkdirs();
+                    
+                    getLog().debug("Moving " + tempDir + " to " + newDir);
                     tempDir.renameTo( newDir );
-                    tempDir = new File( "visitor" );
+                    
+                    tempDir = new File( baseDir, "visitor" );
                     newDir = new File( outputDirectory + File.separator
                             + packagePath + File.separator + "visitor" );
+                    newDir.mkdirs();
+                    
+                    getLog().debug("Moving " + tempDir + " to " + newDir);
                     tempDir.renameTo( newDir );
                 }
                 else
                 {
                     if ( nodePackagePath != null )
                     {
-                        tempDir = new File( nodePackagePath
+                        tempDir = new File( baseDir, nodePackagePath
                                 .substring( nodePackagePath
                                         .lastIndexOf( File.separator ) ) );
                         newDir = new File( outputDirectory + File.separator
                                 + nodePackagePath );
+                        newDir.mkdirs();
+                        
+                        getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
                     else
                     {
-                        tempDir = new File( "syntaxtree" );
+                        tempDir = new File( baseDir, "syntaxtree" );
                         newDir = new File( outputDirectory + File.separator
                                 + "syntaxtree" );
+                        newDir.mkdirs();
+                        
+                        getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
+                    
                     if ( visitorPackagePath != null )
                     {
-                        tempDir = new File( visitorPackagePath
+                        tempDir = new File( baseDir, visitorPackagePath
                                 .substring( visitorPackagePath
                                         .lastIndexOf( File.separator ) ) );
                         newDir = new File( outputDirectory + File.separator
                                 + visitorPackagePath );
+                        newDir.mkdirs();
+                        
+                        getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
                     else
                     {
-                        tempDir = new File( "visitor" );
+                        tempDir = new File( baseDir, "visitor" );
                         newDir = new File( outputDirectory + File.separator
                                 + "visitor" );
+                        newDir.mkdirs();
+                        
+                        getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
                 }
@@ -338,6 +374,9 @@ public class JTBMojo extends AbstractMojo
             argsList.add( "-printer" );
         }
         argsList.add( jtbFileName );
+        
+        getLog( ).debug( "Using arguments: " + argsList );
+        
         return (String[ ]) argsList.toArray( new String[argsList.size( )] );
     }
 
