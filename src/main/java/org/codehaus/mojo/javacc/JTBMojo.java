@@ -16,12 +16,7 @@ package org.codehaus.mojo.javacc;
  * limitations under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import EDU.purdue.jtb.JTB;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -32,7 +27,11 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-import EDU.purdue.jtb.JTB;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @goal jtb
@@ -158,9 +157,9 @@ public class JTBMojo extends AbstractMojo
      * @readonly
      */
     private MavenProject project;
-    
+
     /**
-     * @parameter expression="${basedir}"
+     * @parameter expression="${user.dir}"
      * @required
      * @readonly
      */
@@ -172,7 +171,7 @@ public class JTBMojo extends AbstractMojo
         {
             packagePath = StringUtils.replace( packageName, '.',
                     File.separatorChar );
-            
+
             getLog().debug("Using packagePath: " + packagePath);
         }
         else
@@ -181,15 +180,15 @@ public class JTBMojo extends AbstractMojo
             {
                 visitorPackagePath = StringUtils.replace( visitorPackageName,
                         '.', File.separatorChar );
-                
+
                 getLog().debug("Using visitorPackagePath: " + visitorPackagePath);
             }
-            
+
             if ( nodePackageName != null )
             {
                 nodePackagePath = StringUtils.replace( nodePackageName, '.',
                         File.separatorChar );
-                
+
                 getLog().debug("Using nodePackagePath: " + nodePackagePath);
             }
         }
@@ -213,14 +212,13 @@ public class JTBMojo extends AbstractMojo
             }
             return;
         }
-        
+
         for ( Iterator i = staleGrammars.iterator( ); i.hasNext( ); )
         {
             File jtbFile = (File) i.next( );
             try
             {
-                JTB.main( generateJTBArgumentList( jtbFile
-                                .getAbsolutePath( ) ) );
+                JTB.main( generateJTBArgumentList( jtbFile.getAbsolutePath( ) ) );
 
                 /*
                  * since jtb was meant to be run as a command-line tool, it only
@@ -235,15 +233,15 @@ public class JTBMojo extends AbstractMojo
                     newDir = new File( outputDirectory + File.separator
                             + packagePath + File.separator + "syntaxtree" );
                     newDir.mkdirs();
-                    
+
                     getLog().debug("Moving " + tempDir + " to " + newDir);
                     tempDir.renameTo( newDir );
-                    
+
                     tempDir = new File( baseDir, "visitor" );
                     newDir = new File( outputDirectory + File.separator
                             + packagePath + File.separator + "visitor" );
                     newDir.mkdirs();
-                    
+
                     getLog().debug("Moving " + tempDir + " to " + newDir);
                     tempDir.renameTo( newDir );
                 }
@@ -257,7 +255,7 @@ public class JTBMojo extends AbstractMojo
                         newDir = new File( outputDirectory + File.separator
                                 + nodePackagePath );
                         newDir.mkdirs();
-                        
+
                         getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
@@ -267,11 +265,11 @@ public class JTBMojo extends AbstractMojo
                         newDir = new File( outputDirectory + File.separator
                                 + "syntaxtree" );
                         newDir.mkdirs();
-                        
+
                         getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
-                    
+
                     if ( visitorPackagePath != null )
                     {
                         tempDir = new File( baseDir, visitorPackagePath
@@ -280,7 +278,7 @@ public class JTBMojo extends AbstractMojo
                         newDir = new File( outputDirectory + File.separator
                                 + visitorPackagePath );
                         newDir.mkdirs();
-                        
+
                         getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
@@ -290,7 +288,7 @@ public class JTBMojo extends AbstractMojo
                         newDir = new File( outputDirectory + File.separator
                                 + "visitor" );
                         newDir.mkdirs();
-                        
+
                         getLog().debug("Moving " + tempDir + " to " + newDir);
                         tempDir.renameTo( newDir );
                     }
@@ -374,9 +372,9 @@ public class JTBMojo extends AbstractMojo
             argsList.add( "-printer" );
         }
         argsList.add( jtbFileName );
-        
+
         getLog( ).debug( "Using arguments: " + argsList );
-        
+
         return (String[ ]) argsList.toArray( new String[argsList.size( )] );
     }
 
