@@ -30,13 +30,14 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 import org.javacc.jjtree.JJTree;
 
 
 /**
  * @goal jjtree
  * @phase generate-sources
- * @description Goal which parse a JJ file and transform it to Java Source Files.
+ * @description Goal which parses a JJ file and transforms it to Java Source Files.
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$
  */
@@ -127,6 +128,8 @@ public class JJTreeMojo
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
+    
+    private String packageName;
 
     /**
      * @parameter expression="${project}"
@@ -137,11 +140,16 @@ public class JJTreeMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( !FileUtils.fileExists( outputDirectory ) )
+        if ( nodePackage != null )
         {
-            FileUtils.mkdir( outputDirectory );
+            packageName = StringUtils.replace( nodePackage, '.', File.separatorChar );
         }
-        
+
+        if ( !FileUtils.fileExists( getOutputDirectory() ) )
+        {
+            FileUtils.mkdir( getOutputDirectory() );
+        }
+
         if ( !FileUtils.fileExists( timestampDirectory ) )
         {
             FileUtils.mkdir( timestampDirectory );
@@ -180,7 +188,15 @@ public class JJTreeMojo
            project.addCompileSourceRoot( outputDirectory );
         }
     }
-    
+
+    private String getOutputDirectory()
+    {
+        if ( packageName != null )
+        {
+            return outputDirectory + File.separator + packageName;
+        }
+        return outputDirectory;
+    }
 
     private String[] generateArgumentList(String jjTreeFilename) {
 
@@ -223,25 +239,25 @@ public class JJTreeMojo
         
         if ( nodeUsesParser != null )
         {
-            argsList.add ( "-NODE_USES_PARSER=" + nodeUsesParser );
+            argsList.add( "-NODE_USES_PARSER=" + nodeUsesParser );
         }
         
         if ( visitor != null )
         {
-            argsList.add ( "-VISITOR=" + visitor);
+            argsList.add( "-VISITOR=" + visitor );
         }
         
         if ( staticOption != null )
         {
-            argsList.add( "-STATIC=" + staticOption);
+            argsList.add( "-STATIC=" + staticOption );
         }
         
-        if (visitorException != null ) 
+        if ( visitorException != null ) 
         {   
-            argsList.add ( "-VISITOR_EXCEPTION=\'" + visitorException + "\'");
+            argsList.add( "-VISITOR_EXCEPTION=\'" + visitorException + "\'" );
         }
-        
-        argsList.add( "-OUTPUT_DIRECTORY=" + outputDirectory);
+
+        argsList.add( "-OUTPUT_DIRECTORY:" + getOutputDirectory() );
         
         argsList.add( jjTreeFilename );
         
