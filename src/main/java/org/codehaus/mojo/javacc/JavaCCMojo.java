@@ -17,6 +17,7 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -220,26 +221,39 @@ public class JavaCCMojo
         if ( staleGrammars.isEmpty() )
         {
            getLog().info( "Nothing to process - all grammars are up to date" );
-           if ( project != null )
-           {
-              project.addCompileSourceRoot( outputDirectory );
-           }
-           return;
         }
-
-        for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
+        else
         {
-            File javaccFile = (File) i.next();
-            try
-            {
-                org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile.getAbsolutePath()) );
-                
-                FileUtils.copyFileToDirectory(javaccFile, new File(timestampDirectory));
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( "JavaCC execution failed", e );
-            }
+        	//Copy all .java file from sourceDirectory to outputDirectory, in order to override Token.java
+        	try
+        	{
+	        	if ( packageName != null )
+	            {
+	                FileUtils.copyDirectory(new File(sourceDirectory), new File(outputDirectory + File.separator + packageName), "*.java", "*.jj,*.JJ");
+	            } 
+	            else 
+	            {
+	            	FileUtils.copyDirectory(new File(sourceDirectory), new File(outputDirectory), "*.java", "*.jj,*.JJ");
+	            }
+        	} catch(IOException e)
+        	{
+        		throw new MojoExecutionException( "Unable to copy overriden java files.", e );
+        	}
+        	
+	        for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
+	        {
+	            File javaccFile = (File) i.next();
+	            try
+	            {
+	                org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile.getAbsolutePath()) );
+	                
+	                FileUtils.copyFileToDirectory(javaccFile, new File(timestampDirectory));
+	            }
+	            catch ( Exception e )
+	            {
+	                throw new MojoExecutionException( "JavaCC execution failed", e );
+	            }
+	        }
         }
         
         if ( project != null )
