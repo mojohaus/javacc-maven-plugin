@@ -1,19 +1,22 @@
 package org.codehaus.mojo.javacc;
 
 /*
- * Copyright 2001-2005 The Codehaus.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file 
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
+ * KIND, either express or implied.  See the License for the 
+ * specific language governing permissions and limitations 
+ * under the License.
  */
 
 import EDU.purdue.jtb.JTB;
@@ -47,30 +50,46 @@ public class JTBMojo extends AbstractMojo
      * This option is short for
      * <code>nodePackageName = package + syntaxtree</code> and
      * <code>visitorPackageName = package + visitor</code>.
+     * 
      * @parameter expression=${package}"
      */
     private String packageName;
 
+    /**
+     * The path of the package name relate to <code>packageName</code> 
+     * @see #packageName
+     */
     private String packagePath;
 
     /**
      * This option specifies the package for the generated AST nodes.
+     * 
      * @parameter expression=${nodePackageName}"
      */
     private String nodePackageName;
 
+    /**
+     * The path of the package name relate to <code>nodePackageName</code> 
+     * @see #nodePackageName
+     */
     private String nodePackagePath;
 
     /**
      * This option specifies the package for the generated visitors.
+     * 
      * @parameter expression=${visitorPackageName}"
      */
     private String visitorPackageName;
 
+    /**
+     * The path of the package name relate to <code>visitorPackageName</code> 
+     * @see #visitorPackageName
+     */
     private String visitorPackagePath;
 
     /**
      * If true, JTB will supress its semantic error checking.
+     * 
      * @parameter expression=${supressErrorChecking}"
      */
     private Boolean supressErrorChecking;
@@ -78,6 +97,7 @@ public class JTBMojo extends AbstractMojo
     /**
      * If true, all generated comments will be wrapped in pre tags so that they
      * are formatted correctly in javadocs.
+     * 
      * @parameter expression=${javadocFriendlyComments}"
      */
     private Boolean javadocFriendlyComments;
@@ -85,24 +105,28 @@ public class JTBMojo extends AbstractMojo
     /**
      * Setting this option to true causes JTB to generate field names that
      * reflect the structure of the tree.
+     * 
      * @parameter expression=${descriptiveFieldNames}"
      */
     private Boolean descriptiveFieldNames;
 
     /**
      * All AST nodes will inherit from the class specified for this parameter.
+     * 
      * @parameter expression=${nodeParentClass}"
      */
     private String nodeParentClass;
 
     /**
      * If true, all nodes will contain fields for its parent node.
+     * 
      * @parameter expression=${parentPointers}"
      */
     private Boolean parentPointers;
 
     /**
      * If true, JTB will include JavaCC "special tokens" in the AST.
+     * 
      * @parameter expression=${specialTokens}"
      */
     private Boolean specialTokens;
@@ -113,18 +137,21 @@ public class JTBMojo extends AbstractMojo
      * <li>Scheme records representing the grammar.</li>
      * <li>A Scheme tree building visitor.</li>
      * <ul>
+     * 
      * @parameter expression=${scheme}"
      */
     private Boolean scheme;
 
     /**
      * If true, JTB will generate a syntax tree dumping visitor.
+     * 
      * @parameter expression=${printer}"
      */
     private Boolean printer;
 
     /**
      * Directory where the JTB file(s) are located.
+     * 
      * @parameter expression="${basedir}/src/main/jtb"
      * @required
      */
@@ -132,6 +159,7 @@ public class JTBMojo extends AbstractMojo
 
     /**
      * Directory where the output Java Files will be located.
+     * 
      * @parameter expression="${project.build.directory}/generated-sources/jtb"
      * @required
      */
@@ -139,6 +167,7 @@ public class JTBMojo extends AbstractMojo
 
     /**
      * the directory to store the resulting JavaCC grammar(s)
+     * 
      * @parameter expression="${basedir}/target"
      */
     private String timestampDirectory;
@@ -146,12 +175,14 @@ public class JTBMojo extends AbstractMojo
     /**
      * The granularity in milliseconds of the last modification date for testing
      * whether a source needs recompilation
+     * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 
     /**
      * The number of milliseconds after which a grammar is considered stale.
+     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -165,31 +196,33 @@ public class JTBMojo extends AbstractMojo
      */
     private File baseDir;
 
-    public void execute( ) throws MojoExecutionException
+    /**
+     * Execute the JTB
+     * 
+     * @throws MojoExecutionException if the compilation fails
+     */
+    public void execute() throws MojoExecutionException
     {
         if ( packageName != null )
         {
-            packagePath = StringUtils.replace( packageName, '.',
-                    File.separatorChar );
+            packagePath = StringUtils.replace( packageName, '.', File.separatorChar );
 
-            getLog().debug("Using packagePath: " + packagePath);
+            getLog().debug( "Using packagePath: " + packagePath );
         }
         else
         {
             if ( visitorPackageName != null )
             {
-                visitorPackagePath = StringUtils.replace( visitorPackageName,
-                        '.', File.separatorChar );
+                visitorPackagePath = StringUtils.replace( visitorPackageName, '.', File.separatorChar );
 
-                getLog().debug("Using visitorPackagePath: " + visitorPackagePath);
+                getLog().debug( "Using visitorPackagePath: " + visitorPackagePath );
             }
 
             if ( nodePackageName != null )
             {
-                nodePackagePath = StringUtils.replace( nodePackageName, '.',
-                        File.separatorChar );
+                nodePackagePath = StringUtils.replace( nodePackageName, '.', File.separatorChar );
 
-                getLog().debug("Using nodePackagePath: " + nodePackagePath);
+                getLog().debug( "Using nodePackagePath: " + nodePackagePath );
             }
         }
         if ( !FileUtils.fileExists( outputDirectory ) )
@@ -201,11 +234,11 @@ public class JTBMojo extends AbstractMojo
             FileUtils.mkdir( timestampDirectory );
         }
 
-        Set staleGrammars = computeStaleGrammars( );
+        Set staleGrammars = computeStaleGrammars();
 
-        if ( staleGrammars.isEmpty( ) )
+        if ( staleGrammars.isEmpty() )
         {
-            getLog( ).info( "Nothing to process - all grammars are up to date" );
+            getLog().info( "Nothing to process - all grammars are up to date" );
             if ( project != null )
             {
                 project.addCompileSourceRoot( outputDirectory );
@@ -213,12 +246,12 @@ public class JTBMojo extends AbstractMojo
             return;
         }
 
-        for ( Iterator i = staleGrammars.iterator( ); i.hasNext( ); )
+        for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
         {
-            File jtbFile = (File) i.next( );
+            File jtbFile = (File) i.next();
             try
             {
-                JTB.main( generateJTBArgumentList( jtbFile.getAbsolutePath( ) ) );
+                JTB.main( generateJTBArgumentList( jtbFile.getAbsolutePath() ) );
 
                 /*
                  * since jtb was meant to be run as a command-line tool, it only
@@ -230,72 +263,63 @@ public class JTBMojo extends AbstractMojo
                 if ( packagePath != null )
                 {
                     tempDir = new File( baseDir, "syntaxtree" );
-                    newDir = new File( outputDirectory + File.separator
-                            + packagePath + File.separator + "syntaxtree" );
+                    newDir = new File( outputDirectory + File.separator + packagePath + File.separator + "syntaxtree" );
                     newDir.mkdirs();
 
-                    getLog().debug("Moving " + tempDir + " to " + newDir);
+                    getLog().debug( "Moving " + tempDir + " to " + newDir );
                     tempDir.renameTo( newDir );
 
                     tempDir = new File( baseDir, "visitor" );
-                    newDir = new File( outputDirectory + File.separator
-                            + packagePath + File.separator + "visitor" );
+                    newDir = new File( outputDirectory + File.separator + packagePath + File.separator + "visitor" );
                     newDir.mkdirs();
 
-                    getLog().debug("Moving " + tempDir + " to " + newDir);
+                    getLog().debug( "Moving " + tempDir + " to " + newDir );
                     tempDir.renameTo( newDir );
                 }
                 else
                 {
                     if ( nodePackagePath != null )
                     {
-                        tempDir = new File( baseDir, nodePackagePath
-                                .substring( nodePackagePath
-                                        .lastIndexOf( File.separator ) ) );
-                        newDir = new File( outputDirectory + File.separator
-                                + nodePackagePath );
+                        tempDir = new File( baseDir, nodePackagePath.substring( nodePackagePath
+                                .lastIndexOf( File.separator ) ) );
+                        newDir = new File( outputDirectory + File.separator + nodePackagePath );
                         newDir.mkdirs();
 
-                        getLog().debug("Moving " + tempDir + " to " + newDir);
+                        getLog().debug( "Moving " + tempDir + " to " + newDir );
                         tempDir.renameTo( newDir );
                     }
                     else
                     {
                         tempDir = new File( baseDir, "syntaxtree" );
-                        newDir = new File( outputDirectory + File.separator
-                                + "syntaxtree" );
+                        newDir = new File( outputDirectory + File.separator + "syntaxtree" );
                         newDir.mkdirs();
 
-                        getLog().debug("Moving " + tempDir + " to " + newDir);
+                        getLog().debug( "Moving " + tempDir + " to " + newDir );
                         tempDir.renameTo( newDir );
                     }
 
                     if ( visitorPackagePath != null )
                     {
-                        tempDir = new File( baseDir, visitorPackagePath
-                                .substring( visitorPackagePath
-                                        .lastIndexOf( File.separator ) ) );
-                        newDir = new File( outputDirectory + File.separator
-                                + visitorPackagePath );
+                        tempDir = new File( baseDir, visitorPackagePath.substring( visitorPackagePath
+                                .lastIndexOf( File.separator ) ) );
+                        newDir = new File( outputDirectory + File.separator + visitorPackagePath );
                         newDir.mkdirs();
 
-                        getLog().debug("Moving " + tempDir + " to " + newDir);
+                        getLog().debug( "Moving " + tempDir + " to " + newDir );
                         tempDir.renameTo( newDir );
                     }
                     else
                     {
                         tempDir = new File( baseDir, "visitor" );
-                        newDir = new File( outputDirectory + File.separator
-                                + "visitor" );
+                        newDir = new File( outputDirectory + File.separator + "visitor" );
                         newDir.mkdirs();
 
-                        getLog().debug("Moving " + tempDir + " to " + newDir);
+                        getLog().debug( "Moving " + tempDir + " to " + newDir );
                         tempDir.renameTo( newDir );
                     }
                 }
 
-                FileUtils.copyFileToDirectory( jtbFile, new File(
-                        timestampDirectory ) );
+                FileUtils.copyFileToDirectory( jtbFile, new File( timestampDirectory ) );
             }
             catch ( Exception e )
             {
@@ -308,15 +332,18 @@ public class JTBMojo extends AbstractMojo
         }
 
     }
-
-    private String[ ] generateJTBArgumentList( String jtbFileName )
+    
+    /**
+     * @param jtbFileName a <code>String</code> which rappresent the path of the file to compile
+     * @return a <code>String[]</code> that represent the argument to use for JTB
+     */
+    private String[] generateJTBArgumentList( String jtbFileName )
     {
 
-        ArrayList argsList = new ArrayList( );
+        ArrayList argsList = new ArrayList();
 
         argsList.add( "-o" );
-        argsList.add( outputDirectory + File.separator
-                + FileUtils.basename( jtbFileName ) + "jj" );
+        argsList.add( outputDirectory + File.separator + FileUtils.basename( jtbFileName ) + "jj" );
         if ( packageName != null )
         {
             argsList.add( "-p" );
@@ -335,18 +362,15 @@ public class JTBMojo extends AbstractMojo
                 argsList.add( visitorPackageName );
             }
         }
-        if ( ( supressErrorChecking != null )
-                && supressErrorChecking.booleanValue( ) )
+        if ( ( supressErrorChecking != null ) && supressErrorChecking.booleanValue() )
         {
             argsList.add( "-e" );
         }
-        if ( ( javadocFriendlyComments != null )
-                && javadocFriendlyComments.booleanValue( ) )
+        if ( ( javadocFriendlyComments != null ) && javadocFriendlyComments.booleanValue() )
         {
             argsList.add( "-jd" );
         }
-        if ( ( descriptiveFieldNames != null )
-                && descriptiveFieldNames.booleanValue( ) )
+        if ( ( descriptiveFieldNames != null ) && descriptiveFieldNames.booleanValue() )
         {
             argsList.add( "-f" );
         }
@@ -355,30 +379,34 @@ public class JTBMojo extends AbstractMojo
             argsList.add( "-ns" );
             argsList.add( nodeParentClass );
         }
-        if ( ( parentPointers != null ) && parentPointers.booleanValue( ) )
+        if ( ( parentPointers != null ) && parentPointers.booleanValue() )
         {
             argsList.add( "-pp" );
         }
-        if ( ( specialTokens != null ) && specialTokens.booleanValue( ) )
+        if ( ( specialTokens != null ) && specialTokens.booleanValue() )
         {
             argsList.add( "-tk" );
         }
-        if ( ( scheme != null ) && scheme.booleanValue( ) )
+        if ( ( scheme != null ) && scheme.booleanValue() )
         {
             argsList.add( "-scheme" );
         }
-        if ( ( printer != null ) && printer.booleanValue( ) )
+        if ( ( printer != null ) && printer.booleanValue() )
         {
             argsList.add( "-printer" );
         }
         argsList.add( jtbFileName );
 
-        getLog( ).debug( "Using arguments: " + argsList );
+        getLog().debug( "Using arguments: " + argsList );
 
-        return (String[ ]) argsList.toArray( new String[argsList.size( )] );
+        return (String[]) argsList.toArray( new String[argsList.size()] );
     }
 
-    private Set computeStaleGrammars( ) throws MojoExecutionException
+    /**
+     * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
+     * @throws MojoExecutionException if it fails
+     */
+    private Set computeStaleGrammars() throws MojoExecutionException
     {
         SuffixMapping mapping = new SuffixMapping( ".jtb", ".jtb" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JTB", ".JTB" );
@@ -390,19 +418,18 @@ public class JTBMojo extends AbstractMojo
 
         File outDir = new File( timestampDirectory );
 
-        Set staleSources = new HashSet( );
+        Set staleSources = new HashSet();
 
         File sourceDir = new File( sourceDirectory );
 
         try
         {
-            staleSources
-                    .addAll( scanner.getIncludedSources( sourceDir, outDir ) );
+            staleSources.addAll( scanner.getIncludedSources( sourceDir, outDir ) );
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'"
-                    + sourceDir + "\' for stale grammars to reprocess.", e );
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
+                    + "\' for stale grammars to reprocess.", e );
         }
 
         return staleSources;

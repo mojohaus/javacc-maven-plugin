@@ -1,19 +1,22 @@
 package org.codehaus.mojo.javacc;
 
 /*
- * Copyright 2001-2005 The Codehaus.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file 
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, 
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
+ * KIND, either express or implied.  See the License for the 
+ * specific language governing permissions and limitations 
+ * under the License.
  */
 
 import java.io.File;
@@ -33,82 +36,83 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.javacc.jjtree.JJTree;
 
-
 /**
  * @goal jjtree
  * @phase generate-sources
- * @description Goal which parses a JJ file and transforms it to Java Source Files.
+ * @description Goal which parses a JJ file and transforms it to Java Source
+ *              Files.
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$
  */
-public class JJTreeMojo
-    extends AbstractMojo
-{      
+public class JJTreeMojo extends AbstractMojo
+{
 
-   /**
-    * @parameter expression="${buildNodeFiles}"
-    */
-   private Boolean buildNodeFiles;
+    /**
+     * @parameter expression="${buildNodeFiles}"
+     */
+    private Boolean buildNodeFiles;
 
-   /**
-    * @parameter expression="${multi}"
-    */
-   private Boolean multi;
+    /**
+     * @parameter expression="${multi}"
+     */
+    private Boolean multi;
 
-   /**
-    * @parameter expression="${nodeDefaultVoid}"
-    */
-   private Boolean nodeDefaultVoid;
+    /**
+     * @parameter expression="${nodeDefaultVoid}"
+     */
+    private Boolean nodeDefaultVoid;
 
-   /**
-    * @parameter expression="${nodeFactory}"
-    */
-   private Boolean nodeFactory;
+    /**
+     * @parameter expression="${nodeFactory}"
+     */
+    private Boolean nodeFactory;
 
-   /**
-    * @parameter expression="${nodeScopeHook}"
-    */
-   private Boolean nodeScopeHook;
+    /**
+     * @parameter expression="${nodeScopeHook}"
+     */
+    private Boolean nodeScopeHook;
 
-   /**
-    * @parameter expression="${nodeUsesParser}"
-    */
-   private Boolean nodeUsesParser; 
-   
-   /**
-    * @parameter expression="${staticOption}"
-    */
-   private Boolean staticOption;
-    
-   /** 
-    * @parameter expression="${visitor}"
-    */
-   private Boolean visitor;
+    /**
+     * @parameter expression="${nodeUsesParser}"
+     */
+    private Boolean nodeUsesParser;
 
-   /**
-    * @parameter expression="${nodePackage}"
-    */
-   private String nodePackage;
+    /**
+     * @parameter expression="${staticOption}"
+     */
+    private Boolean staticOption;
 
-   /**
-    * @parameter expression="${visitorException}"
-    */
-   private String visitorException;
+    /**
+     * @parameter expression="${visitor}"
+     */
+    private Boolean visitor;
 
-   /**
-    * @parameter expression="${nodePrefix}"
-    */
-   private String nodePrefix;
-   
+    /**
+     * @parameter expression="${nodePackage}"
+     */
+    private String nodePackage;
+
+    /**
+     * @parameter expression="${visitorException}"
+     */
+    private String visitorException;
+
+    /**
+     * @parameter expression="${nodePrefix}"
+     */
+    private String nodePrefix;
+
     /**
      * Directory where the JJT file(s) are located.
+     * 
      * @parameter expression="${basedir}/src/main/jjtree"
      * @required
      */
     private String sourceDirectory;
-    
+
     /**
      * Directory where the output Java Files will be located.
+     * 
      * @parameter expression="${project.build.directory}/generated-sources/jjtree"
      * @required
      */
@@ -122,23 +126,31 @@ public class JJTreeMojo
     private String timestampDirectory;
 
     /**
-     * The granularity in milliseconds of the last modification
-     * date for testing whether a source needs recompilation
+     * The granularity in milliseconds of the last modification date for testing
+     * whether a source needs recompilation
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
-    
+
+    /**
+     * Contains the package name to use for the generated code 
+     */
     private String packageName;
 
     /**
      * @parameter expression="${project}"
+     * @readonly
      * @required
      */
     private MavenProject project;
-    
-    public void execute()
-        throws MojoExecutionException
+
+    /**
+     * Execute the JJTree
+     * 
+     * @throws MojoExecutionException if the compilation fails
+     */
+    public void execute() throws MojoExecutionException
     {
         if ( nodePackage != null )
         {
@@ -159,12 +171,12 @@ public class JJTreeMojo
 
         if ( staleGrammars.isEmpty() )
         {
-           getLog().info( "Nothing to process - all grammars are up to date" );
-           if ( project != null )
-           {
-              project.addCompileSourceRoot( outputDirectory );
-           }
-           return;
+            getLog().info( "Nothing to process - all grammars are up to date" );
+            if ( project != null )
+            {
+                project.addCompileSourceRoot( outputDirectory );
+            }
+            return;
         }
 
         for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
@@ -173,22 +185,25 @@ public class JJTreeMojo
             try
             {
                 JJTree jjtree = new JJTree();
-                jjtree.main( generateArgumentList( jjTreeFile.getAbsolutePath()) );
-                
-                FileUtils.copyFileToDirectory(jjTreeFile, new File(timestampDirectory));
+                jjtree.main( generateArgumentList( jjTreeFile.getAbsolutePath() ) );
+
+                FileUtils.copyFileToDirectory( jjTreeFile, new File( timestampDirectory ) );
             }
             catch ( Exception e )
             {
                 throw new MojoExecutionException( "JJTree execution failed", e );
             }
         }
-        
+
         if ( project != null )
         {
-           project.addCompileSourceRoot( outputDirectory );
+            project.addCompileSourceRoot( outputDirectory );
         }
     }
 
+    /**
+     * @return the directory that will conatin the generated code
+     */
     private String getOutputDirectory()
     {
         if ( packageName != null )
@@ -198,20 +213,25 @@ public class JJTreeMojo
         return outputDirectory;
     }
 
-    private String[] generateArgumentList(String jjTreeFilename) {
+    /**
+     * @param jjTreeFilename a <code>String</code> which rappresent the path of the file to compile
+     * @return a <code>String[]</code> that represent the argument to use for JJTree
+     */
+    private String[] generateArgumentList( String jjTreeFilename )
+    {
 
         ArrayList argsList = new ArrayList();
-        
-        if ( buildNodeFiles != null ) 
+
+        if ( buildNodeFiles != null )
         {
-            argsList.add("-BUILD_NODE_FILES=" + buildNodeFiles.toString());
+            argsList.add( "-BUILD_NODE_FILES=" + buildNodeFiles.toString() );
         }
-        
+
         if ( multi != null )
         {
-            argsList.add("-MULTI=" + multi);
+            argsList.add( "-MULTI=" + multi );
         }
-        
+
         if ( nodeDefaultVoid != null )
         {
             argsList.add( "-NODE_DEFAULT_VOID=" + nodeDefaultVoid );
@@ -219,81 +239,84 @@ public class JJTreeMojo
 
         if ( nodeFactory != null )
         {
-            argsList.add( "-NODE_FACTORY=" + nodeFactory);
+            argsList.add( "-NODE_FACTORY=" + nodeFactory );
         }
-        
+
         if ( nodePackage != null )
         {
             argsList.add( "-NODE_PACKAGE=" + nodePackage );
         }
-        
+
         if ( nodePrefix != null )
         {
             argsList.add( "-NODE_PREFIX=" + nodePrefix );
         }
-        
+
         if ( nodeScopeHook != null )
         {
             argsList.add( "-NODE_SCOPE_HOOK=" + nodeScopeHook );
         }
-        
+
         if ( nodeUsesParser != null )
         {
             argsList.add( "-NODE_USES_PARSER=" + nodeUsesParser );
         }
-        
+
         if ( visitor != null )
         {
             argsList.add( "-VISITOR=" + visitor );
         }
-        
+
         if ( staticOption != null )
         {
             argsList.add( "-STATIC=" + staticOption );
         }
-        
-        if ( visitorException != null ) 
-        {   
+
+        if ( visitorException != null )
+        {
             argsList.add( "-VISITOR_EXCEPTION=\'" + visitorException + "\'" );
         }
 
         argsList.add( "-OUTPUT_DIRECTORY:" + getOutputDirectory() );
-        
+
         argsList.add( jjTreeFilename );
-        
-        getLog().debug("argslist: " + argsList.toString());
-        
-        return (String[])argsList.toArray(new String[argsList.size()]);
-     }
+
+        getLog().debug( "argslist: " + argsList.toString() );
+
+        return (String[]) argsList.toArray( new String[argsList.size()] );
+    }
     
-     private Set computeStaleGrammars() throws MojoExecutionException
-       {
-          SuffixMapping mapping = new SuffixMapping( ".jjt", ".jjt" );
-          SuffixMapping mappingCAP = new SuffixMapping( ".JJT", ".JJT" );
+    /**
+     * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
+     * @throws MojoExecutionException if it fails
+     */
+    private Set computeStaleGrammars() throws MojoExecutionException
+    {
+        SuffixMapping mapping = new SuffixMapping( ".jjt", ".jjt" );
+        SuffixMapping mappingCAP = new SuffixMapping( ".JJT", ".JJT" );
 
-          SourceInclusionScanner scanner = new StaleSourceScanner( staleMillis );
+        SourceInclusionScanner scanner = new StaleSourceScanner( staleMillis );
 
-          scanner.addSourceMapping( mapping );
-          scanner.addSourceMapping( mappingCAP);
+        scanner.addSourceMapping( mapping );
+        scanner.addSourceMapping( mappingCAP );
 
-          File outDir = new File( timestampDirectory );
+        File outDir = new File( timestampDirectory );
 
-          Set staleSources = new HashSet();
+        Set staleSources = new HashSet();
 
-          File sourceDir = new File( sourceDirectory );
+        File sourceDir = new File( sourceDirectory );
 
-          try
-          {
-             staleSources.addAll( scanner.getIncludedSources( sourceDir, outDir ) );
-          }
-          catch ( InclusionScanException e )
-          {
-             throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir + "\' for stale grammars to reprocess.", e );
-          }
+        try
+        {
+            staleSources.addAll( scanner.getIncludedSources( sourceDir, outDir ) );
+        }
+        catch ( InclusionScanException e )
+        {
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
+                    + "\' for stale grammars to reprocess.", e );
+        }
 
-          return staleSources;
-       }
+        return staleSources;
+    }
 
-    
 }
-
