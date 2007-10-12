@@ -175,7 +175,7 @@ public class JavaCCMojo extends AbstractMojo
     private String outputDirectory;
 
     /**
-     * the directory to store the processed .jj files
+     * The directory to store the processed .jj files
      * 
      * @parameter expression="${project.build.directory}/generated-sources/javacc-timestamp"
      */
@@ -183,7 +183,7 @@ public class JavaCCMojo extends AbstractMojo
 
     /**
      * The granularity in milliseconds of the last modification date for testing
-     * whether a source needs recompilation
+     * whether a source needs recompilation.
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
@@ -208,6 +208,13 @@ public class JavaCCMojo extends AbstractMojo
      */
     private MavenProject project;
 
+    /**
+     * @parameter expression="${basedir}"
+     * @required
+     * @readonly
+     */
+    private File baseDir;
+    
     /**
      * Execute the JavaCC compiler 
      * @throws MojoExecutionException if it fails
@@ -251,7 +258,7 @@ public class JavaCCMojo extends AbstractMojo
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info( "Nothing to process - all grammars are up to date" );
+            getLog().info("Nothing to process - all grammars in " + sourceDirectory + " are up to date.");            
         }
         else
         {

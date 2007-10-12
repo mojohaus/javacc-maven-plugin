@@ -181,8 +181,6 @@ public class JTBMojo extends AbstractMojo
     private int staleMillis;
 
     /**
-     * The number of milliseconds after which a grammar is considered stale.
-     * 
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -190,7 +188,7 @@ public class JTBMojo extends AbstractMojo
     private MavenProject project;
 
     /**
-     * @parameter expression="${user.dir}"
+     * @parameter expression="${basedir}"
      * @required
      * @readonly
      */
