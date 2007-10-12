@@ -170,9 +170,9 @@ public class JJTreeMojo extends AbstractMojo
             packageName = StringUtils.replace( nodePackage, '.', File.separatorChar );
         }
 
-        if ( !FileUtils.fileExists( getOutputDirectory() ) )
+        if ( !FileUtils.fileExists( outputDirectory ) )
         {
-            FileUtils.mkdir( getOutputDirectory() );
+            FileUtils.mkdir( outputDirectory );
         }
 
         if ( !FileUtils.fileExists( timestampDirectory ) )
@@ -227,12 +227,21 @@ public class JJTreeMojo extends AbstractMojo
     /**
      * @return the directory that will conatin the generated code
      */
-    private String getOutputDirectory()
+    private String getOutputDirectory( String jjtreeInput ) throws MojoExecutionException
     {
         if ( packageName != null )
         {
             return outputDirectory + File.separator + packageName;
         }
+        else 
+        {
+            String declaredPackage = JavaCCUtil.getDeclaredPackage(jjtreeInput);
+            
+            if (declaredPackage != null)
+            {
+               return outputDirectory + File.separator + declaredPackage;
+            }
+        }    
         return outputDirectory;
     }
 
@@ -240,7 +249,7 @@ public class JJTreeMojo extends AbstractMojo
      * @param jjTreeFilename a <code>String</code> which rappresent the path of the file to compile
      * @return a <code>String[]</code> that represent the argument to use for JJTree
      */
-    private String[] generateArgumentList( String jjTreeFilename )
+    private String[] generateArgumentList( String jjTreeFilename ) throws MojoExecutionException
     {
 
         ArrayList argsList = new ArrayList();
@@ -300,7 +309,7 @@ public class JJTreeMojo extends AbstractMojo
             argsList.add( "-VISITOR_EXCEPTION=\'" + visitorException + "\'" );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY:" + getOutputDirectory() );
+        argsList.add( "-OUTPUT_DIRECTORY:" + getOutputDirectory( jjTreeFilename ) );
 
         argsList.add( jjTreeFilename );
 

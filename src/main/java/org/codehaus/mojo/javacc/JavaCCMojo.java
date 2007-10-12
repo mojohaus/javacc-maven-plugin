@@ -154,6 +154,10 @@ public class JavaCCMojo extends AbstractMojo
     private Boolean keepLineColumn;
 
     /**
+     * Package into which the generated classes will be put. Note that this will
+     * also be used to create the directory structure where shources will be
+     * generated.<br/>
+     *
      * @parameter expression="${packageName}"
      */
     private String packageName;
@@ -221,6 +225,13 @@ public class JavaCCMojo extends AbstractMojo
      */
     public void execute() throws MojoExecutionException
     {
+        File sourceDir = new File(sourceDirectory);
+        if (!sourceDir.exists()) 
+        {
+            getLog().warn("Source directory '" + sourceDirectory + "' does not exist. Skipping...");
+            return;
+        }
+        
         // check packageName for . vs /
         if ( packageName != null )
         {
@@ -309,6 +320,7 @@ public class JavaCCMojo extends AbstractMojo
      * @return a <code>String[]</code> that represent the argument to use for JavaCC
      */
     private String[] generateJavaCCArgumentList( String javaccInput )
+        throws MojoExecutionException
     {
 
         ArrayList argsList = new ArrayList();
@@ -424,7 +436,16 @@ public class JavaCCMojo extends AbstractMojo
         }
         else
         {
-            argsList.add( "-OUTPUT_DIRECTORY:" + outputDirectory );
+            String declaredPackage = JavaCCUtil.getDeclaredPackage( javaccInput );
+            
+            if (declaredPackage != null)
+            {
+                argsList.add("-OUTPUT_DIRECTORY:" + outputDirectory + File.separator + declaredPackage);
+            }
+            else
+            {
+                argsList.add("-OUTPUT_DIRECTORY:" + outputDirectory);
+            }            
         }
 
         argsList.add( javaccInput );
