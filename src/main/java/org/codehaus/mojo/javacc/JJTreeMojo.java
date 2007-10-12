@@ -169,6 +169,11 @@ public class JJTreeMojo extends AbstractMojo
         {
             packageName = StringUtils.replace( nodePackage, '.', File.separatorChar );
         }
+        
+        if ( ! sourceDirectory.startsWith(File.separator) )
+        {
+            sourceDirectory = project.getBasedir().getAbsolutePath() + File.separator + sourceDirectory;
+        }
 
         if ( !FileUtils.fileExists( outputDirectory ) )
         {
@@ -210,7 +215,8 @@ public class JJTreeMojo extends AbstractMojo
                 JJTree jjtree = new JJTree();
                 jjtree.main( generateArgumentList( jjTreeFile.getAbsolutePath() ) );
 
-                FileUtils.copyFileToDirectory( jjTreeFile, new File( timestampDirectory ) );
+                String timestampFilePath = jjTreeFile.getAbsolutePath().replace( sourceDirectory, "" );
+                FileUtils.copyFile(jjTreeFile, new File(timestampDirectory + File.separator + timestampFilePath));
             }
             catch ( Exception e )
             {

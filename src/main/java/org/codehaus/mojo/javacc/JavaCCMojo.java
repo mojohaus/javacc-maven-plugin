@@ -249,6 +249,11 @@ public class JavaCCMojo extends AbstractMojo
                 FileUtils.mkdir( outputDirectory );
             }
         }
+        
+        if ( ! sourceDirectory.startsWith(File.separator) )
+        {
+           sourceDirectory = project.getBasedir().getAbsolutePath() + File.separator + sourceDirectory;
+        }
 
         if ( !FileUtils.fileExists( timestampDirectory ) )
         {
