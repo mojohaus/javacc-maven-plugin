@@ -40,7 +40,7 @@ import org.javacc.jjtree.JJTree;
 /**
  * @goal jjtree
  * @phase generate-sources
- * @description Goal which parses a JJ file and transforms it to Java Source
+ * @description Goal which parses a JJT file and transforms it to Java Source
  *              Files.
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$
@@ -122,7 +122,7 @@ public class JJTreeMojo extends AbstractMojo
     /**
      * the directory to store the processed .jjt files
      * 
-     * @parameter expression="${basedir}/target"
+     * @parameter expression="${project.build.directory}/generated-sources/jjtree-timestamp"
      */
     private String timestampDirectory;
 
@@ -194,7 +194,7 @@ public class JJTreeMojo extends AbstractMojo
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info( "Nothing to process - all grammars are up to date" );
+            getLog().info( "Nothing to process - all grammars in " + sourceDirectory + " are up to date." );
             if ( project != null )
             {
                 project.addCompileSourceRoot( outputDirectory );
