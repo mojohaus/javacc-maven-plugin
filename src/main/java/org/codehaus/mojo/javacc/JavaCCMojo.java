@@ -22,6 +22,7 @@ package org.codehaus.mojo.javacc;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -189,6 +190,18 @@ public class JavaCCMojo extends AbstractMojo
     private int staleMillis;
 
     /**
+     * A list of inclusion filters for the compiler.
+     * @parameter
+     */
+    private Set includes;
+    
+    /**
+     * A list of exclusion filters for the compiler.
+     * @parameter
+     */
+    private Set excludes;
+    
+    /**
      * @parameter expression="${project}"
      * @readonly
      * @required
@@ -224,6 +237,16 @@ public class JavaCCMojo extends AbstractMojo
             FileUtils.mkdir( timestampDirectory );
         }
 
+        if ( includes == null )
+        {
+            includes = Collections.singleton( "**/*" );
+        }
+        
+        if ( excludes == null )
+        {
+            excludes = Collections.EMPTY_SET;
+        }
+        
         Set staleGrammars = computeStaleGrammars();
 
         if ( staleGrammars.isEmpty() )
@@ -413,7 +436,7 @@ public class JavaCCMojo extends AbstractMojo
         SuffixMapping mapping = new SuffixMapping( ".jj", ".jj" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JJ", ".JJ" );
 
-        SourceInclusionScanner scanner = new StaleSourceScanner( staleMillis );
+        SourceInclusionScanner scanner = new StaleSourceScanner( staleMillis, includes, excludes );
 
         scanner.addSourceMapping( mapping );
         scanner.addSourceMapping( mappingCAP );
