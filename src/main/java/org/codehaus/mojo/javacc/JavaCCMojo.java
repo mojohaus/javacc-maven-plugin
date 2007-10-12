@@ -305,7 +305,8 @@ public class JavaCCMojo extends AbstractMojo
                 {
                     org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile.getAbsolutePath() ) );
 
-                    FileUtils.copyFileToDirectory( javaccFile, new File( timestampDirectory ) );
+                    String timestampFilePath = javaccFile.getAbsolutePath().replace(sourceDirectory, "");
+                    FileUtils.copyFile(javaccFile, new File(timestampDirectory + File.separator + timestampFilePath));
                 }
                 catch ( Exception e )
                 {
