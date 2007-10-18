@@ -47,6 +47,12 @@ under the License.
   	<url>http://jira.codehaus.org/browse/MJAVACC</url>
   </issueManagement>
   
+  <scm>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/javacc-maven-plugin</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/javacc-maven-plugin</developerConnection>
+    <url>http://fisheye.codehaus.org/browse/mojo/trunk/mojo/javacc-maven-plugin</url>
+  </scm>
+
   <dependencies>
       <dependency>
         <groupId>org.apache.maven</groupId>
