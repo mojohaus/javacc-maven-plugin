@@ -241,7 +241,7 @@ public class JJTreeMojo extends AbstractMojo
         }
         else 
         {
-            String declaredPackage = JavaCCUtil.getDeclaredPackage(jjtreeInput);
+            String declaredPackage = JavaCCUtil.getDeclaredPackage( new File( jjtreeInput ));
             
             if (declaredPackage != null)
             {

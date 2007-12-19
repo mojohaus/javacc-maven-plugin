@@ -43,7 +43,7 @@ public class JavaCCUtil {
      *
      * @throws MojoExecutionException in case of IOException
      */
-    public static String getDeclaredPackage(String javaccInput)
+    public static String getDeclaredPackage(File javaccInput)
         throws MojoExecutionException
     {
         //
