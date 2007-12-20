@@ -136,7 +136,7 @@ public class JTBMojo extends AbstractMojo
      * <ul>
      * <li>Scheme records representing the grammar.</li>
      * <li>A Scheme tree building visitor.</li>
-     * <ul>
+     * </ul>
      * 
      * @parameter expression=${scheme}"
      */
