@@ -3,6 +3,7 @@
  ------
  <jruiz@exist.com>
  Jesse McConnell <jesse.mcconnell@gmail.com>
+ Tim Pizey <timp At paneris.org>
  ------
  July 27 2005
  ------
@@ -11,63 +12,25 @@ Maven 2 JavaCC plugin
 
  This plugin is for processing javacc files into java sources.
 
- http://www.javacc.org
+ {{{http://javacc.dev.java.net/} JavaCC Home}}
 
  This plugin will process all *.jj files in the sourceDirectory into a 
  common generated sources output directory.  This will occur during the 
  generate-resources phase and the sources directory will be added to the project
  for the compile phase.
  
-Available Configuration Options: (param - default value)
- 
- * sourceDirectory - src/main/javacc
- 
- * outputDirectory - target/generated-sources/javacc
- 
- * timestampDirectory - target (used so grammers are not constantly regenerated)
- 
- * lookAhead - 1
+ It can also process *.jjt and *.jbt files.
 
- * choiceAmbiguityCheck - 2
 
- * otherAmbiguityCheck - 1
+Expected usage
 
- * isStatic - true
+ You are expected to place your Java source files in the standard maven location: src/main/java.
 
- * debugParser - false
+ The grammar files should be placed in src/main/javacc and src/main/jjtree respectively. 
 
- * debugLookAhead - false
+ If you have modified generated files (not recommended) then you should place them in your grammar source directory, 
+ so that they are respected and not duplicated. 
 
- * debugTokenManager - false
-
- * optimizeTokenManager - true
-
- * errorReporting - true
-
- * javaUnicodeEscape - false
-
- * unicodeInput - false
-
- * ignoreCase - false
-
- * commonTokenAction - false
-
- * userTokenManager - false
-
- * userCharStream - false
-
- * buildParser - true
-
- * buildTokenManager - true
-
- * sanityCheck - true
-
- * forceLaCheck - false
-
- * cacheTokens - false
-
- * keepLineColumn - true
- 
  []
  
 Usage:
@@ -75,23 +38,52 @@ Usage:
 -------------------
 <project>
    ...
-      <build>
-         <plugins>
-            <plugin>
-               <groupId>org.codehaus.mojo</groupId>
-               <artifactId>javacc-maven-plugin</artifactId>
-   	         <version>0.6-SNAPSHOT</version>
-	            <executions>
-	            <execution>
-	               <goals>
-	                  <goal>javacc</goal>
-	               </goals>
-	            </execution>
-	         </executions>
-          </plugin>
-       </plugins>
-       ...
-     </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>jjt</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>jjtree</goal>
+            </goals>
+            <configuration>
+              <nodePackage>org.javacc.examples.jjtree.eg4</nodePackage>
+              <sourceDirectory>${basedir}/src/main/jjtree</sourceDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>jjc</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>javacc</goal>
+            </goals>
+            <configuration>
+              <packageName>org.javacc.examples.jjtree.eg4</packageName>
+              <sourceDirectory>${project.build.directory}/generated-sources/jjtree</sourceDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+     ...
+  </build>
+  
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <configuration>
+          <packageName>your.project.package</packageName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
    ...
 </project>
 -------------------
+      
