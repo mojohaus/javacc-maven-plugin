@@ -38,10 +38,10 @@ import org.codehaus.plexus.util.StringUtils;
 import org.javacc.jjtree.JJTree;
 
 /**
+ * Parses a JJT grammar file and transforms it to Java source files.
+ * 
  * @goal jjtree
  * @phase generate-sources
- * @description Goal which parses a JJT file and transforms it to Java Source
- *              Files.
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$
  */

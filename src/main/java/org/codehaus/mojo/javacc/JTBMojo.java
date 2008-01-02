@@ -37,11 +37,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
+ * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically
+ * builds the AST.
+ * 
  * @goal jtb
  * @phase generate-sources
- * @description Goal which parses a jtb file and transforms it into source files
- *              for an AST and a JavaCC grammar file which automatically builds
- *              the AST.
  * @author Gregory Kick (gk5885@kickstyle.net)
  */
 public class JTBMojo extends AbstractMojo
