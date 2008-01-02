@@ -155,7 +155,7 @@ public class JTBMojo extends AbstractMojo
      * @parameter expression="${basedir}/src/main/jtb"
      * @required
      */
-    private String sourceDirectory;
+    private File sourceDirectory;
 
     /**
      * Directory where the output Java Files will be located.
@@ -163,14 +163,14 @@ public class JTBMojo extends AbstractMojo
      * @parameter expression="${project.build.directory}/generated-sources/jtb"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * the directory to store the resulting JavaCC grammar(s)
      * 
      * @parameter expression="${basedir}/target"
      */
-    private String timestampDirectory;
+    private File timestampDirectory;
 
     /**
      * The granularity in milliseconds of the last modification date for testing
@@ -223,13 +223,13 @@ public class JTBMojo extends AbstractMojo
                 getLog().debug( "Using nodePackagePath: " + nodePackagePath );
             }
         }
-        if ( !FileUtils.fileExists( outputDirectory ) )
+        if ( !outputDirectory.exists() )
         {
-            FileUtils.mkdir( outputDirectory );
+            outputDirectory.mkdirs();
         }
-        if ( !FileUtils.fileExists( timestampDirectory ) )
+        if ( !timestampDirectory.exists() )
         {
-            FileUtils.mkdir( timestampDirectory );
+            timestampDirectory.mkdirs();
         }
 
         Set staleGrammars = computeStaleGrammars();
@@ -239,7 +239,7 @@ public class JTBMojo extends AbstractMojo
             getLog().info( "Nothing to process - all grammars are up to date" );
             if ( project != null )
             {
-                project.addCompileSourceRoot( outputDirectory );
+                project.addCompileSourceRoot( outputDirectory.getPath() );
             }
             return;
         }
@@ -317,7 +317,7 @@ public class JTBMojo extends AbstractMojo
                     }
                 }
 
-                FileUtils.copyFileToDirectory( jtbFile, new File( timestampDirectory ) );
+                FileUtils.copyFileToDirectory( jtbFile, timestampDirectory );
             }
             catch ( Exception e )
             {
@@ -326,7 +326,7 @@ public class JTBMojo extends AbstractMojo
         }
         if ( project != null )
         {
-            project.addCompileSourceRoot( outputDirectory );
+            project.addCompileSourceRoot( outputDirectory.getPath() );
         }
 
     }
@@ -414,19 +414,15 @@ public class JTBMojo extends AbstractMojo
         scanner.addSourceMapping( mapping );
         scanner.addSourceMapping( mappingCAP );
 
-        File outDir = new File( timestampDirectory );
-
         Set staleSources = new HashSet();
-
-        File sourceDir = new File( sourceDirectory );
 
         try
         {
-            staleSources.addAll( scanner.getIncludedSources( sourceDir, outDir ) );
+            staleSources.addAll( scanner.getIncludedSources( sourceDirectory, timestampDirectory ) );
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
                     + "\' for stale grammars to reprocess.", e );
         }
 

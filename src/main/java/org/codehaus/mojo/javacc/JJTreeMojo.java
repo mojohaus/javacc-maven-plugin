@@ -109,7 +109,7 @@ public class JJTreeMojo extends AbstractMojo
      * @parameter expression="${basedir}/src/main/jjtree"
      * @required
      */
-    private String sourceDirectory;
+    private File sourceDirectory;
 
     /**
      * Directory where the output Java Files will be located.
@@ -117,14 +117,14 @@ public class JJTreeMojo extends AbstractMojo
      * @parameter expression="${project.build.directory}/generated-sources/jjtree"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * the directory to store the processed .jjt files
      * 
      * @parameter expression="${project.build.directory}/generated-sources/jjtree-timestamp"
      */
-    private String timestampDirectory;
+    private File timestampDirectory;
 
     /**
      * The granularity in milliseconds of the last modification date for testing
@@ -169,20 +169,15 @@ public class JJTreeMojo extends AbstractMojo
         {
             packageName = StringUtils.replace( nodePackage, '.', File.separatorChar );
         }
-        
-        if ( ! sourceDirectory.startsWith(File.separator) )
+
+        if ( !outputDirectory.exists() )
         {
-            sourceDirectory = project.getBasedir().getAbsolutePath() + File.separator + sourceDirectory;
+            outputDirectory.mkdirs();
         }
 
-        if ( !FileUtils.fileExists( outputDirectory ) )
+        if ( !timestampDirectory.exists() )
         {
-            FileUtils.mkdir( outputDirectory );
-        }
-
-        if ( !FileUtils.fileExists( timestampDirectory ) )
-        {
-            FileUtils.mkdir( timestampDirectory );
+            timestampDirectory.mkdirs();
         }
         
         if ( includes == null )
@@ -202,7 +197,7 @@ public class JJTreeMojo extends AbstractMojo
             getLog().info( "Nothing to process - all grammars in " + sourceDirectory + " are up to date." );
             if ( project != null )
             {
-                project.addCompileSourceRoot( outputDirectory );
+                project.addCompileSourceRoot( outputDirectory.getPath() );
             }
             return;
         }
@@ -215,8 +210,8 @@ public class JJTreeMojo extends AbstractMojo
                 JJTree jjtree = new JJTree();
                 jjtree.main( generateArgumentList( jjTreeFile.getAbsolutePath() ) );
 
-                String timestampFilePath = jjTreeFile.getAbsolutePath().replace( sourceDirectory, "" );
-                FileUtils.copyFile(jjTreeFile, new File(timestampDirectory + File.separator + timestampFilePath));
+                File timestampFile = new File( timestampDirectory.toURI().resolve( sourceDirectory.toURI().relativize( jjTreeFile.toURI() ) ) );
+                FileUtils.copyFile( jjTreeFile, timestampFile );
             }
             catch ( Exception e )
             {
@@ -226,18 +221,18 @@ public class JJTreeMojo extends AbstractMojo
 
         if ( project != null )
         {
-            project.addCompileSourceRoot( outputDirectory );
+            project.addCompileSourceRoot( outputDirectory.getPath() );
         }
     }
 
     /**
      * @return the directory that will conatin the generated code
      */
-    private String getOutputDirectory( String jjtreeInput ) throws MojoExecutionException
+    private File getOutputDirectory( String jjtreeInput ) throws MojoExecutionException
     {
         if ( packageName != null )
         {
-            return outputDirectory + File.separator + packageName;
+            return new File( outputDirectory, packageName );
         }
         else 
         {
@@ -245,7 +240,7 @@ public class JJTreeMojo extends AbstractMojo
             
             if (declaredPackage != null)
             {
-               return outputDirectory + File.separator + declaredPackage;
+               return new File( outputDirectory, declaredPackage );
             }
         }    
         return outputDirectory;
@@ -338,19 +333,15 @@ public class JJTreeMojo extends AbstractMojo
         scanner.addSourceMapping( mapping );
         scanner.addSourceMapping( mappingCAP );
 
-        File outDir = new File( timestampDirectory );
-
         Set staleSources = new HashSet();
-
-        File sourceDir = new File( sourceDirectory );
 
         try
         {
-            staleSources.addAll( scanner.getIncludedSources( sourceDir, outDir ) );
+            staleSources.addAll( scanner.getIncludedSources( sourceDirectory, timestampDirectory ) );
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
                     + "\' for stale grammars to reprocess.", e );
         }
 

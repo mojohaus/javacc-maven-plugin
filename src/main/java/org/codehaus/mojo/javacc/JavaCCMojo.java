@@ -168,7 +168,7 @@ public class JavaCCMojo extends AbstractMojo
      * @parameter expression="${basedir}/src/main/javacc"
      * @required
      */
-    private String sourceDirectory;
+    private File sourceDirectory;
 
     /**
      * Directory where the output Java Files will be located.
@@ -176,14 +176,14 @@ public class JavaCCMojo extends AbstractMojo
      * @parameter expression="${project.build.directory}/generated-sources/javacc"
      * @required
      */
-    private String outputDirectory;
+    private File outputDirectory;
 
     /**
      * The directory to store the processed .jj files
      * 
      * @parameter expression="${project.build.directory}/generated-sources/javacc-timestamp"
      */
-    private String timestampDirectory;
+    private File timestampDirectory;
 
     /**
      * The granularity in milliseconds of the last modification date for testing
@@ -224,29 +224,25 @@ public class JavaCCMojo extends AbstractMojo
             packageName = StringUtils.replace( packageName, '.', File.separatorChar );
         }
 
-        File sourceDir = getAbsolutePath( new File( sourceDirectory ) );
-        if (!sourceDir.isDirectory()) 
+        if (!sourceDirectory.isDirectory()) 
         {
-            getLog().warn("Source directory '" + sourceDir + "' does not exist. Skipping...");
+            getLog().warn("Source directory '" + sourceDirectory + "' does not exist. Skipping...");
             return;
         }
         
-        File outputDir = getAbsolutePath( new File( outputDirectory ) );
-        
-        File outputDirPackages = outputDir;
+        File outputDirPackages = outputDirectory;
         if ( packageName != null )
         {
-            outputDirPackages = new File( outputDir, packageName );
+            outputDirPackages = new File( outputDirectory, packageName );
         }
         if ( !outputDirPackages.exists() )
         {
             outputDirPackages.mkdirs();
         }
         
-        File timestampDir = getAbsolutePath( new File( timestampDirectory ) );
-        if ( !timestampDir.exists() )
+        if ( !timestampDirectory.exists() )
         {
-            timestampDir.mkdirs();
+            timestampDirectory.mkdirs();
         }
         
         if ( includes == null )
@@ -259,11 +255,11 @@ public class JavaCCMojo extends AbstractMojo
             excludes = Collections.EMPTY_SET;
         }
         
-        Set staleGrammars = computeStaleGrammars( sourceDir, timestampDir );
+        Set staleGrammars = computeStaleGrammars( sourceDirectory, timestampDirectory );
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info("Nothing to process - all grammars in " + sourceDir + " are up to date.");
+            getLog().info("Nothing to process - all grammars in " + sourceDirectory + " are up to date.");
         }
         else
         {
@@ -271,7 +267,7 @@ public class JavaCCMojo extends AbstractMojo
             // order to override Token.java
             try
             {
-                FileUtils.copyDirectory( sourceDir, outputDirPackages, "*.java", "*.jj,*.JJ" );
+                FileUtils.copyDirectory( sourceDirectory, outputDirPackages, "*.java", "*.jj,*.JJ" );
             }
             catch ( IOException e )
             {
@@ -283,9 +279,9 @@ public class JavaCCMojo extends AbstractMojo
                 File javaccFile = (File) i.next();
                 try
                 {
-                    org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDir ) );
+                    org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDirectory ) );
 
-                    File timestampFile = new File( timestampDir.toURI().resolve( sourceDir.toURI().relativize( javaccFile.toURI() ) ) );
+                    File timestampFile = new File( timestampDirectory.toURI().resolve( sourceDirectory.toURI().relativize( javaccFile.toURI() ) ) );
                     FileUtils.copyFile(javaccFile, timestampFile);
                 }
                 catch ( Exception e )
@@ -297,7 +293,7 @@ public class JavaCCMojo extends AbstractMojo
 
         if ( project != null )
         {
-            project.addCompileSourceRoot( outputDir.getPath() );
+            project.addCompileSourceRoot( outputDirectory.getPath() );
         }
     }
     
@@ -423,7 +419,6 @@ public class JavaCCMojo extends AbstractMojo
         {
             outputPackage = JavaCCUtil.getDeclaredPackage( javaccInput );
         }
-        getLog().debug("Output Package: " + outputPackage);  // FIXME: remove
         File outputDirPackages = outputDir;
         if ( outputPackage != null )
         {
@@ -467,23 +462,6 @@ public class JavaCCMojo extends AbstractMojo
         }
 
         return staleSources;
-    }
-
-    /**
-     * Converts the specified path argument into an absolute path. If the path is relative,
-     * it is resolved against the base directory of the project (in constrast, File.getAbsoluteFile()
-     * would resolve against the current directory which may be anything).
-     *
-     * @param path The path argument to convert.
-     * @return The absolute path corresponding to the input argument.
-     */
-    protected File getAbsolutePath( File path )
-    {
-        if ( path.isAbsolute() )
-        {
-           return path;
-        }
-        return new File( project.getBasedir().getAbsolutePath(), path.getPath() );
     }
 
 }
