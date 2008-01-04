@@ -384,6 +384,7 @@ public class JavaCCMojo
      * @param outputDir The output directory for the generated Java files. If a package name is provided by the user or
      *            the grammar file, it is appended to this directory.
      * @return a <code>String[]</code> that represent the argument to use for JavaCC
+     * @throws MojoExecutionException If there is a problem generating the command line arguments.
      */
     private String[] generateJavaCCArgumentList( File javaccInput, File outputDir )
         throws MojoExecutionException
@@ -550,8 +551,8 @@ public class JavaCCMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir +
-                "\' for stale grammars to reprocess.", e );
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
+                + "\' for stale grammars to reprocess.", e );
         }
 
         return staleSources;

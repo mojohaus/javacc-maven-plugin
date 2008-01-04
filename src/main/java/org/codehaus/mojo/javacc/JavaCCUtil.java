@@ -32,7 +32,8 @@ import org.codehaus.plexus.util.StringUtils;
  * @author pgier
  * @version $Id$
  */
-public class JavaCCUtil {
+public class JavaCCUtil
+{
 
     /**
      * JavaCC class package declaration
@@ -40,16 +41,13 @@ public class JavaCCUtil {
     public static final String PACKAGE_DECLARATION = "package ";
 
     /**
-     * Searches the grammar file for a package declaration. If found,
-     * its value is returned.
-     *
+     * Searches the grammar file for a package declaration. If found, its value is returned.
+     * 
      * @param javaccInput the grammar path name
-     *
      * @return the package declared in the class code or null if no package is declared.
-     *
      * @throws MojoExecutionException in case of IOException
      */
-    public static String getDeclaredPackage(File javaccInput)
+    public static String getDeclaredPackage( File javaccInput )
         throws MojoExecutionException
     {
         //
@@ -59,25 +57,28 @@ public class JavaCCUtil {
 
         try
         {
-            grammar = FileUtils.fileRead(javaccInput);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Unable to read grammar file '" + javaccInput + "'", e);
+            grammar = FileUtils.fileRead( javaccInput );
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Unable to read grammar file '" + javaccInput + "'", e );
         }
 
         //
         // Note: the way to search this parameter can be much more smart;
         // let's start easy.
         //
-        int begin = grammar.indexOf(PACKAGE_DECLARATION);
-        if (begin < 0)
+        int begin = grammar.indexOf( PACKAGE_DECLARATION );
+        if ( begin < 0 )
         {
             return null;
         }
 
-        int end = grammar.indexOf(';', begin);
+        int end = grammar.indexOf( ';', begin );
 
         String packageName =
-            StringUtils.replace(grammar.substring(begin + PACKAGE_DECLARATION.length(), end).trim(), '.', File.separatorChar);
+            StringUtils.replace( grammar.substring( begin + PACKAGE_DECLARATION.length(), end ).trim(), '.',
+                                 File.separatorChar );
 
         return packageName;
     }

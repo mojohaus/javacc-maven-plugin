@@ -20,6 +20,7 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,7 +46,8 @@ import org.javacc.jjtree.JJTree;
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$
  */
-public class JJTreeMojo extends AbstractMojo
+public class JJTreeMojo
+    extends AbstractMojo
 {
 
     /**
@@ -127,8 +129,7 @@ public class JJTreeMojo extends AbstractMojo
     private File timestampDirectory;
 
     /**
-     * The granularity in milliseconds of the last modification date for testing
-     * whether a source needs recompilation
+     * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
@@ -136,18 +137,20 @@ public class JJTreeMojo extends AbstractMojo
 
     /**
      * A list of inclusion filters for the compiler.
+     * 
      * @parameter
      */
     private Set includes;
-        
+
     /**
      * A list of exclusion filters for the compiler.
+     * 
      * @parameter
      */
     private Set excludes;
-    
+
     /**
-     * Contains the package name to use for the generated code 
+     * Contains the package name to use for the generated code
      */
     private String packageName;
 
@@ -163,7 +166,8 @@ public class JJTreeMojo extends AbstractMojo
      * 
      * @throws MojoExecutionException if the compilation fails
      */
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException
     {
         if ( nodePackage != null )
         {
@@ -179,17 +183,17 @@ public class JJTreeMojo extends AbstractMojo
         {
             timestampDirectory.mkdirs();
         }
-        
+
         if ( includes == null )
         {
             includes = Collections.singleton( "**/*" );
         }
-        
+
         if ( excludes == null )
         {
             excludes = Collections.EMPTY_SET;
         }
-        
+
         Set staleGrammars = computeStaleGrammars();
 
         if ( staleGrammars.isEmpty() )
@@ -210,7 +214,8 @@ public class JJTreeMojo extends AbstractMojo
                 JJTree jjtree = new JJTree();
                 jjtree.main( generateArgumentList( jjTreeFile.getAbsolutePath() ) );
 
-                File timestampFile = new File( timestampDirectory.toURI().resolve( sourceDirectory.toURI().relativize( jjTreeFile.toURI() ) ) );
+                URI relativeURI = sourceDirectory.toURI().relativize( jjTreeFile.toURI() );
+                File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
                 FileUtils.copyFile( jjTreeFile, timestampFile );
             }
             catch ( Exception e )
@@ -226,31 +231,40 @@ public class JJTreeMojo extends AbstractMojo
     }
 
     /**
-     * @return the directory that will conatin the generated code
+     * Get the output directory for the javacc files.
+     * 
+     * @param jjtreeInput The jjtree file.
+     * @return the directory that will contain the generated code
+     * @throws MojoExecutionException If there is a problem getting the package name.
      */
-    private File getOutputDirectory( String jjtreeInput ) throws MojoExecutionException
+    private File getOutputDirectory( String jjtreeInput )
+        throws MojoExecutionException
     {
         if ( packageName != null )
         {
             return new File( outputDirectory, packageName );
         }
-        else 
+        else
         {
-            String declaredPackage = JavaCCUtil.getDeclaredPackage( new File( jjtreeInput ));
-            
-            if (declaredPackage != null)
+            String declaredPackage = JavaCCUtil.getDeclaredPackage( new File( jjtreeInput ) );
+
+            if ( declaredPackage != null )
             {
-               return new File( outputDirectory, declaredPackage );
+                return new File( outputDirectory, declaredPackage );
             }
-        }    
+        }
         return outputDirectory;
     }
 
     /**
+     * Create the argument list to be passed to jjtree on the command line.
+     * 
      * @param jjTreeFilename a <code>String</code> which rappresent the path of the file to compile
      * @return a <code>String[]</code> that represent the argument to use for JJTree
+     * @throws MojoExecutionException if it fails.
      */
-    private String[] generateArgumentList( String jjTreeFilename ) throws MojoExecutionException
+    private String[] generateArgumentList( String jjTreeFilename )
+        throws MojoExecutionException
     {
 
         ArrayList argsList = new ArrayList();
@@ -318,12 +332,13 @@ public class JJTreeMojo extends AbstractMojo
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
     }
-    
+
     /**
      * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
      * @throws MojoExecutionException if it fails
      */
-    private Set computeStaleGrammars() throws MojoExecutionException
+    private Set computeStaleGrammars()
+        throws MojoExecutionException
     {
         SuffixMapping mapping = new SuffixMapping( ".jjt", ".jjt" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JJT", ".JJT" );
@@ -341,8 +356,8 @@ public class JJTreeMojo extends AbstractMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
-                    + "\' for stale grammars to reprocess.", e );
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory 
+                + "\' for stale grammars to reprocess.", e );
         }
 
         return staleSources;
