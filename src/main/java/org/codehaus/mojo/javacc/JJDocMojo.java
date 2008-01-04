@@ -21,6 +21,7 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -47,7 +48,10 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
  * JJDoc takes a JavaCC [tm] parser specification and produces documentation for the BNF grammar. <a
- * href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>.
+ * href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>.  This mojo will search
+ * the source directory for all .jj files and run jjdoc once for each file it finds.  Each of these 
+ * output files, along with an index.html file will be placed in the site directory (target/site/jjdoc),
+ * and a link will be created in the "Project Reports" menu of the generated site.
  * 
  * @author <a href="mailto:pgier@redhat.com">Paul Gier</a>
  * @version $Id$
@@ -85,21 +89,6 @@ public class JJDocMojo
     private Renderer siteRenderer;
 
     /**
-     * Specifies the destination directory where javadoc saves the generated HTML files.
-     * 
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
-     */
-    private File reportOutputDirectory;
-
-    /**
-     * The name of the destination directory. This will be a subdirectory of the report output directory.
-     * 
-     * @parameter expression="${destDir}" default-value="jjdoc"
-     */
-    private String destDir;
-
-    /**
      * The name of the JJDoc report.
      * 
      * @parameter expression="${name}" default-value="JJDoc"
@@ -120,23 +109,30 @@ public class JJDocMojo
      * @required
      * @readonly
      */
-    protected List pluginArtifacts;
+    private List pluginArtifacts;
 
     /**
      * Directory where the JJ file(s) are located.
      * 
      * @parameter expression="${basedir}/src/main/javacc"
-     * @required
      */
     private File sourceDirectory;
 
+
     /**
-     * Specifies the destination directory where jjdoc saves the generated HTML files.
+     * The relative path of the jjdoc reports in the output directory.
+     * This path will be appended to the output directory.
      * 
-     * @parameter expression="${project.reporting.outputDirectory}/jjdoc"
-     * @required
+     * @parameter default-value="jjdoc";
      */
-    protected File outputDirectory;
+    private String jjdocDirectory;
+    
+    /**
+     * Specifies the destination directory where jjdoc saves the generated HTML or Text files.
+     * 
+     * @parameter expression="${project.reporting.outputDirectory}"
+     */
+    private File outputDirectory;
 
     /**
      * Setting TEXT to true causes JJDoc to generate a plain text format description of the BNF. Some formatting is done
@@ -167,6 +163,7 @@ public class JJDocMojo
      * Get the maven project.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
+     * @return The current maven project.
      */
     protected MavenProject getProject()
     {
@@ -177,6 +174,7 @@ public class JJDocMojo
      * Get the site renderer.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
+     * @return The site renderer
      */
     protected Renderer getSiteRenderer()
     {
@@ -187,10 +185,15 @@ public class JJDocMojo
      * Get the output directory of the report.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
+     * @return the report output directory.
      */
     protected String getOutputDirectory()
     {
-        return reportOutputDirectory.getAbsolutePath();
+        if ( ! outputDirectory.toString().endsWith( jjdocDirectory ) )
+        {
+            outputDirectory = new File( outputDirectory, jjdocDirectory );
+        }
+        return outputDirectory.toString();
     }
 
     // ----------------------------------------------------------------------
@@ -199,6 +202,8 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
+     * @param locale The locale
+     * @return The name of this report
      */
     public String getName( Locale locale )
     {
@@ -212,6 +217,8 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
+     * @param locale The locale to use
+     * @return The description of the report
      */
     public String getDescription( Locale locale )
     {
@@ -225,14 +232,16 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
+     * @return The name of the main report file.
      */
     public String getOutputName()
     {
-        return destDir + "/index";
+        return jjdocDirectory + "/index";
     }
 
     /**
      * @see org.apache.maven.reporting.MavenReport#isExternalReport()
+     * @return Determines if the report is using a sink. This always returns false.
      */
     public boolean isExternalReport()
     {
@@ -241,6 +250,7 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
+     * @return Always returns true because this mojo can generate a report.
      */
     public boolean canGenerateReport()
     {
@@ -249,40 +259,11 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getCategoryName()
+     * @return The category where this report is located.
      */
     public String getCategoryName()
     {
         return CATEGORY_PROJECT_REPORTS;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getReportOutputDirectory()
-     */
-    public File getReportOutputDirectory()
-    {
-        if ( reportOutputDirectory == null )
-        {
-            return outputDirectory;
-        }
-
-        return reportOutputDirectory;
-    }
-
-    /**
-     * Method to set the directory where the generated reports will be put
-     * 
-     * @param reportOutputDirectory the directory file to be set
-     */
-    public void setReportOutputDirectory( File reportOutputDirectory )
-    {
-        if ( ( reportOutputDirectory != null ) && ( !reportOutputDirectory.getAbsolutePath().endsWith( destDir ) ) )
-        {
-            this.reportOutputDirectory = new File( reportOutputDirectory, destDir );
-        }
-        else
-        {
-            this.reportOutputDirectory = reportOutputDirectory;
-        }
     }
 
     /**
@@ -304,18 +285,18 @@ public class JJDocMojo
             {
                 File grammarFile = (File) i.next();
 
-                String relativeOutputFilePath =
-                    grammarFile.getAbsolutePath().replace( sourceDirectory.getAbsolutePath(), "" );
-                relativeOutputFilePath = relativeOutputFilePath.replace( ".jj", getOutputFileExtension() );
-                relativeOutputFilePath = relativeOutputFilePath.replace( ".JJ", getOutputFileExtension() );
+                URI relativeOutputFileURI = sourceDirectory.toURI().relativize( grammarFile.toURI() );
+                String relativeOutputFileName =
+                    relativeOutputFileURI.toString().replaceAll( "(.jj|.JJ)$", getOutputFileExtension() );
 
-                File jjdocOutputFile = new File( getReportOutputDirectory(), relativeOutputFilePath );
+                File jjdocOutputFile = new File( getOutputDirectory(), relativeOutputFileName );
                 jjdocOutputFile.getParentFile().mkdirs();
 
                 String[] jjdocArgs = generateArgs( grammarFile, jjdocOutputFile );
+                // Fork jjdoc because of calls to System.exit().
                 forkJJDoc( jjdocArgs );
 
-                this.createReportLink( sink, grammarFile, relativeOutputFilePath );
+                this.createReportLink( sink, grammarFile, relativeOutputFileName );
             }
         }
         catch ( MojoExecutionException e )
@@ -328,14 +309,15 @@ public class JJDocMojo
         sink.close();
 
     }
-    
+
     /**
      * The jjdoc output file will have a .html or .txt extension depending on the value of the "text" parameter.
-     * @return
+     * 
+     * @return The file extension to be used for the jjdoc output files.
      */
     public String getOutputFileExtension()
     {
-        if (text)
+        if ( text )
         {
             return ".txt";
         }
@@ -348,7 +330,7 @@ public class JJDocMojo
     /**
      * Create the header and title for the html report page.
      * 
-     * @param sink
+     * @param sink The sink for writing to the main report file.
      */
     public void createReportHeader( Sink sink )
     {
@@ -389,7 +371,7 @@ public class JJDocMojo
             linkPath = linkPath.substring( 1 );
         }
         sink.link( linkPath );
-        String grammarFileRelativePath = grammarFile.getAbsolutePath().replace( sourceDirectory.getAbsolutePath(), "" );
+        String grammarFileRelativePath = sourceDirectory.toURI().relativize( grammarFile.toURI() ).toString() ;
         if ( grammarFileRelativePath.startsWith( "/" ) )
         {
             grammarFileRelativePath = grammarFileRelativePath.substring( 1 );
@@ -400,6 +382,11 @@ public class JJDocMojo
         sink.tableRow_();
     }
 
+    /**
+     * Create the html footer for the report page.
+     * 
+     * @param sink The sink to write the html report page.
+     */
     public void createReportFooter( Sink sink )
     {
         sink.table_();
@@ -441,6 +428,7 @@ public class JJDocMojo
      * Searches the source directory to find grammar files that can be documented.
      * 
      * @return A set of the javacc grammar files.
+     * @throws MojoExecutionException If there is a problem while scanning for .jj files.
      */
     public Set scanForGrammarFiles()
         throws MojoExecutionException
@@ -464,8 +452,8 @@ public class JJDocMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory +
-                "\' for stale grammars to reprocess.", e );
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory 
+                + "\' for stale grammars to reprocess.", e );
         }
 
         return grammarFiles;
@@ -503,8 +491,8 @@ public class JJDocMojo
     /**
      * Runs jjdoc in a forked jvm. This must be done because of the calls to System.exit in jjdoc.
      * 
-     * @param jjdocArgs
-     * @throws MojoExecutionException
+     * @param jjdocArgs The arguments to pass to jjdoc.
+     * @throws MojoExecutionException If there is a problem while running jjdoc.
      */
     public void forkJJDoc( String[] jjdocArgs )
         throws MojoExecutionException
@@ -552,6 +540,11 @@ public class JJDocMojo
     public class MojoLogStreamConsumer
         implements StreamConsumer
     {
+        /**
+         * Consume a line of text.
+         * 
+         * @param line The line to consume
+         */
         public void consumeLine( String line )
         {
             getLog().info( line );

@@ -10,6 +10,9 @@
   <packaging>maven-plugin</packaging>
   <name>Maven 2 Javacc Plugin</name>
   <version>2.3-SNAPSHOT</version>
+  <description>Maven 2 Plugin for processing javacc files.</description>
+  <url>http://mojo.codehaus.org/javacc-maven-plugin/</url>
+  <inceptionYear>2005</inceptionYear>
   
   <licenses>
     <license>

@@ -26,6 +26,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * Some helper methods used by the javacc mojos.
+ * 
+ * @author pgier
+ * @version $Id$
+ */
 public class JavaCCUtil {
 
     /**

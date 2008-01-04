@@ -1,0 +1,55 @@
+ ------
+ JJTree Examples
+ ------
+ Paul Gier <pgier at redhat.com>
+ ------
+ January 04 2008
+ ------
+
+JJTree Examples
+
+  The jjtree mojo is normally used in combination with the javacc mojo.  You may want to
+  specify a separate execution configuration for javacc so that there are no conflicts
+  between the various configuration parameters.
+  A list of all configuration options can be seen on the {{{../jjtree-mojo.html}jjtree mojo}} page.
+
+-------------------
+<project>
+   ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>jjtree-execution</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>jjtree</goal>
+            </goals>
+            <configuration>
+              <sourceDirectory>${basedir}/src/my-jjtree-files</sourceDirectory>
+            </configuration>
+          </execution>
+          <execution>
+            <id>javacc-execution</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>javacc</goal>
+            </goals>
+            <configuration>
+              <sourceDirectory>${basedir}/src/my-javacc-files</sourceDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+     ...
+  </build>
+  ...
+</project>
+-------------------
+
+
+ 

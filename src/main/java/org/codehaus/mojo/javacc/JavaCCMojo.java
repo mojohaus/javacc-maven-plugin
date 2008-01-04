@@ -21,6 +21,7 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,7 +39,8 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Parses a JJ grammar file and transforms it to Java source files.
+ * Parses a javacc (jj) grammar file and transforms it to Java source files. Detailed information about the javacc
+ * options can be found on the <a href="https://javacc.dev.java.net/">javacc</a> site.
  * 
  * @goal javacc
  * @phase generate-sources
@@ -46,104 +48,181 @@ import org.codehaus.plexus.util.StringUtils;
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$
  */
-public class JavaCCMojo extends AbstractMojo
+public class JavaCCMojo
+    extends AbstractMojo
 {
     /**
+     * The number of tokens to look ahead before making a decision at a choice point during parsing. The default value
+     * is 1.
+     * 
      * @parameter expression=${lookAhead}"
      */
     private Integer lookAhead;
 
     /**
+     * This is the number of tokens considered in checking choices
+     * of the form "A | B | ..." for ambiguity.  Default value is 2.
+     * 
      * @parameter expression="${choiceAmbiguityCheck}"
      */
     private Integer choiceAmbiguityCheck;
 
     /**
+     * This is the number of tokens considered in checking all other kinds of choices (i.e., of the forms "(A)*",
+     * "(A)+", and "(A)?") for ambiguity. Default value is 1.
+     * 
      * @parameter expression=${otherAmbiguityCheck}"
      */
     private Integer otherAmbiguityCheck;
 
     /**
+     * If true, all methods and class variables are specified as static in the generated parser and token manager. This
+     * allows only one parser object to be present, but it improves the performance of the parser. Default value is
+     * true.
+     * 
      * @parameter expression=${isStatic}"
      */
     private Boolean isStatic;
 
     /**
+     * This option is used to obtain debugging information from the generated parser. Setting this option to true causes
+     * the parser to generate a trace of its actions. Default value is false.
+     * 
      * @parameter expression="${debugParser}"
      */
     private Boolean debugParser;
 
     /**
+     * This is a boolean option whose default value is false. Setting this option to true causes the parser to generate
+     * all the tracing information it does when the option DEBUG_PARSER is true, and in addition, also causes it to
+     * generated a trace of actions performed during lookahead operation.
+     * 
      * @parameter expression="${debugLookAhead}"
      */
     private Boolean debugLookAhead;
 
     /**
+     * This option is used to obtain debugging information from the generated token manager. Default value is false.
+     * 
      * @parameter expression="${debugTokenManager}"
      */
     private Boolean debugTokenManager;
 
     /**
-     * @parameter expression="${optimizeTokenManager}"
-     */
-    private Boolean optimizeTokenManager;
-
-    /**
+     * Setting it to false causes errors due to parse errors to be reported in somewhat less detail. Default value is
+     * true.
+     * 
      * @parameter expression="${errorReporting}"
      */
     private Boolean errorReporting;
 
     /**
+     * When set to true, the generated parser uses an input stream object that processes Java Unicode escapes (\ u...)
+     * before sending characters to the token manager. Default value is false.
+     * 
      * @parameter expression="${javaUnicodeEscape}"
      */
     private Boolean javaUnicodeEscape;
 
     /**
+     * When set to true, the generated parser uses uses an input stream object that reads Unicode files. By default,
+     * ASCII files are assumed. Default value is false.
+     * 
      * @parameter expression="${unicodeInput}"
      */
     private Boolean unicodeInput;
 
     /**
+     * Setting this option to true causes the generated token manager to ignore case in the token specifications and the
+     * input files. Default value is false.
+     * 
      * @parameter expression="${ignoreCase}"
      */
     private Boolean ignoreCase;
 
     /**
+     * When set to true, every call to the token manager's method "getNextToken" (see the description of the Java
+     * Compiler Compiler API) will cause a call to a used defined method "CommonTokenAction" after the token has been
+     * scanned in by the token manager. Default value is false.
+     * 
      * @parameter expression="${commonTokenAction}"
      */
     private Boolean commonTokenAction;
 
     /**
+     * The default action is to generate a token manager that works on the specified grammar tokens. If this option is
+     * set to true, then the parser is generated to accept tokens from any token manager of type "TokenManager" - this
+     * interface is generated into the generated parser directory. Default value is false.
+     * 
      * @parameter expression="${userTokenManager}"
      */
     private Boolean userTokenManager;
 
     /**
+     * The default action is to generate a character stream reader as specified by the options JAVA_UNICODE_ESCAPE and
+     * UNICODE_INPUT. Default value is false.
+     * 
      * @parameter expression="${userCharStream}"
      */
     private Boolean userCharStream;
 
     /**
+     * The default action is to generate the parser file. Default value is true.
+     * 
      * @parameter expression="${buildParser}"
      */
     private Boolean buildParser;
 
     /**
+     * The default action is to generate the token manager. Default value is true.
+     * 
      * @parameter expression="${buildTokenManager}"
      */
     private Boolean buildTokenManager;
 
     /**
+     * When set to true, the generated token manager will include a field called parser that references the
+     * instantiating parser instance. Default value is false.
+     * 
+     * @parameter
+     */
+    private Boolean tokenManagerUsesParser;
+
+    /**
+     * This is a string option whose default value is "", meaning that the generated Token class will extend
+     * java.lang.Object. This option may be set to the name of a class that will be used as the base class for the
+     * generated Token class.
+     * 
+     * @parameter
+     */
+    private String tokenExtends;
+
+    /**
+     * This is a string option whose default value is "", meaning that Tokens will be created by calling
+     * Token.newToken(). If set the option names a Token factory class containing a public static Token newToken(int
+     * ofKind, String image) method.
+     */
+    private String tokenFactory;
+
+    /**
+     * JavaCC performs many syntactic and semantic checks on the grammar file during parser generation. Default value is
+     * true.
+     * 
      * @parameter expression="${sanityCheck}"
      */
     private Boolean sanityCheck;
 
     /**
+     * This option setting controls lookahead ambiguity checking performed by JavaCC. Default value is false.
+     * 
      * @parameter expression="${forceLaCheck}"
      */
     private Boolean forceLaCheck;
 
     /**
+     * Setting this option to true causes the generated parser to
+     * lookahead for extra tokens ahead of time.  Default value is false.
+     * 
      * @parameter expression="${cacheTokens}"
      */
     private Boolean cacheTokens;
@@ -154,10 +233,9 @@ public class JavaCCMojo extends AbstractMojo
     private Boolean keepLineColumn;
 
     /**
-     * Package into which the generated classes will be put. Note that this will
-     * also be used to create the directory structure where sources will be
-     * generated. Defaults to the package name specified in a grammar file.
-     *
+     * Package into which the generated classes will be put. Note that this will also be used to create the directory
+     * structure where sources will be generated. Defaults to the package name specified in a grammar file.
+     * 
      * @parameter expression="${packageName}"
      */
     private String packageName;
@@ -186,8 +264,7 @@ public class JavaCCMojo extends AbstractMojo
     private File timestampDirectory;
 
     /**
-     * The granularity in milliseconds of the last modification date for testing
-     * whether a source needs recompilation.
+     * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
@@ -195,28 +272,32 @@ public class JavaCCMojo extends AbstractMojo
 
     /**
      * A list of inclusion filters for the compiler.
+     * 
      * @parameter
      */
     private Set includes;
-    
+
     /**
      * A list of exclusion filters for the compiler.
+     * 
      * @parameter
      */
     private Set excludes;
-    
+
     /**
      * @parameter expression="${project}"
      * @readonly
      * @required
      */
     private MavenProject project;
-    
+
     /**
-     * Execute the JavaCC compiler 
+     * Execute the JavaCC compiler
+     * 
      * @throws MojoExecutionException if it fails
      */
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException
     {
         // check packageName for . vs /
         if ( packageName != null )
@@ -224,12 +305,12 @@ public class JavaCCMojo extends AbstractMojo
             packageName = StringUtils.replace( packageName, '.', File.separatorChar );
         }
 
-        if (!sourceDirectory.isDirectory()) 
+        if ( !sourceDirectory.isDirectory() )
         {
-            getLog().warn("Source directory '" + sourceDirectory + "' does not exist. Skipping...");
+            getLog().warn( "Source directory '" + sourceDirectory + "' does not exist. Skipping..." );
             return;
         }
-        
+
         File outputDirPackages = outputDirectory;
         if ( packageName != null )
         {
@@ -239,27 +320,27 @@ public class JavaCCMojo extends AbstractMojo
         {
             outputDirPackages.mkdirs();
         }
-        
+
         if ( !timestampDirectory.exists() )
         {
             timestampDirectory.mkdirs();
         }
-        
+
         if ( includes == null )
         {
             includes = Collections.singleton( "**/*" );
         }
-        
+
         if ( excludes == null )
         {
             excludes = Collections.EMPTY_SET;
         }
-        
+
         Set staleGrammars = computeStaleGrammars( sourceDirectory, timestampDirectory );
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info("Nothing to process - all grammars in " + sourceDirectory + " are up to date.");
+            getLog().info( "Nothing to process - all grammars in " + sourceDirectory + " are up to date." );
         }
         else
         {
@@ -281,8 +362,9 @@ public class JavaCCMojo extends AbstractMojo
                 {
                     org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDirectory ) );
 
-                    File timestampFile = new File( timestampDirectory.toURI().resolve( sourceDirectory.toURI().relativize( javaccFile.toURI() ) ) );
-                    FileUtils.copyFile(javaccFile, timestampFile);
+                    URI relativeURI = sourceDirectory.toURI().relativize( javaccFile.toURI() );
+                    File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
+                    FileUtils.copyFile( javaccFile, timestampFile );
                 }
                 catch ( Exception e )
                 {
@@ -296,11 +378,11 @@ public class JavaCCMojo extends AbstractMojo
             project.addCompileSourceRoot( outputDirectory.getPath() );
         }
     }
-    
+
     /**
      * @param javaccInput a <code>String</code> which rappresent the path of the file to compile
-     * @param outputDir The output directory for the generated Java files. If a package name is
-     *     provided by the user or the grammar file, it is appended to this directory.
+     * @param outputDir The output directory for the generated Java files. If a package name is provided by the user or
+     *            the grammar file, it is appended to this directory.
      * @return a <code>String[]</code> that represent the argument to use for JavaCC
      */
     private String[] generateJavaCCArgumentList( File javaccInput, File outputDir )
@@ -342,11 +424,6 @@ public class JavaCCMojo extends AbstractMojo
         if ( debugTokenManager != null )
         {
             argsList.add( "-DEBUG_TOKEN_MANAGER=" + debugTokenManager );
-        }
-
-        if ( optimizeTokenManager != null )
-        {
-            argsList.add( "-OPTIMIZE_TOKEN_MANAGER=" + optimizeTokenManager );
         }
 
         if ( errorReporting != null )
@@ -394,6 +471,21 @@ public class JavaCCMojo extends AbstractMojo
             argsList.add( "-BUILD_TOKEN_MANAGER=" + buildTokenManager );
         }
 
+        if ( tokenManagerUsesParser != null )
+        {
+            argsList.add( "-TOKEN_MANAGER_USES_PARSER=" + tokenManagerUsesParser );
+        }
+
+        if ( tokenExtends != null )
+        {
+            argsList.add( "-TOKEN_EXTENDS=" + tokenExtends );
+        }
+
+        if ( tokenFactory != null )
+        {
+            argsList.add( "-TOKEN_FACTORY=" + tokenFactory );
+        }
+
         if ( sanityCheck != null )
         {
             argsList.add( "-SANITY_CHECK=" + sanityCheck );
@@ -424,7 +516,7 @@ public class JavaCCMojo extends AbstractMojo
         {
             outputDirPackages = new File( outputDir, outputPackage );
         }
-        argsList.add("-OUTPUT_DIRECTORY:" + outputDirPackages);
+        argsList.add( "-OUTPUT_DIRECTORY:" + outputDirPackages );
 
         argsList.add( javaccInput.getPath() );
 
@@ -438,8 +530,9 @@ public class JavaCCMojo extends AbstractMojo
      * @param timestampDir The output directory for timestamp files.
      * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
      * @throws MojoExecutionException if it fails
-     */    
-    private Set computeStaleGrammars( File sourceDir, File timestampDir ) throws MojoExecutionException
+     */
+    private Set computeStaleGrammars( File sourceDir, File timestampDir )
+        throws MojoExecutionException
     {
         SuffixMapping mapping = new SuffixMapping( ".jj", ".jj" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JJ", ".JJ" );
@@ -457,8 +550,8 @@ public class JavaCCMojo extends AbstractMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
-                    + "\' for stale grammars to reprocess.", e );
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir +
+                "\' for stale grammars to reprocess.", e );
         }
 
         return staleSources;

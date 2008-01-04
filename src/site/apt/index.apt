@@ -1,39 +1,57 @@
  ------
- Maven 2 JavaCC plugin 
+ Introduction 
  ------
  <jruiz@exist.com>
  Jesse McConnell <jesse.mcconnell@gmail.com>
  Tim Pizey <timp At paneris.org>
+ Paul Gier <pgier at redhat.com>
  ------
  July 27 2005
  ------
 
-Maven 2 JavaCC plugin
+Maven 2 JavaCC Plugin
 
- This plugin is for processing javacc files into java sources.
+  This plugin uses the {{{http://javacc.dev.java.net/} JavaCC}} parser generator to process javacc 
+  grammar files and generate the appropriate java source files.  For general information about javacc, 
+  see the {{{http://javacc.dev.java.net/} JavaCC}} web site.
 
- {{{http://javacc.dev.java.net/} JavaCC Home}}
+  Javacc grammar files use the extension ".jj".  This plugin can be used to locate and 
+  process all grammar files within a specified directory.  Java source files will be written to a common 
+  generated-sources output directory, typically located in the build output directory.  By default, 
+  the plugin will run during the generate-sources phase, but it can be configured to run in other 
+  phases as well.
+  
+  The plugin can also be be used to call the jjtree and jtb tools.  JJTree is a preprocessor for JavaCC 
+  that inserts parse tree building actions at various places in the JavaCC source. More information 
+  about jjtree can be found on the {{{http://javacc.dev.java.net/} JavaCC}} site.
+   
+  JTB (Java Tree Builder) is a syntax tree builder.  More information about JTB can be found on the 
+  {{{http://compilers.cs.ucla.edu/jtb/} JTB}} web site.
+  
+  This plugin also contains a mojo for running jjdoc.  JJDoc is a simple tool that generates 
+  {{{http://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form} BNF }} documentation for the javacc 
+  grammar files.  This can be used to generate a report for your project site using the maven
+  reporting tools.
+   
+* Goals Overview
 
- This plugin will process all *.jj files in the sourceDirectory into a 
- common generated sources output directory.  This will occur during the 
- generate-resources phase and the sources directory will be added to the project
- for the compile phase.
- 
- It can also process *.jjt and *.jbt files.
+  * {{{javacc-mojo.html}javacc:javacc}} This mojo uses javacc to process .jj grammar files and generate a java parser.
+  
+  * {{{jjtree-mojo.html}javacc:jjtree}} This mojo uses jjtree to process .jjt files and generate .jj files.
+  
+  * {{{jtb-mojo.html}javacc:jtb}} This mojo uses jtb to process .jtb files and generate .jj files.
+  
+  * {{{jjdoc-mojo.html}javacc:jjdoc}} This mojo is used to create a jjdoc site report.
+   
+* Usage
 
+  This plugin is normally used before java compilation, during the generate-sources phase of a build.  
+  Detailed instructions on how to use the javacc maven plugin can be found on the {{{usage.html}usage}} page.
 
-Expected usage
+* Examples
 
- You are expected to place your Java source files in the standard maven location: src/main/java.
-
- The grammar files should be placed in src/main/javacc and src/main/jjtree respectively. 
-
- If you have modified generated files (not recommended) then you should place them in your grammar source directory, 
- so that they are respected and not duplicated. 
-
- []
- 
-Usage:
+  Below is a basic example of configuring your project build to use the javacc mojo.  More examples can be found 
+  using the links in the menu.
 
 -------------------
 <project>
@@ -45,45 +63,17 @@ Usage:
         <artifactId>javacc-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>jjt</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>jjtree</goal>
-            </goals>
-            <configuration>
-              <nodePackage>org.javacc.examples.jjtree.eg4</nodePackage>
-              <sourceDirectory>${basedir}/src/main/jjtree</sourceDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>jjc</id>
-            <phase>generate-sources</phase>
+            <id>javacc</id>
             <goals>
               <goal>javacc</goal>
             </goals>
-            <configuration>
-              <packageName>org.javacc.examples.jjtree.eg4</packageName>
-              <sourceDirectory>${project.build.directory}/generated-sources/jjtree</sourceDirectory>
-            </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
      ...
   </build>
-  
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javacc-maven-plugin</artifactId>
-        <configuration>
-          <packageName>your.project.package</packageName>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-   ...
+  ...
 </project>
 -------------------
       

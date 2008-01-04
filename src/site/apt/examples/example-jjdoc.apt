@@ -1,0 +1,30 @@
+ ------
+ JJDoc Examples
+ ------
+ Paul Gier <pgier at redhat.com>
+ ------
+ January 04 2008
+ ------
+
+JJDoc Examples
+
+  The following example can be used to create a jjdoc site report.  A list of configuration
+  parameters for the jjdoc mojo can be found {{{../jjdoc-mojo.html}here}}.  The jjdoc goal does 
+  not need to be specified since it will automatically be used during site generation.
+
+-------------------
+<project>
+   ...
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  ...
+</project>
+-------------------
+
+ 

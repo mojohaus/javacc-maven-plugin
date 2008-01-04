@@ -1,0 +1,39 @@
+ ------
+ JTB Examples
+ ------
+ Paul Gier <pgier at redhat.com>
+ ------
+ January 04 2008
+ ------
+
+JTB Examples
+
+ This example shows how the jtb mojo can be used.
+ A list of all configuration options can be seen on the {{{../jtb-mojo.html}jtb mojo}} page.
+
+-------------------
+<project>
+   ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>my-jtb-exec</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>jtb</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+     ...
+  </build>
+  ...
+</project>
+-------------------
+
+ 
