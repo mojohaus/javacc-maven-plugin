@@ -8,10 +8,10 @@
 
 JJTree Examples
 
-  The jjtree mojo is normally used in combination with the javacc mojo.  You may want to
-  specify a separate execution configuration for javacc so that there are no conflicts
+  The <<<jjtree>>> mojo is normally used in combination with the <<<javacc>>> mojo.  You may want to
+  specify separate execution configurations for JavaCC and JJTree so that there are no conflicts
   between the various configuration parameters.
-  A list of all configuration options can be seen on the {{{../jjtree-mojo.html}jjtree mojo}} page.
+  A list of all configuration options can be seen on the <<<{{{../jjtree-mojo.html}jjtree}}>>> mojo page.
 
 -------------------
 <project>

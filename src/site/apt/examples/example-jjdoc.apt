@@ -8,8 +8,8 @@
 
 JJDoc Examples
 
-  The following example can be used to create a jjdoc site report.  A list of configuration
-  parameters for the jjdoc mojo can be found {{{../jjdoc-mojo.html}here}}.  The jjdoc goal does 
+  The following example can be used to create a JJDoc site report.  For a list of configuration
+  parameters, consult the <<<{{{../jjdoc-mojo.html}jjdoc}}>>> mojo documentation.  The <<<jjdoc>>> goal does 
   not need to be specified since it will automatically be used during site generation.
 
 -------------------

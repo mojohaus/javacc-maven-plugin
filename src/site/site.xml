@@ -36,15 +36,16 @@
       <item name="Usage" href="usage.html"/>
     </menu>
     <menu name="Examples">
-      <item name="Javacc" href="examples/example-javacc.html"/>
+      <item name="JavaCC" href="examples/example-javacc.html"/>
       <item name="JJTree" href="examples/example-jjtree.html"/>
       <item name="JTB" href="examples/example-jtb.html"/>
       <item name="JJDoc" href="examples/example-jjdoc.html"/>
     </menu>
-    <menu name="Reference">
+    <menu name="References">
       <item name="JavaCC" href="https://javacc.dev.java.net/"/>
+      <item name="JJDoc" href="https://javacc.dev.java.net/doc/JJDoc.html"/>
       <item name="JTB" href="http://compilers.cs.ucla.edu/jtb/"/>
     </menu>
-    ${reports}
+    <menu ref="reports"/>
   </body>
 </project>

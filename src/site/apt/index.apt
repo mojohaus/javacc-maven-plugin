@@ -11,46 +11,46 @@
 
 Maven 2 JavaCC Plugin
 
-  This plugin uses the {{{http://javacc.dev.java.net/} JavaCC}} parser generator to process javacc 
-  grammar files and generate the appropriate java source files.  For general information about javacc, 
+  This plugin uses the {{{http://javacc.dev.java.net/} JavaCC}} parser generator to process JavaCC 
+  grammar files and generate the appropriate Java source files.  For general information about JavaCC, 
   see the {{{http://javacc.dev.java.net/} JavaCC}} web site.
 
-  Javacc grammar files use the extension ".jj".  This plugin can be used to locate and 
+  JavaCC grammar files use the extension <<<.jj>>>.  This plugin can be used to locate and 
   process all grammar files within a specified directory.  Java source files will be written to a common 
   generated-sources output directory, typically located in the build output directory.  By default, 
-  the plugin will run during the generate-sources phase, but it can be configured to run in other 
+  the plugin will run during the <<<generate-sources>>> phase, but it can be configured to run in other 
   phases as well.
   
-  The plugin can also be be used to call the jjtree and jtb tools.  JJTree is a preprocessor for JavaCC 
+  The plugin can also be be used to call the JJTree and JTB tools.  JJTree is a preprocessor for JavaCC 
   that inserts parse tree building actions at various places in the JavaCC source. More information 
-  about jjtree can be found on the {{{http://javacc.dev.java.net/} JavaCC}} site.
+  about JJTree can be found on the {{{http://javacc.dev.java.net/} JavaCC}} site.
    
   JTB (Java Tree Builder) is a syntax tree builder.  More information about JTB can be found on the 
   {{{http://compilers.cs.ucla.edu/jtb/} JTB}} web site.
   
-  This plugin also contains a mojo for running jjdoc.  JJDoc is a simple tool that generates 
-  {{{http://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form} BNF }} documentation for the javacc 
-  grammar files.  This can be used to generate a report for your project site using the maven
+  This plugin also contains a mojo for running JJDoc.  JJDoc is a simple tool that generates 
+  {{{http://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form} BNF }} documentation for the JavaCC 
+  grammar files.  This can be used to generate a report for your project site using the Maven
   reporting tools.
    
 * Goals Overview
 
-  * {{{javacc-mojo.html}javacc:javacc}} This mojo uses javacc to process .jj grammar files and generate a java parser.
+  * {{{javacc-mojo.html}javacc:javacc}} This mojo uses JavaCC to process <<<.jj>>> grammar files and generate a java parser.
   
-  * {{{jjtree-mojo.html}javacc:jjtree}} This mojo uses jjtree to process .jjt files and generate .jj files.
+  * {{{jjtree-mojo.html}javacc:jjtree}} This mojo uses JJTree to process <<<.jjt>>> files and generate <<<.jj>>> files.
   
-  * {{{jtb-mojo.html}javacc:jtb}} This mojo uses jtb to process .jtb files and generate .jj files.
+  * {{{jtb-mojo.html}javacc:jtb}} This mojo uses JTB to process <<<.jtb>>> files and generate <<<.jj>>> files.
   
-  * {{{jjdoc-mojo.html}javacc:jjdoc}} This mojo is used to create a jjdoc site report.
+  * {{{jjdoc-mojo.html}javacc:jjdoc}} This mojo is used to create a JJDoc site report.
    
 * Usage
 
-  This plugin is normally used before java compilation, during the generate-sources phase of a build.  
-  Detailed instructions on how to use the javacc maven plugin can be found on the {{{usage.html}usage}} page.
+  This plugin is normally used before Java compilation, during the <<<generate-sources>>> phase of a build.  
+  Detailed instructions on how to use the JavaCC Maven Plugin can be found on the {{{usage.html}usage}} page.
 
 * Examples
 
-  Below is a basic example of configuring your project build to use the javacc mojo.  More examples can be found 
+  Below is a basic example of configuring your project build to use the JavaCC mojo.  More examples can be found 
   using the links in the menu.
 
 -------------------

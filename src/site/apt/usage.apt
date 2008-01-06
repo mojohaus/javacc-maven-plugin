@@ -8,25 +8,27 @@
 
 Usage
 
-  By default, the javacc mojo will search for grammar files in the directory <<<${basedir}/src/maven/javacc>>>.
-  The jjtree mojo will expect to find .jjt files in <<<${basedir}/src/main/jjtree>>> and the jtb mojo will expect
-  to find jtb files in <<<${basedir}/src/main/jtb>>> .  Each of these can be
+  By default, the  <<<{{{javacc-mojo.html}javacc}}>>> mojo will search for grammar files in the directory <<<$\{basedir\}/src/main/javacc>>>.
+  The  <<<{{{jjtree-mojo.html}jjtree}}>>> mojo will expect to find <<<.jjt>>> files in <<<$\{basedir\}/src/main/jjtree>>> and the  <<<{{{jtb-mojo.html}jtb}}>>> mojo will expect
+  to find JTB files in <<<$\{basedir\}/src/main/jtb>>> .  Each of these can be
   configured to search other directories using the plugin configuration parameters.
 
-  The next step is to configure your pom to call the plugin.  The mojos will normally run during the generate-sources
-  phase of the build.  Example of how to configure your pom can be found on the various examples pages.
+  The next step is to configure your POM to call the plugin.  The mojos will normally run during the <<<generate-sources>>>
+  phase of the build.  Example of how to configure your POM can be found on the various examples pages.
 
   Next run your build:
   
-    <<<mvn generate-sources>>>
++-----+
+mvn generate-sources
++-----+
     
-  For the javacc mojo, java source files will be generated to the directory <<<target/generated-sources/javacc>>> and 
-  this path will be added to your build and automatically picked up by the next steps of the build (such as compilation).
+  For the <<<javacc>>> mojo, Java source files will be generated to the directory <<<target/generated-sources/javacc>>> and 
+  this path will be added to your build as a source folder and automatically picked up by the next steps of the build (such as compilation).
   
-* Using jjdoc
+* Using JJDoc
 
-  The jjdoc mojo is a tool for generating a site report.  If the javacc maven plugin is added to the reporting section
-  of your pom, the jjdoc mojo will automatically be run.  It will run the jjdoc tool once for each grammar (.jj) file in
+  The <<<{{{jjdoc-mojo.html}jjdoc}}>>> mojo is a tool for generating a site report.  If the JavaCC Maven Plugin is added to the reporting section
+  of your POM, the <<<jjdoc>>> mojo will automatically be run.  It will run the JJDoc tool once for each grammar (<<<.jj>>>) file in
   your source directory.  Each of these files, along with an index file containing a list of all the reports will be 
   created in the directory <<<target/site/jjdoc>>>.
 
