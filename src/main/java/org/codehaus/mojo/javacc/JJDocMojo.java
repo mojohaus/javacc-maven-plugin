@@ -335,17 +335,21 @@ public class JJDocMojo
     public void createReportHeader( Sink sink )
     {
         sink.head();
+        sink.title();
+        sink.text( "JJDoc Reports" );
+        sink.title_();
         sink.head_();
 
         sink.body();
 
         sink.section1();
-        sink.rawText( "<h2>JJDoc Reports</h2>" );
+        sink.sectionTitle1();
+        sink.text( "JJDoc Reports" );
+        sink.sectionTitle1_();
         sink.text( "This page provides a list of the jjdoc reports that were generated for the javacc grammar files." );
         sink.section1_();
 
         sink.lineBreak();
-        sink.section2();
         sink.table();
         sink.tableRow();
         sink.tableHeaderCell();
@@ -390,7 +394,6 @@ public class JJDocMojo
     public void createReportFooter( Sink sink )
     {
         sink.table_();
-        sink.section2_();
         sink.body_();
     }
 
