@@ -193,7 +193,7 @@ public class JJDocMojo
      */
     public String getName( Locale locale )
     {
-        return "JJDoc";
+        return this.getBundle( locale ).getString( "report.jjdoc.name" );
     }
 
     /**
