@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -275,7 +276,7 @@ public class JJDocMojo
     {
         Sink sink = getSink();
 
-        createReportHeader( sink );
+        createReportHeader( getBundle( locale ), sink );
 
         try
         {
@@ -293,6 +294,7 @@ public class JJDocMojo
                 jjdocOutputFile.getParentFile().mkdirs();
 
                 String[] jjdocArgs = generateArgs( grammarFile, jjdocOutputFile );
+                
                 // Fork jjdoc because of calls to System.exit().
                 forkJJDoc( jjdocArgs );
 
@@ -330,13 +332,14 @@ public class JJDocMojo
     /**
      * Create the header and title for the html report page.
      * 
+     * @param bundle The resource bundle with the text.
      * @param sink The sink for writing to the main report file.
      */
-    public void createReportHeader( Sink sink )
+    public void createReportHeader( ResourceBundle bundle, Sink sink )
     {
         sink.head();
         sink.title();
-        sink.text( "JJDoc Reports" );
+        sink.text( bundle.getString( "report.jjdoc.title" ) );
         sink.title_();
         sink.head_();
 
@@ -344,16 +347,16 @@ public class JJDocMojo
 
         sink.section1();
         sink.sectionTitle1();
-        sink.text( "JJDoc Reports" );
+        sink.text( bundle.getString( "report.jjdoc.title" ) );
         sink.sectionTitle1_();
-        sink.text( "This page provides a list of the jjdoc reports that were generated for the javacc grammar files." );
+        sink.text( bundle.getString( "report.jjdoc.description" ) );
         sink.section1_();
 
         sink.lineBreak();
         sink.table();
         sink.tableRow();
         sink.tableHeaderCell();
-        sink.text( "Grammar File" );
+        sink.text( bundle.getString( "report.jjdoc.table.heading" ) );
         sink.tableHeaderCell_();
         sink.tableRow_();
 
@@ -535,6 +538,17 @@ public class JJDocMojo
             throw new MojoExecutionException( "Error while executing forked tests.", e );
         }
 
+    }
+
+
+    /**
+     * Get the ResourceBundle for the report text.
+     * @param locale The user locale
+     * @return The resource bundle
+     */
+    private ResourceBundle getBundle( Locale locale )
+    {
+        return ResourceBundle.getBundle( "jjdoc-report", locale, this.getClass().getClassLoader() );
     }
 
     /**
