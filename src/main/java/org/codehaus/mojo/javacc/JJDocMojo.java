@@ -41,7 +41,6 @@ import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -88,20 +87,6 @@ public class JJDocMojo
      * @component
      */
     private Renderer siteRenderer;
-
-    /**
-     * The name of the JJDoc report.
-     * 
-     * @parameter expression="${name}" default-value="JJDoc"
-     */
-    private String name;
-
-    /**
-     * The description of the JJDoc report.
-     * 
-     * @parameter expression="${description}" default-value="Javacc grammar documentation."
-     */
-    private String description;
 
     /**
      * The plugin dependencies.
@@ -208,12 +193,7 @@ public class JJDocMojo
      */
     public String getName( Locale locale )
     {
-        if ( StringUtils.isEmpty( name ) )
-        {
-            return "JJDoc";
-        }
-
-        return name;
+        return "JJDoc";
     }
 
     /**
@@ -223,12 +203,7 @@ public class JJDocMojo
      */
     public String getDescription( Locale locale )
     {
-        if ( StringUtils.isEmpty( description ) )
-        {
-            return "JJDoc documentation.";
-        }
-
-        return description;
+        return this.getBundle( locale ).getString( "report.jjdoc.short.description" );
     }
 
     /**
