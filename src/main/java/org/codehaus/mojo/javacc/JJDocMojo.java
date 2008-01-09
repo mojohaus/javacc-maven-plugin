@@ -494,7 +494,7 @@ public class JJDocMojo
         cli.addArguments( jjdocArgs );
 
         StreamConsumer out = new MojoLogStreamConsumer();
-        StreamConsumer err = new MojoLogStreamConsumer();
+        StreamConsumer err = new MojoLogStreamConsumer( true );
 
         getLog().debug( "Forking Command Line: " );
         getLog().debug( cli.toString() );
@@ -515,7 +515,6 @@ public class JJDocMojo
 
     }
 
-
     /**
      * Get the ResourceBundle for the report text.
      * @param locale The user locale
@@ -527,11 +526,34 @@ public class JJDocMojo
     }
 
     /**
-     * Consume and log command output from the jjdoc process
+     * Consume and log command line output from the jjdoc process
      */
     public class MojoLogStreamConsumer
         implements StreamConsumer
     {
+        /**
+         * Determines if the stream consumer is being used for System.out or System.err
+         */
+        private boolean err = false;
+
+        /**
+         * Default constructor with err set to false. All consumed lines will be logged at the debug level.
+         */
+        public MojoLogStreamConsumer()
+        {
+
+        }
+
+        /**
+         * Single param constructor.
+         * 
+         * @param err If set to true, all consumed lines will be logged at the info level
+         */
+        public MojoLogStreamConsumer( boolean err )
+        {
+            this.err = err;
+        }
+
         /**
          * Consume a line of text.
          * 
@@ -539,7 +561,14 @@ public class JJDocMojo
          */
         public void consumeLine( String line )
         {
-            getLog().info( line );
+            if ( err )
+            {
+                getLog().info( line );
+            }
+            else
+            {
+                getLog().debug( line );
+            }
         }
     }
 
