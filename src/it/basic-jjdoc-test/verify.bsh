@@ -1,0 +1,24 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import org.codehaus.plexus.util.*;
+
+boolean result = true;
+
+try
+{
+    File file = new File( basedir, "target/site/jjdoc/BasicParser.html" );
+    if ( !file.exists() || file.isDirectory() )
+    {
+        System.err.println( "Could not find generated jjdoc file: " + file );
+        return false;
+    }
+    
+}
+catch( Throwable e )
+{
+    System.err.println(e);
+    result = false;
+}
+
+return result;
