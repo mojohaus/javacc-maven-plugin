@@ -42,8 +42,8 @@ public class JavaCCUtil
 
     /**
      * Searches the grammar file for a package declaration. If found, its value is returned.
-     * Note: The relative package path is returned, not the actual package name.  For Example, if the
-     * package is com.stuff.mycode, the value returned will be com/stuff/mycode.
+     * Note: The relative package path (using OS-specific directory separator) is returned, not the actual package name.  For Example, if the
+     * package is "com.stuff.mycode", the value returned will be "com/stuff/mycode".
      * 
      * @param javaccInput the grammar path name
      * @return the package declared in the class code or null if no package is declared.

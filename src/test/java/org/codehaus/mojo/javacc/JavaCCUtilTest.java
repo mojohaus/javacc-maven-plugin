@@ -13,11 +13,12 @@ import junit.framework.TestCase;
 public class JavaCCUtilTest
     extends TestCase
 {
-    public void testGGetDeclaredPackage ()
+    public void testGetDeclaredPackage ()
         throws Exception
     {
         File testFile = new File(getClass().getResource( "/BasicParser.jj" ).getFile());
         String packageName = JavaCCUtil.getDeclaredPackage( testFile );
-        assertEquals( "The package name is not correct", "org/codehaus/mojo/javacc/test", packageName );
+        packageName = packageName.replace( File.separatorChar, '.' );
+        assertEquals( "The package name is not correct", "org.codehaus.mojo.javacc.test", packageName );
     }
 }
