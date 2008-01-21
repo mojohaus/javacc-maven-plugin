@@ -104,9 +104,8 @@ public class JJDocMojo
      */
     private File sourceDirectory;
 
-
     /**
-     * The relative path of the jjdoc reports in the output directory.
+     * The relative path of the JJDoc reports in the output directory.
      * This path will be appended to the output directory.
      * 
      * @parameter default-value="jjdoc";
@@ -114,9 +113,12 @@ public class JJDocMojo
     private String jjdocDirectory;
     
     /**
-     * Specifies the destination directory where jjdoc saves the generated HTML or Text files.
+     * Specifies the destination directory where JJDoc saves the generated HTML or Text files. Note that this parameter
+     * is only evaluated if the goal is run directly from the command line. If the goal is run indirectly as part of a
+     * site generation, the output directory configured in the Maven Site Plugin is used instead.
      * 
      * @parameter expression="${project.reporting.outputDirectory}"
+     * @required
      */
     private File outputDirectory;
 
@@ -168,18 +170,25 @@ public class JJDocMojo
     }
 
     /**
-     * Get the output directory of the report.
+     * Get the output directory of the report if run directly from the command line.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
      * @return the report output directory.
      */
     protected String getOutputDirectory()
     {
-        if ( ! outputDirectory.toString().endsWith( jjdocDirectory ) )
-        {
-            outputDirectory = new File( outputDirectory, jjdocDirectory );
-        }
         return outputDirectory.toString();
+    }
+
+    /**
+     * Get the output directory of the JJDoc files, i.e. the sub directory in the report output directory as specified
+     * by the {@link #jjdocDirectory} parameter.
+     * 
+     * @return the report output directory of the JJDoc files.
+     */
+    protected File getJJDocOutputDirectory()
+    {
+        return new File( getReportOutputDirectory(), jjdocDirectory );
     }
 
     // ----------------------------------------------------------------------
@@ -265,7 +274,7 @@ public class JJDocMojo
                 String relativeOutputFileName =
                     relativeOutputFileURI.toString().replaceAll( "(.jj|.JJ)$", getOutputFileExtension() );
 
-                File jjdocOutputFile = new File( getOutputDirectory(), relativeOutputFileName );
+                File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
                 jjdocOutputFile.getParentFile().mkdirs();
 
                 String[] jjdocArgs = generateArgs( grammarFile, jjdocOutputFile );
@@ -429,7 +438,7 @@ public class JJDocMojo
 
         try
         {
-            grammarFiles.addAll( scanner.getIncludedSources( sourceDirectory, outputDirectory ) );
+            grammarFiles.addAll( scanner.getIncludedSources( sourceDirectory, getJJDocOutputDirectory() ) );
         }
         catch ( InclusionScanException e )
         {
