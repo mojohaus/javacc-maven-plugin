@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -56,7 +57,7 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  * @author <a href="mailto:pgier@redhat.com">Paul Gier</a>
  * @version $Id$
  * @goal jjdoc
- * @phase generate-sources
+ * @execute phase=generate-sources
  * @see <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>
  */
 public class JJDocMojo
@@ -98,11 +99,28 @@ public class JJDocMojo
     private List pluginArtifacts;
 
     /**
-     * Directory where the JJ file(s) are located.
+     * Directories where the JJ file(s) are located. By default, the directories <code>${basedir}/src/main/javacc</code>
+     * and <code>${project.build.directory}/generated-sources/jjtree</code> are scanned for grammar files to document. 
+     * 
+     * @parameter
+     */
+    private File[] sourceDirectories;
+
+    /**
+     * The default source directory for grammar files.
      * 
      * @parameter expression="${basedir}/src/main/javacc"
+     * @readonly
      */
-    private File sourceDirectory;
+    private File defaultSourceDirectory;
+
+    /**
+     * The default source directory for generated grammar files.
+     * 
+     * @parameter expression="${project.build.directory}/generated-sources/jjtree"
+     * @readonly
+     */
+    private File defaultGeneratedSourceDirectory;
 
     /**
      * The relative path of the JJDoc reports in the output directory.
@@ -191,6 +209,32 @@ public class JJDocMojo
         return new File( getReportOutputDirectory(), jjdocDirectory );
     }
 
+    /**
+     * Get the source directories that should be scanned for grammar files.
+     * 
+     * @return The source directories that should be scanned for grammar files.
+     */
+    protected List getSourceDirectories()
+    {
+        List directories = new ArrayList();
+        if ( sourceDirectories != null && sourceDirectories.length > 0 )
+        {
+            directories.addAll( Arrays.asList( sourceDirectories ) );
+        }
+        else
+        {
+            if ( defaultSourceDirectory != null )
+            {
+                directories.add( defaultSourceDirectory );
+            }
+            if ( defaultGeneratedSourceDirectory != null )
+            {
+                directories.add( defaultGeneratedSourceDirectory );
+            }
+        }
+        return directories;
+    }
+
     // ----------------------------------------------------------------------
     // public methods
     // ----------------------------------------------------------------------
@@ -264,25 +308,39 @@ public class JJDocMojo
 
         try
         {
-            Set grammarFiles = scanForGrammarFiles();
-
-            for ( Iterator i = grammarFiles.iterator(); i.hasNext(); )
+            for ( Iterator it = getSourceDirectories().iterator(); it.hasNext(); )
             {
-                File grammarFile = (File) i.next();
+                File sourceDirectory = (File) it.next();
+                if ( !sourceDirectory.isDirectory() )
+                {
+                    getLog().debug( "Skipping non-existing source directory: " + sourceDirectory );
+                    continue;
+                }
+                else
+                {
+                    getLog().debug( "Scanning source directory: " + sourceDirectory );
+                }
 
-                URI relativeOutputFileURI = sourceDirectory.toURI().relativize( grammarFile.toURI() );
-                String relativeOutputFileName =
-                    relativeOutputFileURI.toString().replaceAll( "(.jj|.JJ)$", getOutputFileExtension() );
+                Set grammarFiles = scanForGrammarFiles( sourceDirectory );
 
-                File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
-                jjdocOutputFile.getParentFile().mkdirs();
+                for ( Iterator i = grammarFiles.iterator(); i.hasNext(); )
+                {
+                    File grammarFile = (File) i.next();
 
-                String[] jjdocArgs = generateArgs( grammarFile, jjdocOutputFile );
-                
-                // Fork jjdoc because of calls to System.exit().
-                forkJJDoc( jjdocArgs );
+                    URI relativeOutputFileURI = sourceDirectory.toURI().relativize( grammarFile.toURI() );
+                    String relativeOutputFileName =
+                        relativeOutputFileURI.toString().replaceAll( "(.jj|.JJ)$", getOutputFileExtension() );
 
-                this.createReportLink( sink, grammarFile, relativeOutputFileName );
+                    File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
+                    jjdocOutputFile.getParentFile().mkdirs();
+
+                    String[] jjdocArgs = generateArgs( grammarFile, jjdocOutputFile );
+
+                    // Fork jjdoc because of calls to System.exit().
+                    forkJJDoc( jjdocArgs );
+
+                    this.createReportLink( sink, sourceDirectory, grammarFile, relativeOutputFileName );
+                }
             }
         }
         catch ( MojoExecutionException e )
@@ -350,10 +408,11 @@ public class JJDocMojo
      * Create a table row containing a link to the jjdoc report for a grammar file.
      * 
      * @param sink The sink to write the report
+     * @param sourceDirectory The source directory of the grammar file.
      * @param grammarFile The javacc grammar file.
      * @param linkPath The path to the jjdoc output.
      */
-    public void createReportLink( Sink sink, File grammarFile, String linkPath )
+    public void createReportLink( Sink sink, File sourceDirectory, File grammarFile, String linkPath )
     {
         sink.tableRow();
         sink.tableCell();
@@ -415,19 +474,20 @@ public class JJDocMojo
     }
 
     /**
-     * Searches the source directory to find grammar files that can be documented.
+     * Searches the specified source directory to find grammar files that can be documented.
      * 
+     * @param sourceDirectory The source directory to scan for grammar files.
      * @return A set of the javacc grammar files.
      * @throws MojoExecutionException If there is a problem while scanning for .jj files.
      */
-    public Set scanForGrammarFiles()
+    public Set scanForGrammarFiles( File sourceDirectory )
         throws MojoExecutionException
     {
 
         SuffixMapping mapping = new SuffixMapping( ".jj", getOutputFileExtension() );
         SuffixMapping mappingCAP = new SuffixMapping( ".JJ", getOutputFileExtension() );
 
-        Set includes = Collections.singleton( "**/*" );
+        Set includes = new HashSet( Arrays.asList( new String[] { "**/*.jj", "**/*.JJ" } ) );
         Set excludes = Collections.EMPTY_SET;
         SourceInclusionScanner scanner = new SimpleSourceInclusionScanner( includes, excludes );
 
