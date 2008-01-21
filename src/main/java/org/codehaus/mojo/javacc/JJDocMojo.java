@@ -484,10 +484,7 @@ public class JJDocMojo
         String jvm = System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
         cli.setExecutable( jvm );
 
-        String[] jvmArgs = new String[3];
-        jvmArgs[0] = "-cp";
-        jvmArgs[1] = createJJDocClasspath();
-        jvmArgs[2] = JJDOC_CLASSNAME;
+        String[] jvmArgs = { "-cp", createJJDocClasspath(), JJDOC_CLASSNAME };
 
         cli.addArguments( jvmArgs );
 
@@ -547,11 +544,11 @@ public class JJDocMojo
         /**
          * Single param constructor.
          * 
-         * @param err If set to true, all consumed lines will be logged at the info level
+         * @param error If set to true, all consumed lines will be logged at the info level
          */
-        public MojoLogStreamConsumer( boolean err )
+        public MojoLogStreamConsumer( boolean error )
         {
-            this.err = err;
+            this.err = error;
         }
 
         /**

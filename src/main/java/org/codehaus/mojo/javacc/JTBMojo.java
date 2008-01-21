@@ -38,8 +38,8 @@ import java.util.Set;
 
 /**
  * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically
- * builds the AST.  <b>Note: <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires JDK 1.5 and higher.  This mojo will not work with earlier versions of the
- * JDK</b>.
+ * builds the AST.  <b>Note: <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires JDK 1.5 and higher.  This
+ * mojo will not work with earlier versions of the JDK</b>.
  * 
  * @goal jtb
  * @phase generate-sources
