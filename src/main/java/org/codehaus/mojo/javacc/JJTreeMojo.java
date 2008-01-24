@@ -199,10 +199,6 @@ public class JJTreeMojo
         if ( staleGrammars.isEmpty() )
         {
             getLog().info( "Nothing to process - all grammars in " + sourceDirectory + " are up to date." );
-            if ( project != null )
-            {
-                project.addCompileSourceRoot( outputDirectory.getPath() );
-            }
             return;
         }
 
@@ -222,11 +218,6 @@ public class JJTreeMojo
             {
                 throw new MojoExecutionException( "JJTree execution failed", e );
             }
-        }
-
-        if ( project != null )
-        {
-            project.addCompileSourceRoot( outputDirectory.getPath() );
         }
     }
 
