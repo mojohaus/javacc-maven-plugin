@@ -15,7 +15,7 @@ package org.codehaus.javacc.simple;
 public class BasicParser {
 
   public static void main(String args[]) throws ParseException {
-    Simple1 parser = new Simple1(System.in);
+    BasicParser parser = new BasicParser(System.in);
     parser.Input();
   }
 
