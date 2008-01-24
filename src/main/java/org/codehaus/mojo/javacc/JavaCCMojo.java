@@ -311,16 +311,6 @@ public class JavaCCMojo
             return;
         }
 
-        File outputDirPackages = outputDirectory;
-        if ( packageName != null )
-        {
-            outputDirPackages = new File( outputDirectory, packageName );
-        }
-        if ( !outputDirPackages.exists() )
-        {
-            outputDirPackages.mkdirs();
-        }
-
         if ( !timestampDirectory.exists() )
         {
             timestampDirectory.mkdirs();
@@ -344,23 +334,39 @@ public class JavaCCMojo
         }
         else
         {
-            // Copy all .java file from sourceDirectory to outputDirectory, in
-            // order to override Token.java
-            try
-            {
-                FileUtils.copyDirectory( sourceDirectory, outputDirPackages, "*.java", "*.jj,*.JJ" );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Unable to copy overriden java files.", e );
-            }
-
             for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
             {
                 File javaccFile = (File) i.next();
+
+                String outputPackage = packageName;
+                if ( StringUtils.isEmpty( outputPackage ) )
+                {
+                    outputPackage = JavaCCUtil.getDeclaredPackage( javaccFile );
+                }
+                File outputDirectoryPackage = outputDirectory;
+                if ( outputPackage != null )
+                {
+                    outputDirectoryPackage = new File( outputDirectory, outputPackage );
+                }
+                if ( !outputDirectoryPackage.exists() )
+                {
+                    outputDirectoryPackage.mkdirs();
+                }
+
+                // Copy all .java files from sourceDirectory to outputDirectory, in
+                // order to prevent regeneration of customized Token.java or similar
                 try
                 {
-                    org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDirectory ) );
+                    FileUtils.copyDirectory( javaccFile.getParentFile(), outputDirectoryPackage, "*.java", "*.jj,*.JJ" );
+                }
+                catch ( IOException e )
+                {
+                    throw new MojoExecutionException( "Unable to copy overriden java files.", e );
+                }
+
+                try
+                {
+                    org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDirectoryPackage ) );
 
                     URI relativeURI = sourceDirectory.toURI().relativize( javaccFile.toURI() );
                     File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
@@ -381,8 +387,8 @@ public class JavaCCMojo
 
     /**
      * @param javaccInput a <code>String</code> which rappresent the path of the file to compile
-     * @param outputDir The output directory for the generated Java files. If a package name is provided by the user or
-     *            the grammar file, it is appended to this directory.
+     * @param outputDir The output directory for the generated Java files. This path should already contain the package
+     *            hierarchy
      * @return a <code>String[]</code> that represent the argument to use for JavaCC
      * @throws MojoExecutionException If there is a problem generating the command line arguments.
      */
@@ -507,17 +513,7 @@ public class JavaCCMojo
             argsList.add( "-KEEP_LINE_COLUMN=" + keepLineColumn );
         }
 
-        String outputPackage = packageName;
-        if ( outputPackage == null )
-        {
-            outputPackage = JavaCCUtil.getDeclaredPackage( javaccInput );
-        }
-        File outputDirPackages = outputDir;
-        if ( outputPackage != null )
-        {
-            outputDirPackages = new File( outputDir, outputPackage );
-        }
-        argsList.add( "-OUTPUT_DIRECTORY:" + outputDirPackages );
+        argsList.add( "-OUTPUT_DIRECTORY:" + outputDir );
 
         argsList.add( javaccInput.getPath() );
 
