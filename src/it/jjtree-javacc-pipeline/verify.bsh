@@ -1,0 +1,30 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File outputFolder = new File( basedir, "target/generated-sources/javacc" );
+    
+    File nodeFile = new File( outputFolder, "Node.java");
+    if ( !nodeFile.isFile() )
+    {
+        System.err.println( "Could not find generated java file: " + nodeFile );
+        return false;
+    }
+    
+    File parserFile = new File( outputFolder, "Simple.java");
+    if ( !parserFile.isFile() )
+    {
+        System.err.println( "Could not find generated java file: " + parserFile );
+        return false;
+    }
+}
+catch( Throwable e )
+{
+    System.err.println(e);
+    result = false;
+}
+
+return true;
