@@ -133,7 +133,7 @@
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <goals>
                 <goal>clean</goal>
-                <goal>generate-sources</goal>
+                <goal>compile</goal>
               </goals>
             </configuration>
             <executions>
