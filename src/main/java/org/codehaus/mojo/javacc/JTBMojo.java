@@ -37,20 +37,20 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically
- * builds the AST.  <b>Note: <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires JDK 1.5 and higher.  This
- * mojo will not work with earlier versions of the JDK</b>.
+ * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically builds
+ * the AST. <b>Note: <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires JDK 1.5 and higher. This mojo will
+ * not work with earlier versions of the JDK</b>.
  * 
  * @goal jtb
  * @phase generate-sources
  * @author Gregory Kick (gk5885@kickstyle.net)
  * @version $Id$
  */
-public class JTBMojo extends AbstractMojo
+public class JTBMojo
+    extends AbstractMojo
 {
     /**
-     * This option is short for
-     * <code>nodePackageName = package + syntaxtree</code> and
+     * This option is short for <code>nodePackageName = package + syntaxtree</code> and
      * <code>visitorPackageName = package + visitor</code>.
      * 
      * @parameter expression=${package}"
@@ -58,7 +58,8 @@ public class JTBMojo extends AbstractMojo
     private String packageName;
 
     /**
-     * The path of the package name relate to <code>packageName</code> 
+     * The path of the package name relate to <code>packageName</code>
+     * 
      * @see #packageName
      */
     private String packagePath;
@@ -71,7 +72,8 @@ public class JTBMojo extends AbstractMojo
     private String nodePackageName;
 
     /**
-     * The path of the package name relate to <code>nodePackageName</code> 
+     * The path of the package name relate to <code>nodePackageName</code>
+     * 
      * @see #nodePackageName
      */
     private String nodePackagePath;
@@ -84,7 +86,8 @@ public class JTBMojo extends AbstractMojo
     private String visitorPackageName;
 
     /**
-     * The path of the package name relate to <code>visitorPackageName</code> 
+     * The path of the package name relate to <code>visitorPackageName</code>
+     * 
      * @see #visitorPackageName
      */
     private String visitorPackagePath;
@@ -97,16 +100,14 @@ public class JTBMojo extends AbstractMojo
     private Boolean supressErrorChecking;
 
     /**
-     * If true, all generated comments will be wrapped in pre tags so that they
-     * are formatted correctly in javadocs.
+     * If true, all generated comments will be wrapped in pre tags so that they are formatted correctly in javadocs.
      * 
      * @parameter expression=${javadocFriendlyComments}"
      */
     private Boolean javadocFriendlyComments;
 
     /**
-     * Setting this option to true causes JTB to generate field names that
-     * reflect the structure of the tree.
+     * Setting this option to true causes JTB to generate field names that reflect the structure of the tree.
      * 
      * @parameter expression=${descriptiveFieldNames}"
      */
@@ -175,8 +176,7 @@ public class JTBMojo extends AbstractMojo
     private File timestampDirectory;
 
     /**
-     * The granularity in milliseconds of the last modification date for testing
-     * whether a source needs recompilation
+     * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
@@ -201,7 +201,8 @@ public class JTBMojo extends AbstractMojo
      * 
      * @throws MojoExecutionException if the compilation fails
      */
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException
     {
         if ( packageName != null )
         {
@@ -254,9 +255,8 @@ public class JTBMojo extends AbstractMojo
                 JTB.main( generateJTBArgumentList( jtbFile.getAbsolutePath() ) );
 
                 /*
-                 * since jtb was meant to be run as a command-line tool, it only
-                 * outputs to the current directory. therefore, the files must
-                 * be moved to the correct locations.
+                 * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
+                 * therefore, the files must be moved to the correct locations.
                  */
                 File tempDir;
                 File newDir;
@@ -332,7 +332,7 @@ public class JTBMojo extends AbstractMojo
         }
 
     }
-    
+
     /**
      * @param jtbFileName a <code>String</code> which rappresent the path of the file to compile
      * @return a <code>String[]</code> that represent the argument to use for JTB
@@ -406,7 +406,8 @@ public class JTBMojo extends AbstractMojo
      * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
      * @throws MojoExecutionException if it fails
      */
-    private Set computeStaleGrammars() throws MojoExecutionException
+    private Set computeStaleGrammars()
+        throws MojoExecutionException
     {
         SuffixMapping mapping = new SuffixMapping( ".jtb", ".jtb" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JTB", ".JTB" );
@@ -425,7 +426,7 @@ public class JTBMojo extends AbstractMojo
         catch ( InclusionScanException e )
         {
             throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
-                    + "\' for stale grammars to reprocess.", e );
+                + "\' for stale grammars to reprocess.", e );
         }
 
         return staleSources;

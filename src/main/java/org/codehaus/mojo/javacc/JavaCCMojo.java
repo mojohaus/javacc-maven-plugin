@@ -37,6 +37,7 @@ import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import org.javacc.parser.Main;
 
 /**
  * Parses a javacc (jj) grammar file and transforms it to Java source files. Detailed information about the javacc
@@ -60,8 +61,8 @@ public class JavaCCMojo
     private Integer lookAhead;
 
     /**
-     * This is the number of tokens considered in checking choices
-     * of the form "A | B | ..." for ambiguity.  Default value is 2.
+     * This is the number of tokens considered in checking choices of the form "A | B | ..." for ambiguity. Default
+     * value is 2.
      * 
      * @parameter expression="${choiceAmbiguityCheck}"
      */
@@ -220,8 +221,8 @@ public class JavaCCMojo
     private Boolean forceLaCheck;
 
     /**
-     * Setting this option to true causes the generated parser to
-     * lookahead for extra tokens ahead of time.  Default value is false.
+     * Setting this option to true causes the generated parser to lookahead for extra tokens ahead of time. Default
+     * value is false.
      * 
      * @parameter expression="${cacheTokens}"
      */
@@ -357,7 +358,8 @@ public class JavaCCMojo
                 // order to prevent regeneration of customized Token.java or similar
                 try
                 {
-                    FileUtils.copyDirectory( javaccFile.getParentFile(), outputDirectoryPackage, "*.java", "*.jj,*.JJ" );
+                    FileUtils.copyDirectory( javaccFile.getParentFile(), outputDirectoryPackage, "*.java",
+                                             "*.jj,*.JJ" );
                 }
                 catch ( IOException e )
                 {
@@ -366,7 +368,7 @@ public class JavaCCMojo
 
                 try
                 {
-                    org.javacc.parser.Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDirectoryPackage ) );
+                    Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDirectoryPackage ) );
 
                     URI relativeURI = sourceDirectory.toURI().relativize( javaccFile.toURI() );
                     File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );

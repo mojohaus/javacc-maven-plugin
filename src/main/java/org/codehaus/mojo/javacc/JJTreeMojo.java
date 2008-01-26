@@ -339,7 +339,7 @@ public class JJTreeMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory 
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
                 + "\' for stale grammars to reprocess.", e );
         }
 

@@ -49,10 +49,10 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
  * JJDoc takes a JavaCC [tm] parser specification and produces documentation for the BNF grammar. <a
- * href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>.  This mojo will search
- * the source directory for all .jj files and run jjdoc once for each file it finds.  Each of these 
- * output files, along with an index.html file will be placed in the site directory (target/site/jjdoc),
- * and a link will be created in the "Project Reports" menu of the generated site.
+ * href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>. This mojo will search the source
+ * directory for all .jj files and run jjdoc once for each file it finds. Each of these output files, along with an
+ * index.html file will be placed in the site directory (target/site/jjdoc), and a link will be created in the "Project
+ * Reports" menu of the generated site.
  * 
  * @goal jjdoc
  * @execute phase=generate-sources
@@ -100,7 +100,7 @@ public class JJDocMojo
 
     /**
      * Directories where the JJ file(s) are located. By default, the directories <code>${basedir}/src/main/javacc</code>
-     * and <code>${project.build.directory}/generated-sources/jjtree</code> are scanned for grammar files to document. 
+     * and <code>${project.build.directory}/generated-sources/jjtree</code> are scanned for grammar files to document.
      * 
      * @parameter
      */
@@ -123,13 +123,13 @@ public class JJDocMojo
     private File defaultGeneratedSourceDirectory;
 
     /**
-     * The relative path of the JJDoc reports in the output directory.
-     * This path will be appended to the output directory.
+     * The relative path of the JJDoc reports in the output directory. This path will be appended to the output
+     * directory.
      * 
      * @parameter default-value="jjdoc";
      */
     private String jjdocDirectory;
-    
+
     /**
      * Specifies the destination directory where JJDoc saves the generated HTML or Text files. Note that this parameter
      * is only evaluated if the goal is run directly from the command line. If the goal is run indirectly as part of a
@@ -421,7 +421,7 @@ public class JJDocMojo
             linkPath = linkPath.substring( 1 );
         }
         sink.link( linkPath );
-        String grammarFileRelativePath = sourceDirectory.toURI().relativize( grammarFile.toURI() ).toString() ;
+        String grammarFileRelativePath = sourceDirectory.toURI().relativize( grammarFile.toURI() ).toString();
         if ( grammarFileRelativePath.startsWith( "/" ) )
         {
             grammarFileRelativePath = grammarFileRelativePath.substring( 1 );
@@ -502,7 +502,7 @@ public class JJDocMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory 
+            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
                 + "\' for stale grammars to reprocess.", e );
         }
 
@@ -583,6 +583,7 @@ public class JJDocMojo
 
     /**
      * Get the ResourceBundle for the report text.
+     * 
      * @param locale The user locale
      * @return The resource bundle
      */
