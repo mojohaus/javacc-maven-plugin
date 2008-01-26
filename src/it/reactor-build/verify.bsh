@@ -1,0 +1,83 @@
+import java.io.*;
+import java.util.*;
+import java.util.jar.*;
+import org.codehaus.plexus.util.*;
+
+try
+{
+    {
+        File target = new File( basedir, "target" );
+        if ( target.exists() )
+        {
+            System.err.println( "Parent project has unexpected output folder: " + target );
+            return false;
+        }
+    }
+
+    {
+        File target = new File( basedir, "module-one/target" );
+        if ( !target.isDirectory() )
+        {
+            System.err.println( "Sub module has no output folder: " + target );
+            return false;
+        }
+
+        File javacc = new File( target, "javacc/org/codehaus/javacc/simple/BasicParser.java" );
+        if ( !javacc.isFile() )
+        {
+            System.err.println( "Sub module has no JavaCC output: " + javacc );
+            return false;
+        }
+
+        File timestamp = new File( target, "javacc-timestamps/BasicParser.jj" );
+        if ( !timestamp.isFile() )
+        {
+            System.err.println( "Sub module has no JavaCC timestamp: " + timestamp );
+            return false;
+        }
+
+        File jjdoc = new File( target, "jjdoc/jjdoc/BasicParser.html" );
+        if ( !jjdoc.isFile() )
+        {
+            System.err.println( "Sub module has no JJDoc output: " + jjdoc );
+            return false;
+        }
+    }
+
+    {
+        File target = new File( basedir, "module-two/target" );
+        if ( !target.isDirectory() )
+        {
+            System.err.println( "Sub module has no output folder: " + target );
+            return false;
+        }
+
+        File jjtree = new File( target, "jjtree/Simple.jj" );
+        if ( !jjtree.isFile() )
+        {
+            System.err.println( "Sub module has no JJTree output: " + jjtree );
+            return false;
+        }
+
+        File timestamp = new File( target, "jjtree-timestamps/Simple.jjt" );
+        if ( !timestamp.isFile() )
+        {
+            System.err.println( "Sub module has no JJTree timestamp: " + timestamp );
+            return false;
+        }
+
+        File jjdoc = new File( target, "jjdoc/jjdoc/Simple.html" );
+        if ( !jjdoc.isFile() )
+        {
+            System.err.println( "Sub module has no JJDoc output: " + jjdoc );
+            return false;
+        }
+    }
+}
+catch( Throwable e )
+{
+    System.err.println(e);
+    return false;
+}
+
+return true;
