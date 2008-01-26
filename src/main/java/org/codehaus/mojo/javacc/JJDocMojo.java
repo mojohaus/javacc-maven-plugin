@@ -54,10 +54,10 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  * output files, along with an index.html file will be placed in the site directory (target/site/jjdoc),
  * and a link will be created in the "Project Reports" menu of the generated site.
  * 
- * @author <a href="mailto:pgier@redhat.com">Paul Gier</a>
- * @version $Id$
  * @goal jjdoc
  * @execute phase=generate-sources
+ * @author <a href="mailto:pgier@redhat.com">Paul Gier</a>
+ * @version $Id$
  * @see <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>
  */
 public class JJDocMojo

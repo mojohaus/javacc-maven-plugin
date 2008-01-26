@@ -44,6 +44,7 @@ import java.util.Set;
  * @goal jtb
  * @phase generate-sources
  * @author Gregory Kick (gk5885@kickstyle.net)
+ * @version $Id$
  */
 public class JTBMojo extends AbstractMojo
 {
