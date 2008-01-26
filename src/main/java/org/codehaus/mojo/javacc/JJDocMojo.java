@@ -48,10 +48,10 @@ import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
- * JJDoc takes a JavaCC [tm] parser specification and produces documentation for the BNF grammar. <a
- * href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>. This mojo will search the source
- * directory for all .jj files and run jjdoc once for each file it finds. Each of these output files, along with an
- * index.html file will be placed in the site directory (target/site/jjdoc), and a link will be created in the "Project
+ * <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc</a> takes a JavaCC parser specification and produces
+ * documentation for the BNF grammar. This mojo will search the source directory for all <code>*.jj</code> files and
+ * run JJDoc once for each file it finds. Each of these output files, along with an <code>index.html</code> file will
+ * be placed in the site directory (<code>target/site/jjdoc</code>), and a link will be created in the "Project
  * Reports" menu of the generated site.
  * 
  * @goal jjdoc
@@ -65,7 +65,7 @@ public class JJDocMojo
 {
 
     /**
-     * The jjdoc classname that is used to call jjdoc from the command line.
+     * The jjdoc classname that is used to call JJDoc from the command line.
      */
     public static final String JJDOC_CLASSNAME = "jjdoc";
 
@@ -74,7 +74,7 @@ public class JJDocMojo
     // ----------------------------------------------------------------------
 
     /**
-     * Maven Project
+     * The current Maven project.
      * 
      * @parameter expression="${project}"
      * @required
@@ -83,7 +83,7 @@ public class JJDocMojo
     private MavenProject project;
 
     /**
-     * Generates the site report
+     * The site renderer.
      * 
      * @component
      */
@@ -99,8 +99,9 @@ public class JJDocMojo
     private List pluginArtifacts;
 
     /**
-     * Directories where the JJ file(s) are located. By default, the directories <code>${basedir}/src/main/javacc</code>
-     * and <code>${project.build.directory}/generated-sources/jjtree</code> are scanned for grammar files to document.
+     * Directories where the JavaCC grammar files (<code>*.jj</code>) are located. By default, the directories
+     * <code>${basedir}/src/main/javacc</code> and <code>${project.build.directory}/generated-sources/jjtree</code>
+     * are scanned for grammar files to document.
      * 
      * @parameter
      */
@@ -131,9 +132,10 @@ public class JJDocMojo
     private String jjdocDirectory;
 
     /**
-     * Specifies the destination directory where JJDoc saves the generated HTML or Text files. Note that this parameter
-     * is only evaluated if the goal is run directly from the command line. If the goal is run indirectly as part of a
-     * site generation, the output directory configured in the Maven Site Plugin is used instead.
+     * The destination directory where JJDoc saves the generated documentation files. Note that this parameter is only
+     * relevant if the goal is run from the command line or from the default build lifecycle. If the goal is run
+     * indirectly as part of a site generation, the output directory configured in the Maven Site Plugin is used
+     * instead.
      * 
      * @parameter expression="${project.reporting.outputDirectory}"
      * @required
@@ -141,25 +143,28 @@ public class JJDocMojo
     private File outputDirectory;
 
     /**
-     * Setting TEXT to true causes JJDoc to generate a plain text format description of the BNF. Some formatting is done
-     * via tab characters, but the intention is to leave it as plain as possible. The default value of TEXT causes JJDoc
-     * to generate a hyperlinked HTML document.
+     * A flag to specify the output format for the generated documentation. If set to <code>true</code>, JJDoc will
+     * generate a plain text description of the BNF. Some formatting is done via tab characters, but the intention is to
+     * leave it as plain as possible. Specifying <code>false</code> causes JJDoc to generate a hyperlinked HTML
+     * document.
      * 
      * @parameter default-value=false
      */
     private boolean text;
 
     /**
-     * The default value of ONE_TABLE is used to generate a single HTML table for the BNF. Setting it to false will
-     * produce one table for every production in the grammar.
+     * This option controls the structure of the generated HTML output. If set to <code>true</code>, a single HTML
+     * table for the entire BNF is generated. Setting it to <code>false</code> will produce one table for every
+     * production in the grammar.
      * 
      * @parameter default-value=true
      */
     private boolean oneTable;
 
     /**
-     * This option allows you to specify a CSS file name. If you supply a file name in this option it will appear in a
-     * LINK element in the HEAD section of the file. This option only applies to HTML output.
+     * This option allows you to specify a stylesheet file name. If you supply a file name in this option it will appear
+     * in a <code>&lt;link&gt;</code> element in the <code>&lt;head&gt;</code> section of the file. This option only
+     * applies to HTML output.
      * 
      * @parameter
      */
@@ -169,7 +174,7 @@ public class JJDocMojo
      * Get the maven project.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     * @return The current maven project.
+     * @return The current Maven project.
      */
     protected MavenProject getProject()
     {
@@ -180,7 +185,7 @@ public class JJDocMojo
      * Get the site renderer.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     * @return The site renderer
+     * @return The site renderer.
      */
     protected Renderer getSiteRenderer()
     {
@@ -191,7 +196,7 @@ public class JJDocMojo
      * Get the output directory of the report if run directly from the command line.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
-     * @return the report output directory.
+     * @return The report output directory.
      */
     protected String getOutputDirectory()
     {
@@ -202,7 +207,7 @@ public class JJDocMojo
      * Get the output directory of the JJDoc files, i.e. the sub directory in the report output directory as specified
      * by the {@link #jjdocDirectory} parameter.
      * 
-     * @return the report output directory of the JJDoc files.
+     * @return The report output directory of the JJDoc files.
      */
     protected File getJJDocOutputDirectory()
     {
@@ -241,8 +246,8 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getName(java.util.Locale)
-     * @param locale The locale
-     * @return The name of this report
+     * @param locale The locale to use for this report.
+     * @return The name of this report.
      */
     public String getName( Locale locale )
     {
@@ -251,8 +256,8 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getDescription(java.util.Locale)
-     * @param locale The locale to use
-     * @return The description of the report
+     * @param locale The locale to use for this report.
+     * @return The description of this report.
      */
     public String getDescription( Locale locale )
     {
@@ -298,7 +303,7 @@ public class JJDocMojo
     /**
      * Run the actual report.
      * 
-     * @param locale The locale of the user.
+     * @param locale The locale to use for this report.
      */
     public void executeReport( Locale locale )
     {
@@ -355,9 +360,10 @@ public class JJDocMojo
     }
 
     /**
-     * The jjdoc output file will have a .html or .txt extension depending on the value of the "text" parameter.
+     * The JJDoc output file will have a <code>.html</code> or <code>.txt</code> extension depending on the value
+     * of the parameter {@link #text}.
      * 
-     * @return The file extension to be used for the jjdoc output files.
+     * @return The file extension to be used for the JJDoc output files.
      */
     public String getOutputFileExtension()
     {
@@ -372,7 +378,7 @@ public class JJDocMojo
     }
 
     /**
-     * Create the header and title for the html report page.
+     * Create the header and title for the HTML report page.
      * 
      * @param bundle The resource bundle with the text.
      * @param sink The sink for writing to the main report file.
@@ -405,12 +411,12 @@ public class JJDocMojo
     }
 
     /**
-     * Create a table row containing a link to the jjdoc report for a grammar file.
+     * Create a table row containing a link to the JJDoc report for a grammar file.
      * 
      * @param sink The sink to write the report
      * @param sourceDirectory The source directory of the grammar file.
-     * @param grammarFile The javacc grammar file.
-     * @param linkPath The path to the jjdoc output.
+     * @param grammarFile The JavaCC grammar file.
+     * @param linkPath The path to the JJDoc output.
      */
     public void createReportLink( Sink sink, File sourceDirectory, File grammarFile, String linkPath )
     {
@@ -433,9 +439,9 @@ public class JJDocMojo
     }
 
     /**
-     * Create the html footer for the report page.
+     * Create the HTML footer for the report page.
      * 
-     * @param sink The sink to write the html report page.
+     * @param sink The sink to write the HTML report page.
      */
     public void createReportFooter( Sink sink )
     {
@@ -444,10 +450,10 @@ public class JJDocMojo
     }
 
     /**
-     * Generate the command line arguments for calling javacc.
+     * Generate the command line arguments for calling JJDoc.
      * 
-     * @param javaccFile The grammar file to be documented
-     * @param outputFile The path to the report output
+     * @param javaccFile The grammar file to be documented.
+     * @param outputFile The path to the report output.
      * @return An array of the parameters.
      */
     public String[] generateArgs( File javaccFile, File outputFile )
@@ -477,7 +483,7 @@ public class JJDocMojo
      * Searches the specified source directory to find grammar files that can be documented.
      * 
      * @param sourceDirectory The source directory to scan for grammar files.
-     * @return A set of the javacc grammar files.
+     * @return A set of the JavaCC grammar files.
      * @throws MojoExecutionException If there is a problem while scanning for .jj files.
      */
     public Set scanForGrammarFiles( File sourceDirectory )
@@ -511,7 +517,7 @@ public class JJDocMojo
     }
 
     /**
-     * Create a classpath that contains the javacc jar file with jjdoc
+     * Create a classpath that contains the JavaCC JAR file with JJDoc.
      * 
      * @return The classpath string.
      */
@@ -539,10 +545,10 @@ public class JJDocMojo
     }
 
     /**
-     * Runs jjdoc in a forked jvm. This must be done because of the calls to System.exit in jjdoc.
+     * Runs JJDoc in a forked JVM. This must be done because of the calls to <code>System.exit()</code> in JJDoc.
      * 
-     * @param jjdocArgs The arguments to pass to jjdoc.
-     * @throws MojoExecutionException If there is a problem while running jjdoc.
+     * @param jjdocArgs The arguments to pass to JJDoc.
+     * @throws MojoExecutionException If there is a problem while running JJDoc.
      */
     public void forkJJDoc( String[] jjdocArgs )
         throws MojoExecutionException
@@ -582,10 +588,10 @@ public class JJDocMojo
     }
 
     /**
-     * Get the ResourceBundle for the report text.
+     * Get the resource bundle for the report text.
      * 
-     * @param locale The user locale
-     * @return The resource bundle
+     * @param locale The locale to use for this report.
+     * @return The resource bundle.
      */
     private ResourceBundle getBundle( Locale locale )
     {
@@ -593,13 +599,13 @@ public class JJDocMojo
     }
 
     /**
-     * Consume and log command line output from the jjdoc process
+     * Consume and log command line output from the JJDoc process.
      */
     public class MojoLogStreamConsumer
         implements StreamConsumer
     {
         /**
-         * Determines if the stream consumer is being used for System.out or System.err
+         * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
          */
         private boolean err = false;
 
@@ -614,7 +620,7 @@ public class JJDocMojo
         /**
          * Single param constructor.
          * 
-         * @param error If set to true, all consumed lines will be logged at the info level
+         * @param error If set to true, all consumed lines will be logged at the info level.
          */
         public MojoLogStreamConsumer( boolean error )
         {
@@ -624,7 +630,7 @@ public class JJDocMojo
         /**
          * Consume a line of text.
          * 
-         * @param line The line to consume
+         * @param line The line to consume.
          */
         public void consumeLine( String line )
         {
