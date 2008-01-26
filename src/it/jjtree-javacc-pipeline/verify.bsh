@@ -24,7 +24,7 @@ try
 catch( Throwable e )
 {
     System.err.println(e);
-    result = false;
+    return false;
 }
 
 return true;
