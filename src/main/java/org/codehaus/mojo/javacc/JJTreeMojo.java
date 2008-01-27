@@ -76,11 +76,35 @@ public class JJTreeMojo
     private Boolean nodeDefaultVoid;
 
     /**
+     * The name of a user-defined class that should be used as the base class for all tree nodes. Default value is
+     * <code>""</code> which means to use <code>SimpleNode</code>.
+     * 
+     * @parameter expression="${nodeClass}"
+     */
+    private String nodeClass;
+
+    /**
      * The name of a custom factory class to create <code>Node</code> objects. Default value is <code>""</code>.
      * 
      * @parameter expression="${nodeFactory}"
      */
     private Boolean nodeFactory;
+
+    /**
+     * The package to generate the node classes into. Default value is <code>""</code> meaning to use the package of
+     * the corresponding parser.
+     * 
+     * @parameter expression="${nodePackage}"
+     */
+    private String nodePackage;
+
+    /**
+     * The prefix used to construct node class names from node identifiers in multi mode. Default value is
+     * <code>"AST"</code>.
+     * 
+     * @parameter expression="${nodePrefix}"
+     */
+    private String nodePrefix;
 
     /**
      * A flag whether user-defined parser methods should be called on entry and exit of every node scope. Default value
@@ -99,6 +123,15 @@ public class JJTreeMojo
     private Boolean nodeUsesParser;
 
     /**
+     * A flag whether to insert <code>jjtGetFirstToken()</code>, <code>jjtSetFirstToken()</code>,
+     * <code>jjtGetLastToken()</code>, <code>jjtSetLastToken()</code> into <code>SimpleNode</code> to track
+     * entry/exit of a node scope. Default value is <code>false</code>.
+     * 
+     * @parameter expression="${traceTokens}"
+     */
+    private Boolean trackTokens;
+
+    /**
      * A flag whether to generate code for a static parser. Note that this setting must match the corresponding option
      * for the <code>javacc</code> mojo. Default value is <code>true</code>.
      * 
@@ -115,12 +148,12 @@ public class JJTreeMojo
     private Boolean visitor;
 
     /**
-     * The package to generate the node classes into. Default value is <code>""</code> meaning to use the package of
-     * the corresponding parser.
+     * The type name of the <code>data</code> parameter in the signature of the generated <code>jjtAccept()</code>
+     * and <code>visit()</code> methods. Default value is <code>"Object"</code>.
      * 
-     * @parameter expression="${nodePackage}"
+     * @parameter expression="${visitorDataType}"
      */
-    private String nodePackage;
+    private String visitorDataType;
 
     /**
      * The name of an exception class to include in the signature of the generated <code>jjtAccept()</code> and
@@ -129,14 +162,6 @@ public class JJTreeMojo
      * @parameter expression="${visitorException}"
      */
     private String visitorException;
-
-    /**
-     * The prefix used to construct node class names from node identifiers in multi mode. Default value is
-     * <code>"AST"</code>.
-     * 
-     * @parameter expression="${nodePrefix}"
-     */
-    private String nodePrefix;
 
     /**
      * Directory where the input JJTree files (<code>*.jjt</code>) are located.
@@ -307,6 +332,11 @@ public class JJTreeMojo
             argsList.add( "-NODE_DEFAULT_VOID=" + nodeDefaultVoid );
         }
 
+        if ( nodeClass != null )
+        {
+            argsList.add( "-NODE_CLASS=" + nodeClass );
+        }
+
         if ( nodeFactory != null )
         {
             argsList.add( "-NODE_FACTORY=" + nodeFactory );
@@ -332,9 +362,9 @@ public class JJTreeMojo
             argsList.add( "-NODE_USES_PARSER=" + nodeUsesParser );
         }
 
-        if ( visitor != null )
+        if ( trackTokens != null )
         {
-            argsList.add( "-VISITOR=" + visitor );
+            argsList.add( "-TRACK_TOKENS=" + trackTokens );
         }
 
         if ( isStatic != null )
@@ -342,12 +372,22 @@ public class JJTreeMojo
             argsList.add( "-STATIC=" + isStatic );
         }
 
+        if ( visitor != null )
+        {
+            argsList.add( "-VISITOR=" + visitor );
+        }
+
+        if ( visitorDataType != null )
+        {
+            argsList.add( "-VISITOR_DATA_TYPE=" + visitorDataType );
+        }
+
         if ( visitorException != null )
         {
             argsList.add( "-VISITOR_EXCEPTION=\'" + visitorException + "\'" );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY:" + getOutputDirectory( jjtFile ) );
+        argsList.add( "-OUTPUT_DIRECTORY=" + getOutputDirectory( jjtFile ) );
 
         argsList.add( jjtFile.getAbsolutePath() );
 
