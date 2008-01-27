@@ -52,6 +52,14 @@ public class JJTreeMojo
 {
 
     /**
+     * The Java version for which to generate source code. Default value is <code>1.4</code>.
+     * 
+     * @parameter expression="${jdkVersion}"
+     * @since 2.4
+     */
+    private String jdkVersion;
+
+    /**
      * A flag whether to generate sample implementations for <code>SimpleNode</code> and any other nodes used in the
      * grammar. Default value is <code>true</code>.
      * 
@@ -74,15 +82,6 @@ public class JJTreeMojo
      * @parameter expression="${nodeDefaultVoid}"
      */
     private Boolean nodeDefaultVoid;
-
-    /**
-     * The name of a user-defined class that should be used as the base class for all tree nodes. Default value is
-     * <code>""</code> which means to use <code>SimpleNode</code>.
-     * 
-     * @parameter expression="${nodeClass}"
-     * @since 2.4
-     */
-    private String nodeClass;
 
     /**
      * The name of a custom factory class to create <code>Node</code> objects. Default value is <code>""</code>.
@@ -124,16 +123,6 @@ public class JJTreeMojo
     private Boolean nodeUsesParser;
 
     /**
-     * A flag whether to insert <code>jjtGetFirstToken()</code>, <code>jjtSetFirstToken()</code>,
-     * <code>jjtGetLastToken()</code>, <code>jjtSetLastToken()</code> into <code>SimpleNode</code> to track
-     * entry/exit of a node scope. Default value is <code>false</code>.
-     * 
-     * @parameter expression="${traceTokens}"
-     * @since 2.4
-     */
-    private Boolean trackTokens;
-
-    /**
      * A flag whether to generate code for a static parser. Note that this setting must match the corresponding option
      * for the <code>javacc</code> mojo. Default value is <code>true</code>.
      * 
@@ -148,15 +137,6 @@ public class JJTreeMojo
      * @parameter expression="${visitor}"
      */
     private Boolean visitor;
-
-    /**
-     * The type name of the <code>data</code> parameter in the signature of the generated <code>jjtAccept()</code>
-     * and <code>visit()</code> methods. Default value is <code>"Object"</code>.
-     * 
-     * @parameter expression="${visitorDataType}"
-     * @since 2.4
-     */
-    private String visitorDataType;
 
     /**
      * The name of an exception class to include in the signature of the generated <code>jjtAccept()</code> and
@@ -320,6 +300,11 @@ public class JJTreeMojo
 
         ArrayList argsList = new ArrayList();
 
+        if ( jdkVersion != null )
+        {
+            argsList.add( "-JDK_VERSION=" + jdkVersion );
+        }
+
         if ( buildNodeFiles != null )
         {
             argsList.add( "-BUILD_NODE_FILES=" + buildNodeFiles );
@@ -333,11 +318,6 @@ public class JJTreeMojo
         if ( nodeDefaultVoid != null )
         {
             argsList.add( "-NODE_DEFAULT_VOID=" + nodeDefaultVoid );
-        }
-
-        if ( nodeClass != null )
-        {
-            argsList.add( "-NODE_CLASS=" + nodeClass );
         }
 
         if ( nodeFactory != null )
@@ -365,11 +345,6 @@ public class JJTreeMojo
             argsList.add( "-NODE_USES_PARSER=" + nodeUsesParser );
         }
 
-        if ( trackTokens != null )
-        {
-            argsList.add( "-TRACK_TOKENS=" + trackTokens );
-        }
-
         if ( isStatic != null )
         {
             argsList.add( "-STATIC=" + isStatic );
@@ -378,11 +353,6 @@ public class JJTreeMojo
         if ( visitor != null )
         {
             argsList.add( "-VISITOR=" + visitor );
-        }
-
-        if ( visitorDataType != null )
-        {
-            argsList.add( "-VISITOR_DATA_TYPE=" + visitorDataType );
         }
 
         if ( visitorException != null )
