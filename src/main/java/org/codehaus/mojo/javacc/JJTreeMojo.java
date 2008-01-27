@@ -102,9 +102,9 @@ public class JJTreeMojo
      * A flag whether to generate code for a static parser. Note that this setting must match the corresponding option
      * for the <code>javacc</code> mojo. Default value is <code>true</code>.
      * 
-     * @parameter expression="${staticOption}"
+     * @parameter expression="${isStatic}" alias="staticOption"
      */
-    private Boolean staticOption;
+    private Boolean isStatic;
 
     /**
      * A flag whether to insert a <code>jjtAccept()</code> method in the node classes and to generate a visitor
@@ -331,9 +331,9 @@ public class JJTreeMojo
             argsList.add( "-VISITOR=" + visitor );
         }
 
-        if ( staticOption != null )
+        if ( isStatic != null )
         {
-            argsList.add( "-STATIC=" + staticOption );
+            argsList.add( "-STATIC=" + isStatic );
         }
 
         if ( visitorException != null )
