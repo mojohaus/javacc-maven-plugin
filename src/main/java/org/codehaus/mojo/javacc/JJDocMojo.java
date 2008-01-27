@@ -67,7 +67,7 @@ public class JJDocMojo
     /**
      * The jjdoc classname that is used to call JJDoc from the command line.
      */
-    public static final String JJDOC_CLASSNAME = "jjdoc";
+    private static final String JJDOC_CLASSNAME = "jjdoc";
 
     // ----------------------------------------------------------------------
     // Mojo Parameters
@@ -209,7 +209,7 @@ public class JJDocMojo
      * 
      * @return The report output directory of the JJDoc files.
      */
-    protected File getJJDocOutputDirectory()
+    private File getJJDocOutputDirectory()
     {
         return new File( getReportOutputDirectory(), jjdocDirectory );
     }
@@ -219,7 +219,7 @@ public class JJDocMojo
      * 
      * @return The source directories that should be scanned for grammar files.
      */
-    protected List getSourceDirectories()
+    private List getSourceDirectories()
     {
         List directories = new ArrayList();
         if ( sourceDirectories != null && sourceDirectories.length > 0 )
@@ -365,7 +365,7 @@ public class JJDocMojo
      * 
      * @return The file extension to be used for the JJDoc output files.
      */
-    public String getOutputFileExtension()
+    private String getOutputFileExtension()
     {
         if ( text )
         {
@@ -383,7 +383,7 @@ public class JJDocMojo
      * @param bundle The resource bundle with the text.
      * @param sink The sink for writing to the main report file.
      */
-    public void createReportHeader( ResourceBundle bundle, Sink sink )
+    private void createReportHeader( ResourceBundle bundle, Sink sink )
     {
         sink.head();
         sink.title();
@@ -418,7 +418,7 @@ public class JJDocMojo
      * @param grammarFile The JavaCC grammar file.
      * @param linkPath The path to the JJDoc output.
      */
-    public void createReportLink( Sink sink, File sourceDirectory, File grammarFile, String linkPath )
+    private void createReportLink( Sink sink, File sourceDirectory, File grammarFile, String linkPath )
     {
         sink.tableRow();
         sink.tableCell();
@@ -443,7 +443,7 @@ public class JJDocMojo
      * 
      * @param sink The sink to write the HTML report page.
      */
-    public void createReportFooter( Sink sink )
+    private void createReportFooter( Sink sink )
     {
         sink.table_();
         sink.body_();
@@ -456,7 +456,7 @@ public class JJDocMojo
      * @param outputFile The path to the report output.
      * @return An array of the parameters.
      */
-    public String[] generateArgs( File javaccFile, File outputFile )
+    private String[] generateArgs( File javaccFile, File outputFile )
     {
         ArrayList argsList = new ArrayList();
 
@@ -486,7 +486,7 @@ public class JJDocMojo
      * @return A set of the JavaCC grammar files.
      * @throws MojoExecutionException If there is a problem while scanning for .jj files.
      */
-    public Set scanForGrammarFiles( File sourceDirectory )
+    private Set scanForGrammarFiles( File sourceDirectory )
         throws MojoExecutionException
     {
 
@@ -521,7 +521,7 @@ public class JJDocMojo
      * 
      * @return The classpath string.
      */
-    public String createJJDocClasspath()
+    private String createJJDocClasspath()
     {
         StringBuffer classpath = new StringBuffer();
 
@@ -550,7 +550,7 @@ public class JJDocMojo
      * @param jjdocArgs The arguments to pass to JJDoc.
      * @throws MojoExecutionException If there is a problem while running JJDoc.
      */
-    public void forkJJDoc( String[] jjdocArgs )
+    private void forkJJDoc( String[] jjdocArgs )
         throws MojoExecutionException
     {
         Commandline cli = new Commandline();
@@ -601,20 +601,20 @@ public class JJDocMojo
     /**
      * Consume and log command line output from the JJDoc process.
      */
-    public class MojoLogStreamConsumer
+    class MojoLogStreamConsumer
         implements StreamConsumer
     {
         /**
          * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
          */
-        private boolean err = false;
+        private boolean err;
 
         /**
          * Default constructor with err set to false. All consumed lines will be logged at the debug level.
          */
         public MojoLogStreamConsumer()
         {
-
+            this(false);
         }
 
         /**
