@@ -162,15 +162,6 @@ public class JJDocMojo
     private boolean oneTable;
 
     /**
-     * This option allows you to specify a stylesheet file name. If you supply a file name in this option it will appear
-     * in a <code>&lt;link&gt;</code> element in the <code>&lt;head&gt;</code> section of the file. This option only
-     * applies to HTML output.
-     * 
-     * @parameter expression="${css}"
-     */
-    private String css;
-
-    /**
      * Get the maven project.
      * 
      * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
@@ -469,10 +460,6 @@ public class JJDocMojo
         if ( !this.oneTable )
         {
             argsList.add( "-ONE_TABLE=false" );
-        }
-        if ( ( this.css != null ) && ( !this.css.equals( "" ) ) )
-        {
-            argsList.add( "-CSS=" + css );
         }
         argsList.add( javaccFile.getPath() );
 
