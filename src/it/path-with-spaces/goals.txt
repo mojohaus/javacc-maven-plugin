@@ -1,0 +1,3 @@
+clean
+compile
+javacc:jjdoc

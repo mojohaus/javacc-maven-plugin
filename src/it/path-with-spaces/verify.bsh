@@ -1,0 +1,68 @@
+import java.io.*;
+import java.util.*;
+import org.codehaus.plexus.util.*;
+
+try
+{
+    File targetDir = new File( basedir, "target" );
+    if ( !targetDir.isDirectory() )
+    {
+        System.err.println( "Missing output directory: " + targetDir );
+        return false;
+    }
+
+    {
+        File outFile = new File( targetDir, "java cc/org/codehaus/javacc/simple/BasicParser.java" );
+        if ( !outFile.isFile() )
+        {
+            System.err.println( "Missing JavaCC output file: " + outFile );
+            return false;
+        }
+
+        File tsFile = new File( targetDir, "java cc ts/BasicParser.jj" );
+        if ( !tsFile.isFile() )
+        {
+            System.err.println( "Missing JavaCC timestamp file: " + tsFile );
+            return false;
+        }
+    }
+
+    {
+        File outFile = new File( targetDir, "jj tree/Simple.jj" );
+        if ( !outFile.isFile() )
+        {
+            System.err.println( "Missing JJTree output file: " + outFile );
+            return false;
+        }
+
+        File tsFile = new File( targetDir, "jj tree ts/Simple.jjt" );
+        if ( !tsFile.isFile() )
+        {
+            System.err.println( "Missing JJTree timestamp file: " + tsFile );
+            return false;
+        }
+    }
+
+    {
+        File file1 = new File( targetDir, "jj doc/jjdoc/BasicParser.html" );
+        if ( !file1.isFile() )
+        {
+            System.err.println( "Missing JJDoc output file: " + file1 );
+            return false;
+        }
+
+        File file2 = new File( targetDir, "jj doc/jjdoc/Simple.html" );
+        if ( !file2.isFile() )
+        {
+            System.err.println( "Missing JJDoc output file: " + file2 );
+            return false;
+        }
+    }
+}
+catch( Throwable e )
+{
+    System.err.println(e);
+    return false;
+}
+
+return true;
