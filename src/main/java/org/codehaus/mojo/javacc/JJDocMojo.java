@@ -148,7 +148,7 @@ public class JJDocMojo
      * leave it as plain as possible. Specifying <code>false</code> causes JJDoc to generate a hyperlinked HTML
      * document.
      * 
-     * @parameter default-value=false
+     * @parameter expression="${text}" default-value=false
      */
     private boolean text;
 
@@ -157,7 +157,7 @@ public class JJDocMojo
      * table for the entire BNF is generated. Setting it to <code>false</code> will produce one table for every
      * production in the grammar.
      * 
-     * @parameter default-value=true
+     * @parameter expression="${oneTable}" default-value=true
      */
     private boolean oneTable;
 
@@ -166,7 +166,7 @@ public class JJDocMojo
      * in a <code>&lt;link&gt;</code> element in the <code>&lt;head&gt;</code> section of the file. This option only
      * applies to HTML output.
      * 
-     * @parameter
+     * @parameter expression="${css}"
      */
     private String css;
 
@@ -634,9 +634,17 @@ public class JJDocMojo
          */
         public void consumeLine( String line )
         {
-            if ( err )
+            if ( line.startsWith( "Error: " ) )
             {
-                getLog().info( line );
+                getLog().error( line.substring( 7 ) );
+            }
+            else if ( line.startsWith( "Warning: " ) )
+            {
+                getLog().warn( line.substring( 9 ) );
+            }
+            else if ( err )
+            {
+                getLog().error( line );
             }
             else
             {
