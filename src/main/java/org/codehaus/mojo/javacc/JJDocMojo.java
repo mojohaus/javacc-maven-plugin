@@ -591,6 +591,17 @@ public class JJDocMojo
     class MojoLogStreamConsumer
         implements StreamConsumer
     {
+
+        /**
+         * The line prefix used by JJDoc to report errors.
+         */
+        private static final String ERROR_PREFIX = "Error: ";
+
+        /**
+         * The line prefix used by JJDoc to report warnings.
+         */
+        private static final String WARN_PREFIX = "Warning: ";
+
         /**
          * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
          */
@@ -621,13 +632,13 @@ public class JJDocMojo
          */
         public void consumeLine( String line )
         {
-            if ( line.startsWith( "Error: " ) )
+            if ( line.startsWith( ERROR_PREFIX ) )
             {
-                getLog().error( line.substring( 7 ) );
+                getLog().error( line.substring( ERROR_PREFIX.length() ) );
             }
-            else if ( line.startsWith( "Warning: " ) )
+            else if ( line.startsWith( WARN_PREFIX ) )
             {
-                getLog().warn( line.substring( 9 ) );
+                getLog().warn( line.substring( WARN_PREFIX.length() ) );
             }
             else if ( err )
             {
