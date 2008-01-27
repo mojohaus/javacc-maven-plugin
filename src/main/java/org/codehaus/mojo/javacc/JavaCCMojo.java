@@ -199,21 +199,6 @@ public class JavaCCMojo
     private Boolean tokenManagerUsesParser;
 
     /**
-     * The name of the base class for the generated <code>Token</code>. The default value <code>""</code> means to
-     * extend <code>java.lang.Object</code>.
-     * 
-     * @parameter
-     */
-    private String tokenExtends;
-
-    /**
-     * The name of a user-defined token factory class that provides a
-     * <code>public static Token newToken(int ofKind, String image)</code> method. The default value <code>""</code>
-     * means to use <code>Token.newToken()</code> in order to create new tokens.
-     */
-    private String tokenFactory;
-
-    /**
      * Enables/disables many syntactic and semantic checks on the grammar file during parser generation. Default value
      * is <code>true</code>.
      * 
@@ -494,16 +479,6 @@ public class JavaCCMojo
         if ( tokenManagerUsesParser != null )
         {
             argsList.add( "-TOKEN_MANAGER_USES_PARSER=" + tokenManagerUsesParser );
-        }
-
-        if ( tokenExtends != null )
-        {
-            argsList.add( "-TOKEN_EXTENDS=" + tokenExtends );
-        }
-
-        if ( tokenFactory != null )
-        {
-            argsList.add( "-TOKEN_FACTORY=" + tokenFactory );
         }
 
         if ( sanityCheck != null )
