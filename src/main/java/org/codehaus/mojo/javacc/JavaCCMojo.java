@@ -52,6 +52,15 @@ import org.javacc.parser.Main;
 public class JavaCCMojo
     extends AbstractMojo
 {
+
+    /**
+     * The Java version for which to generate source code. Default value is <code>"1.4"</code>.
+     * 
+     * @parameter expression="${jdkVersion}"
+     * @since 2.4
+     */
+    private String jdkVersion;
+
     /**
      * The number of tokens to look ahead before making a decision at a choice point during parsing. The default value
      * is <code>1</code>.
@@ -395,6 +404,11 @@ public class JavaCCMojo
     {
 
         ArrayList argsList = new ArrayList();
+
+        if ( jdkVersion != null )
+        {
+            argsList.add( "-JDK_VERSION=" + jdkVersion );
+        }
 
         if ( lookAhead != null )
         {

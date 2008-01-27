@@ -52,7 +52,7 @@ public class JJTreeMojo
 {
 
     /**
-     * The Java version for which to generate source code. Default value is <code>1.4</code>.
+     * The Java version for which to generate source code. Default value is <code>"1.4"</code>.
      * 
      * @parameter expression="${jdkVersion}"
      * @since 2.4
