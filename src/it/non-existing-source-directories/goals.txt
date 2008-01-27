@@ -1,0 +1,5 @@
+clean
+javacc:jjtree
+javacc:jtb
+javacc:javacc
+javacc:jjdoc

@@ -319,7 +319,7 @@ public class JavaCCMojo
 
         if ( !sourceDirectory.isDirectory() )
         {
-            getLog().warn( "Source directory '" + sourceDirectory + "' does not exist. Skipping..." );
+            getLog().info( "Skipping non-existing source directory: " + sourceDirectory );
             return;
         }
 

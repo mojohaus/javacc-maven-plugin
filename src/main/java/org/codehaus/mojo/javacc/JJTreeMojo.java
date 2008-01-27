@@ -195,6 +195,12 @@ public class JJTreeMojo
     public void execute()
         throws MojoExecutionException
     {
+        if ( !sourceDirectory.isDirectory() )
+        {
+            getLog().info( "Skipping non-existing source directory: " + sourceDirectory );
+            return;
+        }
+
         if ( nodePackage != null )
         {
             packageName = StringUtils.replace( nodePackage, '.', File.separatorChar );

@@ -38,8 +38,8 @@ import java.util.Set;
 
 /**
  * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically builds
- * the AST. <b>Note: <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires JDK 1.5 and higher. This mojo will
- * not work with earlier versions of the JDK</b>.
+ * the AST. <b>Note: <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires Java 1.5 or higher. This mojo will
+ * not work with earlier versions of the JRE</b>.
  * 
  * @goal jtb
  * @phase generate-sources
@@ -199,11 +199,17 @@ public class JTBMojo
     /**
      * Execute the JTB
      * 
-     * @throws MojoExecutionException if the compilation fails
+     * @throws MojoExecutionException If the compilation fails.
      */
     public void execute()
         throws MojoExecutionException
     {
+        if ( !sourceDirectory.isDirectory() )
+        {
+            getLog().info( "Skipping non-existing source directory: " + sourceDirectory );
+            return;
+        }
+
         if ( packageName != null )
         {
             packagePath = StringUtils.replace( packageName, '.', File.separatorChar );
