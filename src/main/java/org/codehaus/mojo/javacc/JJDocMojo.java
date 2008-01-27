@@ -614,7 +614,7 @@ public class JJDocMojo
          */
         public MojoLogStreamConsumer()
         {
-            this(false);
+            this( false );
         }
 
         /**
