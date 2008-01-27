@@ -40,8 +40,8 @@ import org.codehaus.plexus.util.StringUtils;
 import org.javacc.parser.Main;
 
 /**
- * Parses a javacc (jj) grammar file and transforms it to Java source files. Detailed information about the javacc
- * options can be found on the <a href="https://javacc.dev.java.net/">javacc</a> site.
+ * Parses a JavaCC grammar file (<code>*.jj</code>) and transforms it to Java source files. Detailed information
+ * about the JavaCC options can be found on the <a href="https://javacc.dev.java.net/">JavaCC website</a>.
  * 
  * @goal javacc
  * @phase generate-sources
@@ -54,7 +54,7 @@ public class JavaCCMojo
 {
     /**
      * The number of tokens to look ahead before making a decision at a choice point during parsing. The default value
-     * is 1.
+     * is <code>1</code>.
      * 
      * @parameter expression=${lookAhead}"
      */
@@ -62,7 +62,7 @@ public class JavaCCMojo
 
     /**
      * This is the number of tokens considered in checking choices of the form "A | B | ..." for ambiguity. Default
-     * value is 2.
+     * value is <code>2</code>.
      * 
      * @parameter expression="${choiceAmbiguityCheck}"
      */
@@ -70,81 +70,85 @@ public class JavaCCMojo
 
     /**
      * This is the number of tokens considered in checking all other kinds of choices (i.e., of the forms "(A)*",
-     * "(A)+", and "(A)?") for ambiguity. Default value is 1.
+     * "(A)+", and "(A)?") for ambiguity. Default value is <code>1</code>.
      * 
      * @parameter expression=${otherAmbiguityCheck}"
      */
     private Integer otherAmbiguityCheck;
 
     /**
-     * If true, all methods and class variables are specified as static in the generated parser and token manager. This
-     * allows only one parser object to be present, but it improves the performance of the parser. Default value is
-     * true.
+     * If <code>true</code>, all methods and class variables are specified as static in the generated parser and
+     * token manager. This allows only one parser object to be present, but it improves the performance of the parser.
+     * Default value is <code>true</code>.
      * 
      * @parameter expression=${isStatic}"
      */
     private Boolean isStatic;
 
     /**
-     * This option is used to obtain debugging information from the generated parser. Setting this option to true causes
-     * the parser to generate a trace of its actions. Default value is false.
+     * This option is used to obtain debugging information from the generated parser. Setting this option to
+     * <code>true</code> causes the parser to generate a trace of its actions. Default value is <code>false</code>.
      * 
      * @parameter expression="${debugParser}"
      */
     private Boolean debugParser;
 
     /**
-     * This is a boolean option whose default value is false. Setting this option to true causes the parser to generate
-     * all the tracing information it does when the option DEBUG_PARSER is true, and in addition, also causes it to
-     * generated a trace of actions performed during lookahead operation.
+     * This is a boolean option whose default value is <code>false</code>. Setting this option to <code>true</code>
+     * causes the parser to generate all the tracing information it does when the option <code>debugParser</code> is
+     * <code>true</code>, and in addition, also causes it to generated a trace of actions performed during lookahead
+     * operation.
      * 
      * @parameter expression="${debugLookAhead}"
      */
     private Boolean debugLookAhead;
 
     /**
-     * This option is used to obtain debugging information from the generated token manager. Default value is false.
+     * This option is used to obtain debugging information from the generated token manager. Default value is
+     * <code>false</code>.
      * 
      * @parameter expression="${debugTokenManager}"
      */
     private Boolean debugTokenManager;
 
     /**
-     * Setting it to false causes errors due to parse errors to be reported in somewhat less detail. Default value is
-     * true.
+     * Setting it to <code>false</code> causes errors due to parse errors to be reported in somewhat less detail.
+     * Default value is <code>true</code>.
      * 
      * @parameter expression="${errorReporting}"
      */
     private Boolean errorReporting;
 
     /**
-     * When set to true, the generated parser uses an input stream object that processes Java Unicode escapes (\ u...)
-     * before sending characters to the token manager. Default value is false.
+     * When set to <code>true</code>, the generated parser uses an input stream object that processes Java Unicode
+     * escapes (<code>\</code><code>u</code><i>xxxx</i>) before sending characters to the token manager. Default
+     * value is <code>false</code>.
      * 
      * @parameter expression="${javaUnicodeEscape}"
      */
     private Boolean javaUnicodeEscape;
 
     /**
-     * When set to true, the generated parser uses uses an input stream object that reads Unicode files. By default,
-     * ASCII files are assumed. Default value is false.
+     * When set to <code>true</code>, the generated parser uses uses an input stream object that reads Unicode files.
+     * By default, ASCII files are assumed. Default value is <code>false</code>.
      * 
      * @parameter expression="${unicodeInput}"
      */
     private Boolean unicodeInput;
 
     /**
-     * Setting this option to true causes the generated token manager to ignore case in the token specifications and the
-     * input files. Default value is false.
+     * Setting this option to <code>true</code> causes the generated token manager to ignore case in the token
+     * specifications and the input files. Default value is <code>false</code>.
      * 
      * @parameter expression="${ignoreCase}"
      */
     private Boolean ignoreCase;
 
     /**
-     * When set to true, every call to the token manager's method "getNextToken" (see the description of the Java
-     * Compiler Compiler API) will cause a call to a used defined method "CommonTokenAction" after the token has been
-     * scanned in by the token manager. Default value is false.
+     * When set to <code>true</code>, every call to the token manager's method <code>getNextToken()</code> (see the
+     * description of the <a href="https://javacc.dev.java.net/doc/apiroutines.html">Java Compiler Compiler API</a>)
+     * will cause a call to a user-defined method <code>CommonTokenAction()</code> after the token has been scanned in
+     * by the token manager. Default value is <code>false</code>.
      * 
      * @parameter expression="${commonTokenAction}"
      */
@@ -152,83 +156,90 @@ public class JavaCCMojo
 
     /**
      * The default action is to generate a token manager that works on the specified grammar tokens. If this option is
-     * set to true, then the parser is generated to accept tokens from any token manager of type "TokenManager" - this
-     * interface is generated into the generated parser directory. Default value is false.
+     * set to <code>true</code>, then the parser is generated to accept tokens from any token manager of type
+     * <code>TokenManager</code> - this interface is generated into the generated parser directory. Default value is
+     * <code>false</code>.
      * 
      * @parameter expression="${userTokenManager}"
      */
     private Boolean userTokenManager;
 
     /**
-     * The default action is to generate a character stream reader as specified by the options JAVA_UNICODE_ESCAPE and
-     * UNICODE_INPUT. Default value is false.
+     * This flag controls whether the token manager will read characters from a character stream reader as defined by
+     * the options <code>javaUnicodeEscape</code> and <code>unicodeInput</code> or whether the token manager reads
+     * from a user-supplied implementation of <code>CharStream</code>. Default value is <code>false</code>.
      * 
      * @parameter expression="${userCharStream}"
      */
     private Boolean userCharStream;
 
     /**
-     * The default action is to generate the parser file. Default value is true.
+     * A flag that controls whether the parser file (<code>*Parser.java</code>) should be generated or not. If set
+     * to <code>false</code>, only the token manager is generated. Default value is <code>true</code>.
      * 
      * @parameter expression="${buildParser}"
      */
     private Boolean buildParser;
 
     /**
-     * The default action is to generate the token manager. Default value is true.
+     * A flag that controls whether the token manager file (<code>*TokenManager.java</code>) should be generated or
+     * not. Setting this to <code>false</code> can speed up the generation process if only the parser part of the
+     * grammar changed. Default value is <code>true</code>.
      * 
      * @parameter expression="${buildTokenManager}"
      */
     private Boolean buildTokenManager;
 
     /**
-     * When set to true, the generated token manager will include a field called parser that references the
-     * instantiating parser instance. Default value is false.
+     * When set to <code>true</code>, the generated token manager will include a field called <code>parser</code>
+     * that references the instantiating parser instance. Default value is <code>false</code>.
      * 
      * @parameter
      */
     private Boolean tokenManagerUsesParser;
 
     /**
-     * This is a string option whose default value is "", meaning that the generated Token class will extend
-     * java.lang.Object. This option may be set to the name of a class that will be used as the base class for the
-     * generated Token class.
+     * The name of the base class for the generated <code>Token</code>. The default value <code>""</code> means to
+     * extend <code>java.lang.Object</code>.
      * 
      * @parameter
      */
     private String tokenExtends;
 
     /**
-     * This is a string option whose default value is "", meaning that Tokens will be created by calling
-     * Token.newToken(). If set the option names a Token factory class containing a public static Token newToken(int
-     * ofKind, String image) method.
+     * The name of a user-defined token factory class that provides a
+     * <code>public static Token newToken(int ofKind, String image)</code> method. The default value <code>""</code>
+     * means to use <code>Token.newToken()</code> in order to create new tokens.
      */
     private String tokenFactory;
 
     /**
-     * JavaCC performs many syntactic and semantic checks on the grammar file during parser generation. Default value is
-     * true.
+     * Enables/disables many syntactic and semantic checks on the grammar file during parser generation. Default value
+     * is <code>true</code>.
      * 
      * @parameter expression="${sanityCheck}"
      */
     private Boolean sanityCheck;
 
     /**
-     * This option setting controls lookahead ambiguity checking performed by JavaCC. Default value is false.
+     * This option setting controls lookahead ambiguity checking performed by JavaCC. Default value is
+     * <code>false</code>.
      * 
      * @parameter expression="${forceLaCheck}"
      */
     private Boolean forceLaCheck;
 
     /**
-     * Setting this option to true causes the generated parser to lookahead for extra tokens ahead of time. Default
-     * value is false.
+     * Setting this option to <code>true</code> causes the generated parser to lookahead for extra tokens ahead of
+     * time. Default value is <code>false</code>.
      * 
      * @parameter expression="${cacheTokens}"
      */
     private Boolean cacheTokens;
 
     /**
+     * A flag whether to keep line and column information along with a token. Default value is <code>true</code>.
+     * 
      * @parameter expression="${keepLineColumn}"
      */
     private Boolean keepLineColumn;
@@ -242,7 +253,7 @@ public class JavaCCMojo
     private String packageName;
 
     /**
-     * Directory where the JJ file(s) are located.
+     * The directory where the JavaCC grammar files (<code>*.jj</code>) are located.
      * 
      * @parameter expression="${basedir}/src/main/javacc"
      * @required
@@ -250,7 +261,7 @@ public class JavaCCMojo
     private File sourceDirectory;
 
     /**
-     * Directory where the output Java Files will be located.
+     * The directory where the output Java files will be located.
      * 
      * @parameter expression="${project.build.directory}/generated-sources/javacc"
      * @required
@@ -258,7 +269,7 @@ public class JavaCCMojo
     private File outputDirectory;
 
     /**
-     * The directory to store the processed .jj files
+     * The directory to store the processed input files for later detection of stale sources.
      * 
      * @parameter expression="${project.build.directory}/generated-sources/javacc-timestamp"
      */
@@ -272,14 +283,14 @@ public class JavaCCMojo
     private int staleMillis;
 
     /**
-     * A list of inclusion filters for the compiler.
+     * A set of Ant-like inclusion patterns for the compiler.
      * 
      * @parameter
      */
     private Set includes;
 
     /**
-     * A list of exclusion filters for the compiler.
+     * A set of Ant-like exclusion patterns for the compiler.
      * 
      * @parameter
      */
@@ -293,9 +304,9 @@ public class JavaCCMojo
     private MavenProject project;
 
     /**
-     * Execute the JavaCC compiler
+     * Execute the JavaCC compiler.
      * 
-     * @throws MojoExecutionException if it fails
+     * @throws MojoExecutionException If it fails.
      */
     public void execute()
         throws MojoExecutionException
@@ -388,10 +399,10 @@ public class JavaCCMojo
     }
 
     /**
-     * @param javaccInput a <code>String</code> which rappresent the path of the file to compile
+     * @param javaccInput The path of the file to compile.
      * @param outputDir The output directory for the generated Java files. This path should already contain the package
-     *            hierarchy
-     * @return a <code>String[]</code> that represent the argument to use for JavaCC
+     *            hierarchy.
+     * @return A string array that represents the arguments to use for JavaCC.
      * @throws MojoExecutionException If there is a problem generating the command line arguments.
      */
     private String[] generateJavaCCArgumentList( File javaccInput, File outputDir )
@@ -527,8 +538,8 @@ public class JavaCCMojo
     /**
      * @param sourceDir The source directory to scan for grammar files.
      * @param timestampDir The output directory for timestamp files.
-     * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
-     * @throws MojoExecutionException if it fails
+     * @return A set of <code>File</code> objects to compile.
+     * @throws MojoExecutionException If it fails.
      */
     private Set computeStaleGrammars( File sourceDir, File timestampDir )
         throws MojoExecutionException
