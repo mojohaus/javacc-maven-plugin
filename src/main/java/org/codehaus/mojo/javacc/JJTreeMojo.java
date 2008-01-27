@@ -38,7 +38,9 @@ import org.codehaus.plexus.util.StringUtils;
 import org.javacc.jjtree.JJTree;
 
 /**
- * Parses a JJT grammar file and transforms it to Java source files.
+ * Parses a JJTree grammar file (<code>*.jjt</code>) and transforms it to Java source files and a JavaCC grammar
+ * file. Please see the <a href="https://javacc.dev.java.net/doc/JJTree.html">JJTree Reference Documentation</a> for
+ * more information.
  * 
  * @goal jjtree
  * @phase generate-sources
@@ -50,62 +52,94 @@ public class JJTreeMojo
 {
 
     /**
+     * A flag whether to generate sample implementations for <code>SimpleNode</code> and any other nodes used in the
+     * grammar. Default value is <code>true</code>.
+     * 
      * @parameter expression="${buildNodeFiles}"
      */
     private Boolean buildNodeFiles;
 
     /**
+     * A flag whether to generate a multi mode parse tree or a single mode parse tree. Default value is
+     * <code>false</code>.
+     * 
      * @parameter expression="${multi}"
      */
     private Boolean multi;
 
     /**
+     * A flag whether to make each non-decorated production void instead of an indefinite node. Default value is
+     * <code>false</code>.
+     * 
      * @parameter expression="${nodeDefaultVoid}"
      */
     private Boolean nodeDefaultVoid;
 
     /**
+     * The name of a custom factory class to create <code>Node</code> objects. Default value is <code>""</code>.
+     * 
      * @parameter expression="${nodeFactory}"
      */
     private Boolean nodeFactory;
 
     /**
+     * A flag whether user-defined parser methods should be called on entry and exit of every node scope. Default value
+     * is <code>false</code>.
+     * 
      * @parameter expression="${nodeScopeHook}"
      */
     private Boolean nodeScopeHook;
 
     /**
+     * A flag whether the node construction routines need an additional method parameter to receive the parser object.
+     * Default value is <code>false</code>.
+     * 
      * @parameter expression="${nodeUsesParser}"
      */
     private Boolean nodeUsesParser;
 
     /**
+     * A flag whether to generate code for a static parser. Note that this setting must match the corresponding option
+     * for the <code>javacc</code> mojo. Default value is <code>true</code>.
+     * 
      * @parameter expression="${staticOption}"
      */
     private Boolean staticOption;
 
     /**
+     * A flag whether to insert a <code>jjtAccept()</code> method in the node classes and to generate a visitor
+     * implementation with an entry for every node type used in the grammar. Default value is <code>false</code>.
+     * 
      * @parameter expression="${visitor}"
      */
     private Boolean visitor;
 
     /**
+     * The package to generate the node classes into. Default value is <code>""</code> meaning to use the package of
+     * the corresponding parser.
+     * 
      * @parameter expression="${nodePackage}"
      */
     private String nodePackage;
 
     /**
+     * The name of an exception class to include in the signature of the generated <code>jjtAccept()</code> and
+     * <code>visit()</code> methods. Default value is <code>""</code>.
+     * 
      * @parameter expression="${visitorException}"
      */
     private String visitorException;
 
     /**
+     * The prefix used to construct node class names from node identifiers in multi mode. Default value is
+     * <code>"AST"</code>.
+     * 
      * @parameter expression="${nodePrefix}"
      */
     private String nodePrefix;
 
     /**
-     * Directory where the JJT file(s) are located.
+     * Directory where the input JJTree files (<code>*.jjt</code>) are located.
      * 
      * @parameter expression="${basedir}/src/main/jjtree"
      * @required
@@ -113,7 +147,7 @@ public class JJTreeMojo
     private File sourceDirectory;
 
     /**
-     * Directory where the output Java Files will be located.
+     * Directory where the output Java files for the node classes and the JavaCC grammar file will be located.
      * 
      * @parameter expression="${project.build.directory}/generated-sources/jjtree"
      * @required
@@ -121,42 +155,42 @@ public class JJTreeMojo
     private File outputDirectory;
 
     /**
-     * the directory to store the processed .jjt files
+     * The directory to store the processed input files for later detection of stale sources.
      * 
      * @parameter expression="${project.build.directory}/generated-sources/jjtree-timestamp"
      */
     private File timestampDirectory;
 
     /**
-     * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation
+     * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 
     /**
-     * A list of inclusion filters for the compiler.
+     * A set of Ant-like inclusion patterns for the compiler.
      * 
      * @parameter
      */
     private Set includes;
 
     /**
-     * A list of exclusion filters for the compiler.
+     * A set of Ant-like exclusion patterns for the compiler.
      * 
      * @parameter
      */
     private Set excludes;
 
     /**
-     * Contains the package name to use for the generated code
+     * Contains the package name to use for the generated code.
      */
     private String packageName;
 
     /**
-     * Execute the JJTree
+     * Execute the JJTree preprocessor.
      * 
-     * @throws MojoExecutionException if the compilation fails
+     * @throws MojoExecutionException If the compilation fails.
      */
     public void execute()
         throws MojoExecutionException
@@ -214,10 +248,10 @@ public class JJTreeMojo
     }
 
     /**
-     * Get the output directory for the javacc files.
+     * Get the output directory for the JavaCC files.
      * 
-     * @param jjtreeInput The jjtree file.
-     * @return the directory that will contain the generated code
+     * @param jjtreeInput The path to the JJTree file.
+     * @return The directory that will contain the generated code.
      * @throws MojoExecutionException If there is a problem getting the package name.
      */
     private File getOutputDirectory( String jjtreeInput )
@@ -240,11 +274,11 @@ public class JJTreeMojo
     }
 
     /**
-     * Create the argument list to be passed to jjtree on the command line.
+     * Create the argument list to be passed to JJTree on the command line.
      * 
-     * @param jjTreeFilename a <code>String</code> which rappresent the path of the file to compile
-     * @return a <code>String[]</code> that represent the argument to use for JJTree
-     * @throws MojoExecutionException if it fails.
+     * @param jjTreeFilename A <code>String</code> which represents the path of the file to compile.
+     * @return A string array that represents the arguments to use for JJTree.
+     * @throws MojoExecutionException If it fails.
      */
     private String[] generateArgumentList( String jjTreeFilename )
         throws MojoExecutionException
@@ -317,8 +351,8 @@ public class JJTreeMojo
     }
 
     /**
-     * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
-     * @throws MojoExecutionException if it fails
+     * @return A set of <code>File</code> objects to compile.
+     * @throws MojoExecutionException If it fails.
      */
     private Set computeStaleGrammars()
         throws MojoExecutionException
