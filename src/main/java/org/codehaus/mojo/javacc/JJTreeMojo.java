@@ -80,6 +80,7 @@ public class JJTreeMojo
      * <code>""</code> which means to use <code>SimpleNode</code>.
      * 
      * @parameter expression="${nodeClass}"
+     * @since 2.4
      */
     private String nodeClass;
 
@@ -128,6 +129,7 @@ public class JJTreeMojo
      * entry/exit of a node scope. Default value is <code>false</code>.
      * 
      * @parameter expression="${traceTokens}"
+     * @since 2.4
      */
     private Boolean trackTokens;
 
@@ -152,6 +154,7 @@ public class JJTreeMojo
      * and <code>visit()</code> methods. Default value is <code>"Object"</code>.
      * 
      * @parameter expression="${visitorDataType}"
+     * @since 2.4
      */
     private String visitorDataType;
 
