@@ -258,7 +258,7 @@ public class JTBMojo
             File jtbFile = (File) i.next();
             try
             {
-                JTB.main( generateJTBArgumentList( jtbFile.getAbsolutePath() ) );
+                JTB.main( generateJTBArgumentList( jtbFile ) );
 
                 /*
                  * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
@@ -340,16 +340,16 @@ public class JTBMojo
     }
 
     /**
-     * @param jtbFileName a <code>String</code> which rappresent the path of the file to compile
-     * @return a <code>String[]</code> that represent the argument to use for JTB
+     * @param jtbFile The path of the file to compile.
+     * @return A string array that represents the arguments to use for JTB.
      */
-    private String[] generateJTBArgumentList( String jtbFileName )
+    private String[] generateJTBArgumentList( File jtbFile )
     {
 
         ArrayList argsList = new ArrayList();
 
         argsList.add( "-o" );
-        argsList.add( outputDirectory + File.separator + FileUtils.basename( jtbFileName ) + "jj" );
+        argsList.add( outputDirectory + File.separator + FileUtils.basename( jtbFile.getName() ) + "jj" );
         if ( packageName != null )
         {
             argsList.add( "-p" );
@@ -401,7 +401,7 @@ public class JTBMojo
         {
             argsList.add( "-printer" );
         }
-        argsList.add( jtbFileName );
+        argsList.add( jtbFile.getAbsolutePath() );
 
         getLog().debug( "Using arguments: " + argsList );
 

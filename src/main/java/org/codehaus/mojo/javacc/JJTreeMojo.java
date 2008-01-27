@@ -236,15 +236,15 @@ public class JJTreeMojo
 
         for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
         {
-            File jjTreeFile = (File) i.next();
+            File jjtFile = (File) i.next();
             try
             {
                 JJTree jjtree = new JJTree();
-                jjtree.main( generateArgumentList( jjTreeFile.getAbsolutePath() ) );
+                jjtree.main( generateArgumentList( jjtFile ) );
 
-                URI relativeURI = sourceDirectory.toURI().relativize( jjTreeFile.toURI() );
+                URI relativeURI = sourceDirectory.toURI().relativize( jjtFile.toURI() );
                 File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
-                FileUtils.copyFile( jjTreeFile, timestampFile );
+                FileUtils.copyFile( jjtFile, timestampFile );
             }
             catch ( Exception e )
             {
@@ -254,13 +254,13 @@ public class JJTreeMojo
     }
 
     /**
-     * Get the output directory for the JavaCC files.
+     * Get the output directory for the JJTree files.
      * 
-     * @param jjtreeInput The path to the JJTree file.
+     * @param jjtFile The JJTree input file.
      * @return The directory that will contain the generated code.
      * @throws MojoExecutionException If there is a problem getting the package name.
      */
-    private File getOutputDirectory( String jjtreeInput )
+    private File getOutputDirectory( File jjtFile )
         throws MojoExecutionException
     {
         if ( packageName != null )
@@ -269,7 +269,7 @@ public class JJTreeMojo
         }
         else
         {
-            String declaredPackage = JavaCCUtil.getDeclaredPackage( new File( jjtreeInput ) );
+            String declaredPackage = JavaCCUtil.getDeclaredPackage( jjtFile );
 
             if ( declaredPackage != null )
             {
@@ -282,11 +282,11 @@ public class JJTreeMojo
     /**
      * Create the argument list to be passed to JJTree on the command line.
      * 
-     * @param jjTreeFilename A <code>String</code> which represents the path of the file to compile.
+     * @param jjtFile The path of the file to compile.
      * @return A string array that represents the arguments to use for JJTree.
      * @throws MojoExecutionException If it fails.
      */
-    private String[] generateArgumentList( String jjTreeFilename )
+    private String[] generateArgumentList( File jjtFile )
         throws MojoExecutionException
     {
 
@@ -294,7 +294,7 @@ public class JJTreeMojo
 
         if ( buildNodeFiles != null )
         {
-            argsList.add( "-BUILD_NODE_FILES=" + buildNodeFiles.toString() );
+            argsList.add( "-BUILD_NODE_FILES=" + buildNodeFiles );
         }
 
         if ( multi != null )
@@ -347,9 +347,9 @@ public class JJTreeMojo
             argsList.add( "-VISITOR_EXCEPTION=\'" + visitorException + "\'" );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY:" + getOutputDirectory( jjTreeFilename ) );
+        argsList.add( "-OUTPUT_DIRECTORY:" + getOutputDirectory( jjtFile ) );
 
-        argsList.add( jjTreeFilename );
+        argsList.add( jjtFile.getAbsolutePath() );
 
         getLog().debug( "argslist: " + argsList.toString() );
 
