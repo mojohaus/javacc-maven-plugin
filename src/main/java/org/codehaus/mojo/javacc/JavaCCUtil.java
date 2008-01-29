@@ -22,7 +22,6 @@ package org.codehaus.mojo.javacc;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -47,24 +46,15 @@ public class JavaCCUtil
      * 
      * @param javaccInput the grammar path name
      * @return the package declared in the class code or null if no package is declared.
-     * @throws MojoExecutionException in case of IOException
+     * @throws IOException in case of IOException
      */
     public static String getDeclaredPackage( File javaccInput )
-        throws MojoExecutionException
+        throws IOException
     {
         //
         // Let's read the content of the file first
         //
-        String grammar = null;
-
-        try
-        {
-            grammar = FileUtils.fileRead( javaccInput );
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Unable to read grammar file '" + javaccInput + "'", e );
-        }
+        String grammar = FileUtils.fileRead( javaccInput );
 
         //
         // Note: the way to search this parameter can be much more smart;

@@ -20,6 +20,7 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -279,7 +280,15 @@ public class JJTreeMojo
         }
         else
         {
-            String declaredPackage = JavaCCUtil.getDeclaredPackage( jjtFile );
+            String declaredPackage;
+            try
+            {
+                declaredPackage = JavaCCUtil.getDeclaredPackage( jjtFile );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
+            }
 
             if ( declaredPackage != null )
             {

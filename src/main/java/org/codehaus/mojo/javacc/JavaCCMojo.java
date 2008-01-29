@@ -348,7 +348,14 @@ public class JavaCCMojo
                 String outputPackage = packageName;
                 if ( StringUtils.isEmpty( outputPackage ) )
                 {
-                    outputPackage = JavaCCUtil.getDeclaredPackage( javaccFile );
+                    try
+                    {
+                        outputPackage = JavaCCUtil.getDeclaredPackage( javaccFile );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
+                    }
                 }
                 File outputDirectoryPackage = outputDirectory;
                 if ( outputPackage != null )
