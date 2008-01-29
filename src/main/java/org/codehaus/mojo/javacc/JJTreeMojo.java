@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -245,10 +246,11 @@ public class JJTreeMojo
         for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
         {
             File jjtFile = (File) i.next();
+            File outputDir = getOutputDirectory( jjtFile );
             try
             {
                 JJTree jjtree = new JJTree();
-                jjtree.main( generateArgumentList( jjtFile ) );
+                jjtree.main( generateArgumentList( jjtFile, outputDir ) );
 
                 URI relativeURI = sourceDirectory.toURI().relativize( jjtFile.toURI() );
                 File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
@@ -291,14 +293,13 @@ public class JJTreeMojo
      * Create the argument list to be passed to JJTree on the command line.
      * 
      * @param jjtFile The path of the file to compile.
+     * @param outputDir The output directory for the generated Java files. This path should already contain the package
+     *            hierarchy.
      * @return A string array that represents the arguments to use for JJTree.
-     * @throws MojoExecutionException If it fails.
      */
-    private String[] generateArgumentList( File jjtFile )
-        throws MojoExecutionException
+    private String[] generateArgumentList( File jjtFile, File outputDir )
     {
-
-        ArrayList argsList = new ArrayList();
+        List argsList = new ArrayList();
 
         if ( jdkVersion != null )
         {
@@ -360,7 +361,7 @@ public class JJTreeMojo
             argsList.add( "-VISITOR_EXCEPTION=\'" + visitorException + "\'" );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY=" + getOutputDirectory( jjtFile ) );
+        argsList.add( "-OUTPUT_DIRECTORY=" + outputDir );
 
         argsList.add( jjtFile.getAbsolutePath() );
 

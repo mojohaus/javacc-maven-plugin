@@ -330,7 +330,7 @@ public class JJDocMojo
                     File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
                     jjdocOutputFile.getParentFile().mkdirs();
 
-                    String[] jjdocArgs = generateArgs( grammarFile, jjdocOutputFile );
+                    String[] jjdocArgs = generateArgumentList( grammarFile, jjdocOutputFile );
 
                     // Fork jjdoc because of calls to System.exit().
                     forkJJDoc( jjdocArgs );
@@ -447,9 +447,9 @@ public class JJDocMojo
      * @param outputFile The path to the report output.
      * @return An array of the parameters.
      */
-    private String[] generateArgs( File javaccFile, File outputFile )
+    private String[] generateArgumentList( File javaccFile, File outputFile )
     {
-        ArrayList argsList = new ArrayList();
+        List argsList = new ArrayList();
 
         argsList.add( "-OUTPUT_FILE=" + outputFile );
 
@@ -457,10 +457,12 @@ public class JJDocMojo
         {
             argsList.add( "-TEXT=true" );
         }
+
         if ( !this.oneTable )
         {
             argsList.add( "-ONE_TABLE=false" );
         }
+
         argsList.add( javaccFile.getPath() );
 
         return (String[]) argsList.toArray( new String[argsList.size()] );

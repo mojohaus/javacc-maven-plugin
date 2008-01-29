@@ -34,6 +34,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -258,7 +259,7 @@ public class JTBMojo
             File jtbFile = (File) i.next();
             try
             {
-                JTB.main( generateJTBArgumentList( jtbFile ) );
+                JTB.main( generateArgumentList( jtbFile ) );
 
                 /*
                  * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
@@ -343,10 +344,9 @@ public class JTBMojo
      * @param jtbFile The path of the file to compile.
      * @return A string array that represents the arguments to use for JTB.
      */
-    private String[] generateJTBArgumentList( File jtbFile )
+    private String[] generateArgumentList( File jtbFile )
     {
-
-        ArrayList argsList = new ArrayList();
+        List argsList = new ArrayList();
 
         argsList.add( "-o" );
         argsList.add( outputDirectory + File.separator + FileUtils.basename( jtbFile.getName() ) + "jj" );

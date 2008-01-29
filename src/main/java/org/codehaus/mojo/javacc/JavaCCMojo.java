@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -373,7 +374,7 @@ public class JavaCCMojo
 
                 try
                 {
-                    Main.mainProgram( generateJavaCCArgumentList( javaccFile, outputDirectoryPackage ) );
+                    Main.mainProgram( generateArgumentList( javaccFile, outputDirectoryPackage ) );
 
                     URI relativeURI = sourceDirectory.toURI().relativize( javaccFile.toURI() );
                     File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
@@ -397,13 +398,10 @@ public class JavaCCMojo
      * @param outputDir The output directory for the generated Java files. This path should already contain the package
      *            hierarchy.
      * @return A string array that represents the arguments to use for JavaCC.
-     * @throws MojoExecutionException If there is a problem generating the command line arguments.
      */
-    private String[] generateJavaCCArgumentList( File javaccInput, File outputDir )
-        throws MojoExecutionException
+    private String[] generateArgumentList( File javaccInput, File outputDir )
     {
-
-        ArrayList argsList = new ArrayList();
+        List argsList = new ArrayList();
 
         if ( jdkVersion != null )
         {
