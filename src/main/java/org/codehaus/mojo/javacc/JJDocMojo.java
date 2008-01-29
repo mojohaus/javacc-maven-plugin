@@ -453,15 +453,9 @@ public class JJDocMojo
 
         argsList.add( "-OUTPUT_FILE=" + outputFile );
 
-        if ( this.text )
-        {
-            argsList.add( "-TEXT=true" );
-        }
+        argsList.add( "-TEXT=" + this.text );
 
-        if ( !this.oneTable )
-        {
-            argsList.add( "-ONE_TABLE=false" );
-        }
+        argsList.add( "-ONE_TABLE=" + this.oneTable );
 
         argsList.add( javaccFile.getPath() );
 
@@ -571,7 +565,7 @@ public class JJDocMojo
         }
         catch ( CommandLineException e )
         {
-            throw new MojoExecutionException( "Error while executing forked tests.", e );
+            throw new MojoExecutionException( "Error while executing forked JJDoc.", e );
         }
 
     }
