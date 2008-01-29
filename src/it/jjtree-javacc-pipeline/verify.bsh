@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-import java.util.jar.*;
 import org.codehaus.plexus.util.*;
 
 try
@@ -21,9 +20,9 @@ try
         return false;
     }
 }
-catch( Throwable e )
+catch( Throwable t )
 {
-    System.err.println(e);
+    t.printStackTrace();
     return false;
 }
 
