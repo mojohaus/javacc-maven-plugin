@@ -274,28 +274,15 @@ public class JJTreeMojo
     private File getOutputDirectory( File jjtFile )
         throws MojoExecutionException
     {
-        if ( packageName != null )
+        try
         {
-            return new File( outputDirectory, packageName );
+            GrammarInfo info = new GrammarInfo( jjtFile, this.packageName );
+            return new File( this.outputDirectory, info.getPackageDirectory().getPath() );
         }
-        else
+        catch ( IOException e )
         {
-            String declaredPackage;
-            try
-            {
-                declaredPackage = JavaCCUtil.getDeclaredPackage( jjtFile );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
-            }
-
-            if ( declaredPackage != null )
-            {
-                return new File( outputDirectory, declaredPackage );
-            }
+            throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
         }
-        return outputDirectory;
     }
 
     /**
