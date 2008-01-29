@@ -343,36 +343,19 @@ public class JavaCCMojo
         {
             for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
             {
-                File javaccFile = (File) i.next();
+                File jjFile = (File) i.next();
 
-                String outputPackage = packageName;
-                if ( StringUtils.isEmpty( outputPackage ) )
+                File outputDir = getOutputDirectory( jjFile );
+                if ( !outputDir.exists() )
                 {
-                    try
-                    {
-                        outputPackage = JavaCCUtil.getDeclaredPackage( javaccFile );
-                    }
-                    catch ( IOException e )
-                    {
-                        throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
-                    }
-                }
-                File outputDirectoryPackage = outputDirectory;
-                if ( outputPackage != null )
-                {
-                    outputDirectoryPackage = new File( outputDirectory, outputPackage );
-                }
-                if ( !outputDirectoryPackage.exists() )
-                {
-                    outputDirectoryPackage.mkdirs();
+                    outputDir.mkdirs();
                 }
 
                 // Copy all .java files from sourceDirectory to outputDirectory, in
                 // order to prevent regeneration of customized Token.java or similar
                 try
                 {
-                    FileUtils.copyDirectory( javaccFile.getParentFile(), outputDirectoryPackage, "*.java",
-                                             "*.jj,*.JJ" );
+                    FileUtils.copyDirectory( jjFile.getParentFile(), outputDir, "*.java", "*.jj,*.JJ" );
                 }
                 catch ( IOException e )
                 {
@@ -381,11 +364,11 @@ public class JavaCCMojo
 
                 try
                 {
-                    Main.mainProgram( generateArgumentList( javaccFile, outputDirectoryPackage ) );
+                    Main.mainProgram( generateArgumentList( jjFile, outputDir ) );
 
-                    URI relativeURI = sourceDirectory.toURI().relativize( javaccFile.toURI() );
+                    URI relativeURI = sourceDirectory.toURI().relativize( jjFile.toURI() );
                     File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
-                    FileUtils.copyFile( javaccFile, timestampFile );
+                    FileUtils.copyFile( jjFile, timestampFile );
                 }
                 catch ( Exception e )
                 {
@@ -398,6 +381,40 @@ public class JavaCCMojo
         {
             project.addCompileSourceRoot( outputDirectory.getPath() );
         }
+    }
+
+    /**
+     * Get the output directory for the Java files.
+     * 
+     * @param jjFile The JavaCC input file.
+     * @return The directory that will contain the generated code.
+     * @throws MojoExecutionException If there is a problem getting the package name.
+     */
+    private File getOutputDirectory( File jjFile )
+        throws MojoExecutionException
+    {
+        if ( packageName != null )
+        {
+            return new File( outputDirectory, packageName );
+        }
+        else
+        {
+            String declaredPackage;
+            try
+            {
+                declaredPackage = JavaCCUtil.getDeclaredPackage( jjFile );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
+            }
+
+            if ( declaredPackage != null )
+            {
+                return new File( outputDirectory, declaredPackage );
+            }
+        }
+        return outputDirectory;
     }
 
     /**

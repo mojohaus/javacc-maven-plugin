@@ -265,7 +265,7 @@ public class JJTreeMojo
     }
 
     /**
-     * Get the output directory for the JJTree files.
+     * Get the output directory for the JavaCC files.
      * 
      * @param jjtFile The JJTree input file.
      * @return The directory that will contain the generated code.
