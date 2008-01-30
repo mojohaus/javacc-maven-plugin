@@ -40,8 +40,9 @@
     </menu>
     <menu name="References">
       <item name="JavaCC" href="https://javacc.dev.java.net/"/>
-      <item name="JJDoc" href="https://javacc.dev.java.net/doc/JJDoc.html"/>
+      <item name="JJTree" href="https://javacc.dev.java.net/doc/JJTree.html"/>
       <item name="JTB" href="http://compilers.cs.ucla.edu/jtb/"/>
+      <item name="JJDoc" href="https://javacc.dev.java.net/doc/JJDoc.html"/>
     </menu>
   </body>
 </project>
