@@ -25,7 +25,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 /**
- * Tests {@link GrammarInfo}.
+ * Tests <code>GrammarInfo</code>.
  * 
  * @author Benjamin Bentmann
  * @version $Id$

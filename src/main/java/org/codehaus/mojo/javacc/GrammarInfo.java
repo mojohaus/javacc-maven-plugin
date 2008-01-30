@@ -232,7 +232,7 @@ class GrammarInfo
      */
     public String toString()
     {
-        return String.valueOf( getParserFile() );
+        return getGrammarFile() + " -> " + getParserFile();
     }
 
 }
