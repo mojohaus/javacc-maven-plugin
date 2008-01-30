@@ -37,6 +37,11 @@ class GrammarInfo
 {
 
     /**
+     * The absolute path to the grammar file.
+     */
+    private final File grammarFile;
+
+    /**
      * The declared package for the generated parser (e.g. "org.apache").
      */
     private final String packageName;
@@ -59,42 +64,44 @@ class GrammarInfo
     /**
      * Creates a new info from the specified grammar file.
      * 
-     * @param grammarFile The absolute path to the grammar file, must not be <code>null</code>.
+     * @param inputFile The absolute path to the grammar file, must not be <code>null</code>.
      * @throws IOException If reading the grammar file failed.
      */
-    public GrammarInfo( File grammarFile )
+    public GrammarInfo( File inputFile )
         throws IOException
     {
-        this( grammarFile, (File) null );
+        this( inputFile, (File) null );
     }
 
     /**
      * Creates a new info from the specified grammar file.
      * 
-     * @param grammarFile The absolute path to the grammar file, must not be <code>null</code>.
+     * @param inputFile The absolute path to the grammar file, must not be <code>null</code>.
      * @param packageDir The relative directory path for the generated parser, may be <code>null</code> to use the
      *            package declaration from the grammar file.
      * @throws IOException If reading the grammar file failed.
      */
-    public GrammarInfo( File grammarFile, String packageDir )
+    public GrammarInfo( File inputFile, String packageDir )
         throws IOException
     {
-        this( grammarFile, ( packageDir != null ) ? new File( packageDir ) : null );
+        this( inputFile, ( packageDir != null ) ? new File( packageDir ) : null );
     }
 
     /**
      * Creates a new info from the specified grammar file.
      * 
-     * @param grammarFile The absolute path to the grammar file, must not be <code>null</code>.
+     * @param inputFile The absolute path to the grammar file, must not be <code>null</code>.
      * @param packageDir The relative directory path for the generated parser, may be <code>null</code> to use the
      *            package declaration from the grammar file.
      * @throws IOException If reading the grammar file failed.
      */
-    public GrammarInfo( File grammarFile, File packageDir )
+    public GrammarInfo( File inputFile, File packageDir )
         throws IOException
     {
+        this.grammarFile = inputFile;
+
         // NOTE: JavaCC uses the platform default encoding to read files, so must we
-        String grammar = FileUtils.fileRead( grammarFile );
+        String grammar = FileUtils.fileRead( this.grammarFile );
 
         if ( packageDir == null )
         {
@@ -114,7 +121,7 @@ class GrammarInfo
         String name = findParserName( grammar );
         if ( name.length() <= 0 )
         {
-            this.parserName = FileUtils.removeExtension( grammarFile.getName() );
+            this.parserName = FileUtils.removeExtension( this.grammarFile.getName() );
         }
         else
         {
@@ -163,6 +170,16 @@ class GrammarInfo
             return matcher.group( 1 );
         }
         return "";
+    }
+
+    /**
+     * Gets the absolute path to the grammar file.
+     * 
+     * @return The absolute path to the grammar file.
+     */
+    public File getGrammarFile()
+    {
+        return this.grammarFile;
     }
 
     /**

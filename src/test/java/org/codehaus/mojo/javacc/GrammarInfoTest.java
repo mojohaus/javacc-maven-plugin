@@ -49,6 +49,14 @@ public class GrammarInfoTest
         }
     }
 
+    public void testGetGrammarFile()
+        throws Exception
+    {
+        File grammarFile = new File( getClass().getResource( "/Parser1.jj" ).toURI() );
+        GrammarInfo info = new GrammarInfo( grammarFile );
+        assertEquals( grammarFile, info.getGrammarFile() );
+    }
+
     public void testGetPackageNameDeclaredPackageOverwrite()
         throws Exception
     {
