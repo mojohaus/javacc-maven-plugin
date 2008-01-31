@@ -21,10 +21,10 @@ JJTree Examples
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
+        <version>2.4</version>
         <executions>
           <execution>
             <id>jjtree-execution</id>
-            <phase>generate-sources</phase>
             <goals>
               <goal>jjtree</goal>
             </goals>
@@ -34,7 +34,6 @@ JJTree Examples
           </execution>
           <execution>
             <id>javacc-execution</id>
-            <phase>generate-sources</phase>
             <goals>
               <goal>javacc</goal>
             </goals>
