@@ -259,6 +259,8 @@ public class JTBMojo
         for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
         {
             File jtbFile = (File) i.next();
+            String nodePackage = getNodePackageName();
+            String visitorPackage = getVisitorPackageName();
             try
             {
                 JTB.main( generateArgumentList( jtbFile ) );
@@ -267,66 +269,8 @@ public class JTBMojo
                  * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
                  * therefore, the files must be moved to the correct locations.
                  */
-                File tempDir;
-                File newDir;
-                if ( packagePath != null )
-                {
-                    tempDir = new File( workingDirectory, "syntaxtree" );
-                    newDir = new File( outputDirectory + File.separator + packagePath + File.separator + "syntaxtree" );
-                    newDir.mkdirs();
-
-                    getLog().debug( "Moving " + tempDir + " to " + newDir );
-                    tempDir.renameTo( newDir );
-
-                    tempDir = new File( workingDirectory, "visitor" );
-                    newDir = new File( outputDirectory + File.separator + packagePath + File.separator + "visitor" );
-                    newDir.mkdirs();
-
-                    getLog().debug( "Moving " + tempDir + " to " + newDir );
-                    tempDir.renameTo( newDir );
-                }
-                else
-                {
-                    if ( nodePackagePath != null )
-                    {
-                        tempDir = new File( workingDirectory, nodePackagePath.substring( nodePackagePath
-                                .lastIndexOf( File.separator ) + 1 ) );
-                        newDir = new File( outputDirectory + File.separator + nodePackagePath );
-                        newDir.mkdirs();
-
-                        getLog().debug( "Moving " + tempDir + " to " + newDir );
-                        tempDir.renameTo( newDir );
-                    }
-                    else
-                    {
-                        tempDir = new File( workingDirectory, "syntaxtree" );
-                        newDir = new File( outputDirectory + File.separator + "syntaxtree" );
-                        newDir.mkdirs();
-
-                        getLog().debug( "Moving " + tempDir + " to " + newDir );
-                        tempDir.renameTo( newDir );
-                    }
-
-                    if ( visitorPackagePath != null )
-                    {
-                        tempDir = new File( workingDirectory, visitorPackagePath.substring( visitorPackagePath
-                                .lastIndexOf( File.separator ) + 1 ) );
-                        newDir = new File( outputDirectory + File.separator + visitorPackagePath );
-                        newDir.mkdirs();
-
-                        getLog().debug( "Moving " + tempDir + " to " + newDir );
-                        tempDir.renameTo( newDir );
-                    }
-                    else
-                    {
-                        tempDir = new File( workingDirectory, "visitor" );
-                        newDir = new File( outputDirectory + File.separator + "visitor" );
-                        newDir.mkdirs();
-
-                        getLog().debug( "Moving " + tempDir + " to " + newDir );
-                        tempDir.renameTo( newDir );
-                    }
-                }
+                movePackage( nodePackage );
+                movePackage( visitorPackage );
 
                 FileUtils.copyFileToDirectory( jtbFile, timestampDirectory );
             }
@@ -340,6 +284,119 @@ public class JTBMojo
             project.addCompileSourceRoot( outputDirectory.getPath() );
         }
 
+    }
+
+    /**
+     * Gets the effective package name for the AST node files.
+     * 
+     * @return The effective package name for the AST node files.
+     */
+    private String getNodePackageName()
+    {
+        if ( this.packageName != null )
+        {
+            return this.packageName + ".syntaxtree";
+        }
+        else if ( this.nodePackageName == null )
+        {
+            return "syntaxtree";
+        }
+        else
+        {
+            return this.nodePackageName;
+        }
+    }
+
+    /**
+     * Gets the effective package name for the visitor files.
+     * 
+     * @return The effective package name for the visitor files.
+     */
+    private String getVisitorPackageName()
+    {
+        if ( this.packageName != null )
+        {
+            return this.packageName + ".visitor";
+        }
+        else if ( this.visitorPackageName == null )
+        {
+            return "visitor";
+        }
+        else
+        {
+            return this.visitorPackageName;
+        }
+    }
+
+    /**
+     * Moves the specified output package from JTB to the given target directory. JTB assumes that the current working
+     * directory represents the parent package of the configured node/visitor package.
+     * 
+     * @param pkgName The qualified name of the package to move, must not be <code>null</code>.
+     * @throws MojoExecutionException If the move failed.
+     */
+    private void movePackage( String pkgName )
+        throws MojoExecutionException
+    {
+        String pkgPath = pkgName.replace( '.', File.separatorChar );
+        String subDir = pkgPath.substring( pkgPath.lastIndexOf( File.separatorChar ) + 1 );
+        File sourceDir = new File( this.workingDirectory, subDir );
+        File targetDir = new File( this.outputDirectory, pkgPath );
+        moveDirectory( sourceDir, targetDir );
+    }
+
+    /**
+     * Moves all JTB output files from the specified source directory to the given target directory. Existing files in
+     * the target directory will be overwritten. Note that this move assumes a flat source directory, i.e. copying of
+     * sub directories is not supported.<br/><br/>This method must be used instead of
+     * {@link java.io.File#renameTo(java.io.File)} which would fail if the target directory already existed (at least on
+     * Windows).
+     * 
+     * @param sourceDir The absolute path to the source directory, must not be <code>null</code>.
+     * @param targetDir The absolute path to the target directory, must not be <code>null</code>.
+     * @throws MojoExecutionException If the move failed.
+     */
+    private void moveDirectory( File sourceDir, File targetDir )
+        throws MojoExecutionException
+    {
+        getLog().debug( "Moving JTB output files: " + sourceDir + " -> " + targetDir );
+        /*
+         * NOTE: The source directory might be the current working directory if JTB was told to output into the default
+         * package. The current working directory might be quite anything and will likely contain sub directories not
+         * created by JTB. Therefore, we do a defensive move and only delete the expected Java source files.
+         */
+        File[] sourceFiles = sourceDir.listFiles();
+        for ( int i = 0; i < sourceFiles.length; i++ )
+        {
+            File sourceFile = sourceFiles[i];
+            if ( sourceFile.isFile() && sourceFile.getName().endsWith( ".java" ) )
+            {
+                try
+                {
+                    FileUtils.copyFileToDirectory( sourceFile, targetDir );
+                    if ( !sourceFile.delete() )
+                    {
+                        getLog().error( "Failed to delete original JTB output file: " + sourceFile );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    throw new MojoExecutionException( "Failed to move JTB output file: " + sourceFile + " -> "
+                        + targetDir );
+                }
+            }
+        }
+        if ( sourceDir.list().length <= 0 )
+        {
+            if ( !sourceDir.delete() )
+            {
+                getLog().error( "Failed to delete original JTB output directory: " + sourceDir );
+            }
+        }
+        else
+        {
+            getLog().debug( "Keeping non empty JTB output directory: " + sourceDir );
+        }
     }
 
     /**
