@@ -110,7 +110,7 @@ public class JJDocMojo
     /**
      * The default source directory for grammar files.
      * 
-     * @parameter expression="${basedir}/src/main/javacc"
+     * @parameter default-value="${basedir}/src/main/javacc"
      * @readonly
      */
     private File defaultSourceDirectory;
@@ -118,7 +118,7 @@ public class JJDocMojo
     /**
      * The default source directory for generated grammar files.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/jjtree"
+     * @parameter default-value="${project.build.directory}/generated-sources/jjtree"
      * @readonly
      */
     private File defaultGeneratedSourceDirectory;
@@ -137,8 +137,7 @@ public class JJDocMojo
      * indirectly as part of a site generation, the output directory configured in the Maven Site Plugin is used
      * instead.
      * 
-     * @parameter expression="${project.reporting.outputDirectory}"
-     * @required
+     * @parameter expression="${outputDirectory}" default-value="${project.reporting.outputDirectory}"
      */
     private File outputDirectory;
 

@@ -250,23 +250,22 @@ public class JavaCCMojo
     /**
      * The directory where the JavaCC grammar files (<code>*.jj</code>) are located.
      * 
-     * @parameter expression="${basedir}/src/main/javacc"
-     * @required
+     * @parameter expression="${sourceDirectory}" default-value="${basedir}/src/main/javacc"
      */
     private File sourceDirectory;
 
     /**
      * The directory where the output Java files will be located.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/javacc"
-     * @required
+     * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/javacc"
      */
     private File outputDirectory;
 
     /**
      * The directory to store the processed input files for later detection of stale sources.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/javacc-timestamp"
+     * @parameter expression="${timestampDirectory}"
+     *            default-value="${project.build.directory}/generated-sources/javacc-timestamp"
      */
     private File timestampDirectory;
 

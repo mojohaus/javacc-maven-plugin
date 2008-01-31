@@ -10,7 +10,7 @@
   <packaging>maven-plugin</packaging>
   <name>Maven 2 Javacc Plugin</name>
   <version>2.4-SNAPSHOT</version>
-  <description>Maven 2 Plugin for processing javacc files.</description>
+  <description>Maven 2 Plugin for processing JavaCC grammar files.</description>
   <url>http://mojo.codehaus.org/javacc-maven-plugin/</url>
   <inceptionYear>2005</inceptionYear>
   

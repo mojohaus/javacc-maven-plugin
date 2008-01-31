@@ -151,23 +151,22 @@ public class JJTreeMojo
     /**
      * Directory where the input JJTree files (<code>*.jjt</code>) are located.
      * 
-     * @parameter expression="${basedir}/src/main/jjtree"
-     * @required
+     * @parameter expression="${sourceDirectory}" default-value="${basedir}/src/main/jjtree"
      */
     private File sourceDirectory;
 
     /**
      * Directory where the output Java files for the node classes and the JavaCC grammar file will be located.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/jjtree"
-     * @required
+     * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/jjtree"
      */
     private File outputDirectory;
 
     /**
      * The directory to store the processed input files for later detection of stale sources.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/jjtree-timestamp"
+     * @parameter expression="${timestampDirectory}"
+     *            default-value="${project.build.directory}/generated-sources/jjtree-timestamp"
      */
     private File timestampDirectory;
 

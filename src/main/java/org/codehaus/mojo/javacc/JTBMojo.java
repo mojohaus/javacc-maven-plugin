@@ -156,23 +156,22 @@ public class JTBMojo
     /**
      * Directory where the JTB file(s) are located.
      * 
-     * @parameter expression="${basedir}/src/main/jtb"
-     * @required
+     * @parameter expression="${sourceDirectory}" default-value="${basedir}/src/main/jtb"
      */
     private File sourceDirectory;
 
     /**
      * Directory where the output Java Files will be located.
      * 
-     * @parameter expression="${project.build.directory}/generated-sources/jtb"
-     * @required
+     * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/jtb"
      */
     private File outputDirectory;
 
     /**
      * the directory to store the resulting JavaCC grammar(s)
      * 
-     * @parameter expression="${basedir}/target"
+     * @parameter expression="${timestampDirectory}"
+     *            default-value="${project.build.directory}/generated-sources/jtb-timestamp"
      */
     private File timestampDirectory;
 
@@ -308,7 +307,7 @@ public class JTBMojo
                     if ( visitorPackagePath != null )
                     {
                         tempDir = new File( baseDir, visitorPackagePath.substring( visitorPackagePath
-                                .lastIndexOf( File.separator ) + 1) );
+                                .lastIndexOf( File.separator ) + 1 ) );
                         newDir = new File( outputDirectory + File.separator + visitorPackagePath );
                         newDir.mkdirs();
 
