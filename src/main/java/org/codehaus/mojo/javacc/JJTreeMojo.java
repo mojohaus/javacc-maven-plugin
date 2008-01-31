@@ -251,7 +251,11 @@ public class JJTreeMojo
             try
             {
                 JJTree jjtree = new JJTree();
-                jjtree.main( generateArgumentList( jjtFile, outputDir ) );
+                int exitCode = jjtree.main( generateArgumentList( jjtFile, outputDir ) );
+                if ( exitCode != 0 )
+                {
+                    throw new MojoExecutionException( "JJTree reported non-zero exit code: " + exitCode );
+                }
 
                 URI relativeURI = sourceDirectory.toURI().relativize( jjtFile.toURI() );
                 File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );

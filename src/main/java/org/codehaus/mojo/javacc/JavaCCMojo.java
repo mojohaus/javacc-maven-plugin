@@ -364,7 +364,11 @@ public class JavaCCMojo
 
                 try
                 {
-                    Main.mainProgram( generateArgumentList( jjFile, outputDir ) );
+                    int exitCode = Main.mainProgram( generateArgumentList( jjFile, outputDir ) );
+                    if ( exitCode != 0 )
+                    {
+                        throw new MojoExecutionException( "JavaCC reported non-zero exit code: " + exitCode );
+                    }
 
                     URI relativeURI = sourceDirectory.toURI().relativize( jjFile.toURI() );
                     File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
