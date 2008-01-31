@@ -190,11 +190,14 @@ public class JTBMojo
     private MavenProject project;
 
     /**
-     * @parameter expression="${basedir}"
+     * The current working directory. Unfortunately, JTB always outputs in this directory so we need it to find the
+     * generated files.
+     * 
+     * @parameter expression="${user.dir}"
      * @required
      * @readonly
      */
-    private File baseDir;
+    private File workingDirectory;
 
     /**
      * Execute the JTB
@@ -268,14 +271,14 @@ public class JTBMojo
                 File newDir;
                 if ( packagePath != null )
                 {
-                    tempDir = new File( baseDir, "syntaxtree" );
+                    tempDir = new File( workingDirectory, "syntaxtree" );
                     newDir = new File( outputDirectory + File.separator + packagePath + File.separator + "syntaxtree" );
                     newDir.mkdirs();
 
                     getLog().debug( "Moving " + tempDir + " to " + newDir );
                     tempDir.renameTo( newDir );
 
-                    tempDir = new File( baseDir, "visitor" );
+                    tempDir = new File( workingDirectory, "visitor" );
                     newDir = new File( outputDirectory + File.separator + packagePath + File.separator + "visitor" );
                     newDir.mkdirs();
 
@@ -286,7 +289,7 @@ public class JTBMojo
                 {
                     if ( nodePackagePath != null )
                     {
-                        tempDir = new File( baseDir, nodePackagePath.substring( nodePackagePath
+                        tempDir = new File( workingDirectory, nodePackagePath.substring( nodePackagePath
                                 .lastIndexOf( File.separator ) + 1 ) );
                         newDir = new File( outputDirectory + File.separator + nodePackagePath );
                         newDir.mkdirs();
@@ -296,7 +299,7 @@ public class JTBMojo
                     }
                     else
                     {
-                        tempDir = new File( baseDir, "syntaxtree" );
+                        tempDir = new File( workingDirectory, "syntaxtree" );
                         newDir = new File( outputDirectory + File.separator + "syntaxtree" );
                         newDir.mkdirs();
 
@@ -306,7 +309,7 @@ public class JTBMojo
 
                     if ( visitorPackagePath != null )
                     {
-                        tempDir = new File( baseDir, visitorPackagePath.substring( visitorPackagePath
+                        tempDir = new File( workingDirectory, visitorPackagePath.substring( visitorPackagePath
                                 .lastIndexOf( File.separator ) + 1 ) );
                         newDir = new File( outputDirectory + File.separator + visitorPackagePath );
                         newDir.mkdirs();
@@ -316,7 +319,7 @@ public class JTBMojo
                     }
                     else
                     {
-                        tempDir = new File( baseDir, "visitor" );
+                        tempDir = new File( workingDirectory, "visitor" );
                         newDir = new File( outputDirectory + File.separator + "visitor" );
                         newDir.mkdirs();
 
