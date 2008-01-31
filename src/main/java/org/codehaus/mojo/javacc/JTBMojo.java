@@ -288,7 +288,7 @@ public class JTBMojo
                     if ( nodePackagePath != null )
                     {
                         tempDir = new File( baseDir, nodePackagePath.substring( nodePackagePath
-                                .lastIndexOf( File.separator ) ) );
+                                .lastIndexOf( File.separator ) + 1 ) );
                         newDir = new File( outputDirectory + File.separator + nodePackagePath );
                         newDir.mkdirs();
 
@@ -308,7 +308,7 @@ public class JTBMojo
                     if ( visitorPackagePath != null )
                     {
                         tempDir = new File( baseDir, visitorPackagePath.substring( visitorPackagePath
-                                .lastIndexOf( File.separator ) ) );
+                                .lastIndexOf( File.separator ) + 1) );
                         newDir = new File( outputDirectory + File.separator + visitorPackagePath );
                         newDir.mkdirs();
 
