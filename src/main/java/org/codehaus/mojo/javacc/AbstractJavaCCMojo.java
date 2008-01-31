@@ -21,13 +21,13 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.util.DirectoryScanner;
+import org.apache.maven.plugin.MojoFailureException;
+import org.javacc.parser.Main;
 
 /**
  * Exposes all JavaCC options as mojo parameters such that subclasses can share this boilerplate code.
@@ -248,110 +248,39 @@ public abstract class AbstractJavaCCMojo
     }
 
     /**
-     * Gets the grammar information for the specified file.
+     * Runs JavaCC on the specified grammar file to generate a parser file. The options for JavaCC are derived from the
+     * current values of the corresponding mojo parameters.
      * 
-     * @param grammarFile The absolute path to the grammar file, must not be <code>null</code>.
-     * @return The grammar information for the specified file.
-     * @throws MojoExecutionException If the grammar file could not be read.
+     * @param jjFile The absolute path to the grammar file to pass into JavaCC for compilation, must not be
+     *            <code>null</code>.
+     * @param parserDirectory The absolute path to the output directory for the generated parser file, must not be
+     *            <code>null</code>. Note that this path should already include the desired package hierarchy because
+     *            JavaCC will not append the required sub directories automatically.
+     * @throws MojoExecutionException If JavaCC could not be invoked.
+     * @throws MojoFailureException If JavaCC reported a non-zero exit code.
      */
-    private GrammarInfo getGrammarInfo( File grammarFile )
-        throws MojoExecutionException
+    protected void runJavaCC( File jjFile, File parserDirectory )
+        throws MojoExecutionException, MojoFailureException
     {
+        int exitCode;
         try
         {
-            return new GrammarInfo( grammarFile );
+            String[] args = generateArgumentsForJavaCC( jjFile, parserDirectory );
+            getLog().debug( "Running JavaCC: " + Arrays.asList( args ) );
+            if ( !parserDirectory.exists() )
+            {
+                parserDirectory.mkdirs();
+            }
+            exitCode = Main.mainProgram( args );
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Failed to extract metadata from grammar: " + grammarFile, e );
+            throw new MojoExecutionException( "Failed to execute JavaCC", e );
         }
-    }
-
-    /**
-     * Scans the specified source directory recursively for grammar files.
-     * 
-     * @param sourceDirectory The absolute path to the source directory to scan, must not be <code>null</code>.
-     * @param outputDirectory The absolute path to the output directory used to detect stale target files by timestamp
-     *            checking, may be <code>null</code> if no stale detection should be performed.
-     * @param includes The set of Ant-like inclusion patterns, may be <code>null</code> to include all grammar files
-     *            (*.jj, *.jjt).
-     * @param excludes The set of Ant-like exclusion patterns, may be <code>null</code> to exclude no files.
-     * @param staleMillis The granularity in milliseconds of the last modification date for testing whether a grammar
-     *            file needs recompilation because its corresponding target file is stale.
-     * @return An array of grammar infos describing the found grammar files, never <code>null</code>.
-     * @throws MojoExecutionException If the source directory could not be scanned.
-     */
-    protected GrammarInfo[] scanForGrammarFiles( File sourceDirectory, File outputDirectory, String[] includes,
-                                                 String[] excludes, int staleMillis )
-        throws MojoExecutionException
-    {
-        getLog().debug( "Scanning for grammars: " + sourceDirectory );
-
-        if ( !sourceDirectory.isDirectory() )
+        if ( exitCode != 0 )
         {
-            getLog().debug( "Ignored invalid source directory: " + sourceDirectory );
-            return new GrammarInfo[0];
+            throw new MojoFailureException( "JavaCC reported exit code " + exitCode + ": " + jjFile );
         }
-
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( sourceDirectory );
-        if ( includes != null )
-        {
-            scanner.setIncludes( includes );
-        }
-        else
-        {
-            scanner.setIncludes( new String[] { "**/*.jj", "**/*.JJ", "**/*.jjt", "**/*.JJT" } );
-        }
-        if ( excludes != null )
-        {
-            scanner.setExcludes( excludes );
-        }
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        String[] files = scanner.getIncludedFiles();
-
-        Set grammarInfos = new LinkedHashSet();
-        for ( int i = 0; i < files.length; i++ )
-        {
-            File sourceFile = new File( sourceDirectory, files[i] );
-            GrammarInfo grammarInfo = getGrammarInfo( sourceFile );
-            if ( outputDirectory != null )
-            {
-                File[] targetFiles = getTargetFiles( outputDirectory, grammarInfo );
-                for ( int j = 0; j < targetFiles.length; j++ )
-                {
-                    File targetFile = targetFiles[j];
-                    if ( !targetFile.exists() || targetFile.lastModified() + staleMillis < sourceFile.lastModified() )
-                    {
-                        grammarInfos.add( grammarInfo );
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                grammarInfos.add( grammarInfo );
-            }
-        }
-
-        getLog().debug( "Found grammars: " + grammarInfos );
-
-        return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
-    }
-
-    /**
-     * Determines the output files corresponding to the specified grammar file.
-     * 
-     * @param outputDirectory The absolute path to the output directory for the target files, must not be
-     *            <code>null</code>.
-     * @param grammarInfo The grammar info describing the grammar file, must not be <code>null</code>
-     * @return A file array with target files, never <code>null</code>.
-     */
-    protected File[] getTargetFiles( File outputDirectory, GrammarInfo grammarInfo )
-    {
-        File parserFile = new File( outputDirectory, grammarInfo.getParserFile().getPath() );
-        return new File[] { parserFile };
     }
 
     /**
@@ -359,12 +288,14 @@ public abstract class AbstractJavaCCMojo
      * <strong>Note:</strong> To prevent conflicts with JavaCC options that might be set directly in the grammar file,
      * only those mojo parameters that have been explicitly set by the user are passed on the command line.
      * 
-     * @param grammarFile The absolute path of the grammar file to compile, must not be <code>null</code>.
-     * @param outputDirectory The absolute path to the output directory for the generated Java files, must not be
-     *            <code>null</code>. This path should already contain the package hierarchy.
+     * @param jjFile The absolute path to the grammar file to pass into JavaCC for compilation, must not be
+     *            <code>null</code>.
+     * @param parserDirectory The absolute path to the output directory for the generated parser file, must not be
+     *            <code>null</code>. Note that this path should already include the desired package hierarchy because
+     *            JavaCC will not append the required sub directories automatically.
      * @return A string array that represents the command line arguments to use for JavaCC.
      */
-    protected String[] generateArgumentsForJavaCC( File grammarFile, File outputDirectory )
+    private String[] generateArgumentsForJavaCC( File jjFile, File parserDirectory )
     {
         List argsList = new ArrayList();
 
@@ -478,9 +409,9 @@ public abstract class AbstractJavaCCMojo
             argsList.add( "-KEEP_LINE_COLUMN=" + this.keepLineColumn );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY:" + outputDirectory.getAbsolutePath() );
+        argsList.add( "-OUTPUT_DIRECTORY:" + parserDirectory.getAbsolutePath() );
 
-        argsList.add( grammarFile.getAbsolutePath() );
+        argsList.add( jjFile.getAbsolutePath() );
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
     }
