@@ -1,5 +1,7 @@
 PARSER_BEGIN(Parser)
 
+package org;
+
 public class Parser {
 
   public static void main(String args[]) throws ParseException {
