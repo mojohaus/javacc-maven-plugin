@@ -41,7 +41,7 @@ public abstract class AbstractJavaCCMojo
 {
 
     /**
-     * The Java version for which to generate source code. Default value is <code>"1.4"</code>.
+     * The Java version for which to generate source code. Default value is <code>1.4</code>.
      * 
      * @parameter expression="${jdkVersion}"
      * @since 2.4
@@ -52,7 +52,7 @@ public abstract class AbstractJavaCCMojo
      * The number of tokens to look ahead before making a decision at a choice point during parsing. The default value
      * is <code>1</code>.
      * 
-     * @parameter expression=${lookAhead}"
+     * @parameter expression="${lookAhead}"
      */
     private Integer lookAhead;
 
@@ -68,7 +68,7 @@ public abstract class AbstractJavaCCMojo
      * This is the number of tokens considered in checking all other kinds of choices (i.e., of the forms "(A)*",
      * "(A)+", and "(A)?") for ambiguity. Default value is <code>1</code>.
      * 
-     * @parameter expression=${otherAmbiguityCheck}"
+     * @parameter expression="${otherAmbiguityCheck}"
      */
     private Integer otherAmbiguityCheck;
 
@@ -77,7 +77,7 @@ public abstract class AbstractJavaCCMojo
      * token manager. This allows only one parser object to be present, but it improves the performance of the parser.
      * Default value is <code>true</code>.
      * 
-     * @parameter expression=${isStatic}"
+     * @parameter expression="${isStatic}"
      */
     private Boolean isStatic;
 
@@ -254,8 +254,9 @@ public abstract class AbstractJavaCCMojo
      * @param jjFile The absolute path to the grammar file to pass into JavaCC for compilation, must not be
      *            <code>null</code>.
      * @param parserDirectory The absolute path to the output directory for the generated parser file, must not be
-     *            <code>null</code>. Note that this path should already include the desired package hierarchy because
-     *            JavaCC will not append the required sub directories automatically.
+     *            <code>null</code>. If this directory does not exist yet, it is created. Note that this path should
+     *            already include the desired package hierarchy because JavaCC will not append the required sub
+     *            directories automatically.
      * @throws MojoExecutionException If JavaCC could not be invoked.
      * @throws MojoFailureException If JavaCC reported a non-zero exit code.
      */

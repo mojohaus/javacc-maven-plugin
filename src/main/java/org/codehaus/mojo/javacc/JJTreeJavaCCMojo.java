@@ -37,6 +37,7 @@ import org.javacc.jjtree.JJTree;
  * 
  * @goal jjtree-javacc
  * @phase generate-sources
+ * @since 2.4
  * @author Benjamin Bentmann
  * @version $Id$
  */
@@ -116,8 +117,9 @@ public class JJTreeJavaCCMojo
     private Boolean visitor;
 
     /**
-     * The name of an exception class to include in the signature of the generated <code>jjtAccept()</code> and
-     * <code>visit()</code> methods. Default value is <code>""</code>.
+     * The qualified name of an exception class to include in the signature of the generated <code>jjtAccept()</code>
+     * and <code>visit()</code> methods. By default, the <code>throws</code> clause of the generated methods is empty
+     * such that only unchecked exceptions can be thrown.
      * 
      * @parameter expression="${visitorException}"
      */
@@ -153,8 +155,8 @@ public class JJTreeJavaCCMojo
 
     /**
      * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default,
-     * the patterns <code>"**&#47;*.jj"</code>, <code>"**&#47;*.JJ"</code>, <code>"**&#47;*.jjt"</code> and
-     * <code>"**&#47;*.JJT"</code> are used to select grammar files.
+     * the patterns <code>**&#47;*.jj</code>, <code>**&#47;*.JJ</code>, <code>**&#47;*.jjt</code> and
+     * <code>**&#47;*.JJT</code> are used to select grammar files.
      * 
      * @parameter
      */

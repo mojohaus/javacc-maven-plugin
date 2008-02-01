@@ -50,103 +50,109 @@ public class JTBMojo
     extends AbstractMojo
 {
     /**
-     * This option is short for <code>nodePackageName = package + syntaxtree</code> and
-     * <code>visitorPackageName = package + visitor</code>.
+     * This option is short for <code>nodePackageName</code> = <code>&lt;packageName&gt;.syntaxtree</code> and
+     * <code>visitorPackageName</code> = <code>&lt;packageName&gt;.visitor</code>. Note that this option takes
+     * precedence over <code>nodePackageName</code> and <code>visitorPackageName</code> if specified.
      * 
-     * @parameter expression=${package}"
+     * @parameter expression="${package}"
      */
     private String packageName;
 
     /**
-     * This option specifies the package for the generated AST nodes.
+     * This option specifies the package for the generated AST nodes. Default value is <code>syntaxtree</code>.
      * 
-     * @parameter expression=${nodePackageName}"
+     * @parameter expression="${nodePackageName}"
      */
     private String nodePackageName;
 
     /**
-     * This option specifies the package for the generated visitors.
+     * This option specifies the package for the generated visitors. Default value is <code>visitor</code>.
      * 
-     * @parameter expression=${visitorPackageName}"
+     * @parameter expression="${visitorPackageName}"
      */
     private String visitorPackageName;
 
     /**
-     * If true, JTB will supress its semantic error checking.
+     * If <code>true</code>, JTB will suppress its semantic error checking. Default value is <code>false</code>.
      * 
-     * @parameter expression=${supressErrorChecking}"
+     * @parameter expression="${supressErrorChecking}"
      */
     private Boolean supressErrorChecking;
 
     /**
-     * If true, all generated comments will be wrapped in pre tags so that they are formatted correctly in javadocs.
+     * If <code>true</code>, all generated comments will be wrapped in <code>&lt;pre&gt;</code> tags so that they
+     * are formatted correctly in API docs. Default value is <code>false</code>.
      * 
-     * @parameter expression=${javadocFriendlyComments}"
+     * @parameter expression="${javadocFriendlyComments}"
      */
     private Boolean javadocFriendlyComments;
 
     /**
-     * Setting this option to true causes JTB to generate field names that reflect the structure of the tree.
+     * Setting this option to <code>true</code> causes JTB to generate field names that reflect the structure of the
+     * tree instead of generic names like <code>f0</code>, <code>f1</code> etc. Default value is <code>false</code>.
      * 
-     * @parameter expression=${descriptiveFieldNames}"
+     * @parameter expression="${descriptiveFieldNames}"
      */
     private Boolean descriptiveFieldNames;
 
     /**
-     * All AST nodes will inherit from the class specified for this parameter.
+     * The qualified name of a user-defined class from which all AST nodes will inherit. By default, AST nodes will
+     * inherit from the generated class <code>Node</code>.
      * 
-     * @parameter expression=${nodeParentClass}"
+     * @parameter expression="${nodeParentClass}"
      */
     private String nodeParentClass;
 
     /**
-     * If true, all nodes will contain fields for its parent node.
+     * If <code>true</code>, all nodes will contain fields for its parent node. Default value is <code>false</code>.
      * 
-     * @parameter expression=${parentPointers}"
+     * @parameter expression="${parentPointers}"
      */
     private Boolean parentPointers;
 
     /**
-     * If true, JTB will include JavaCC "special tokens" in the AST.
+     * If <code>true</code>, JTB will include JavaCC "special tokens" in the AST. Default value is <code>false</code>.
      * 
-     * @parameter expression=${specialTokens}"
+     * @parameter expression="${specialTokens}"
      */
     private Boolean specialTokens;
 
     /**
-     * If true, JTB will generate:
+     * If <code>true</code>, JTB will generate the following files to support the Schema programming language:
      * <ul>
      * <li>Scheme records representing the grammar.</li>
      * <li>A Scheme tree building visitor.</li>
      * </ul>
+     * Default value is <code>false</code>.
      * 
-     * @parameter expression=${scheme}"
+     * @parameter expression="${scheme}"
      */
     private Boolean scheme;
 
     /**
-     * If true, JTB will generate a syntax tree dumping visitor.
+     * If <code>true</code>, JTB will generate a syntax tree dumping visitor. Default value is <code>false</code>.
      * 
-     * @parameter expression=${printer}"
+     * @parameter expression="${printer}"
      */
     private Boolean printer;
 
     /**
-     * Directory where the JTB file(s) are located.
+     * The directory where the JavaCC grammar files (<code>*.jtb</code>) are located. It will be recursively scanned
+     * for input files to pass to JTB.
      * 
      * @parameter expression="${sourceDirectory}" default-value="${basedir}/src/main/jtb"
      */
     private File sourceDirectory;
 
     /**
-     * Directory where the output Java Files will be located.
+     * The directory where the output Java files will be located.
      * 
      * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/jtb"
      */
     private File outputDirectory;
 
     /**
-     * the directory to store the resulting JavaCC grammar(s)
+     * The directory to store the processed input files for later detection of stale sources.
      * 
      * @parameter expression="${timestampDirectory}"
      *            default-value="${project.build.directory}/generated-sources/jtb-timestamp"
@@ -154,7 +160,7 @@ public class JTBMojo
     private File timestampDirectory;
 
     /**
-     * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation
+     * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
      */
@@ -178,7 +184,7 @@ public class JTBMojo
     private File workingDirectory;
 
     /**
-     * Execute the JTB
+     * Execute the JTB preprocessor.
      * 
      * @throws MojoExecutionException If the compilation fails.
      */
@@ -215,7 +221,7 @@ public class JTBMojo
                 String visitorPackage = getVisitorPackageName();
                 try
                 {
-                    JTB.main( generateArgumentList( jtbFile ) );
+                    JTB.main( generateArgumentsForJTB( jtbFile ) );
 
                     /*
                      * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
@@ -355,10 +361,12 @@ public class JTBMojo
     }
 
     /**
-     * @param jtbFile The path of the file to compile.
-     * @return A string array that represents the arguments to use for JTB.
+     * Assembles the command line arguments for the invocation of JTB according to the mojo configuration.
+     * 
+     * @param jtbFile The absolute path of the grammar file to compile, must not be <code>null</code>.
+     * @return A string array that represents the arguments to use for JJTree.
      */
-    private String[] generateArgumentList( File jtbFile )
+    private String[] generateArgumentsForJTB( File jtbFile )
     {
         List argsList = new ArrayList();
 
@@ -423,8 +431,8 @@ public class JTBMojo
     }
 
     /**
-     * @return the <code>Set</code> contains a <code>String</code>tha rappresent the files to compile
-     * @throws MojoExecutionException if it fails
+     * @return A set of <code>File</code> objects to compile.
+     * @throws MojoExecutionException If it fails.
      */
     private Set computeStaleGrammars()
         throws MojoExecutionException

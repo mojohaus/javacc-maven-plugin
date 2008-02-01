@@ -100,8 +100,8 @@ public class JJDocMojo
 
     /**
      * Directories where the JavaCC grammar files (<code>*.jj</code>) are located. By default, the directories
-     * <code>${basedir}/src/main/javacc</code> and <code>${project.build.directory}/generated-sources/jjtree</code>
-     * are scanned for grammar files to document.
+     * <code>${basedir}/src/main/javacc</code>, <code>${project.build.directory}/generated-sources/jjtree</code>
+     * and <code>${project.build.directory}/generated-sources/jtb</code> are scanned for grammar files to document.
      * 
      * @parameter
      */

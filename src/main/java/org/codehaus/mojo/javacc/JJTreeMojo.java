@@ -54,7 +54,7 @@ public class JJTreeMojo
 {
 
     /**
-     * The Java version for which to generate source code. Default value is <code>"1.4"</code>.
+     * The Java version for which to generate source code. Default value is <code>1.4</code>.
      * 
      * @parameter expression="${jdkVersion}"
      * @since 2.4
@@ -86,15 +86,14 @@ public class JJTreeMojo
     private Boolean nodeDefaultVoid;
 
     /**
-     * The name of a custom factory class to create <code>Node</code> objects. Default value is <code>""</code>.
+     * The name of a custom factory class to create <code>Node</code> objects.
      * 
      * @parameter expression="${nodeFactory}"
      */
     private Boolean nodeFactory;
 
     /**
-     * The package to generate the node classes into. Default value is <code>""</code> meaning to use the package of
-     * the corresponding parser.
+     * The package to generate the node classes into. By default, the package of the corresponding parser is used.
      * 
      * @parameter expression="${nodePackage}"
      */
@@ -102,7 +101,7 @@ public class JJTreeMojo
 
     /**
      * The prefix used to construct node class names from node identifiers in multi mode. Default value is
-     * <code>"AST"</code>.
+     * <code>AST</code>.
      * 
      * @parameter expression="${nodePrefix}"
      */
@@ -141,8 +140,9 @@ public class JJTreeMojo
     private Boolean visitor;
 
     /**
-     * The name of an exception class to include in the signature of the generated <code>jjtAccept()</code> and
-     * <code>visit()</code> methods. Default value is <code>""</code>.
+     * The qualified name of an exception class to include in the signature of the generated <code>jjtAccept()</code>
+     * and <code>visit()</code> methods. By default, the <code>throws</code> clause of the generated methods is empty
+     * such that only unchecked exceptions can be thrown.
      * 
      * @parameter expression="${visitorException}"
      */
