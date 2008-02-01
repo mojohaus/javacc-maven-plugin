@@ -326,8 +326,9 @@ public class JJTreeJavaCCMojo
      * @param jjtFile The absolute path to the grammar file to pass into JJTree for preprocessing, must not be
      *            <code>null</code>.
      * @param grammarDirectory The absolute path to the output directory for the generated grammar file, must not be
-     *            <code>null</code>. Note that this path should already include the desired package hierarchy because
-     *            JJTree will not append the required sub directories automatically.
+     *            <code>null</code>. If this directory does not exist yet, it is created. Note that this path should
+     *            already include the desired package hierarchy because JJTree will not append the required sub
+     *            directories automatically.
      * @throws MojoExecutionException If JJTree could not be invoked.
      * @throws MojoFailureException If JJTree reported a non-zero exit code.
      */

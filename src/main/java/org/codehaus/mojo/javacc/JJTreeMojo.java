@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,6 +32,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
@@ -199,10 +201,11 @@ public class JJTreeMojo
     /**
      * Execute the JJTree preprocessor.
      * 
-     * @throws MojoExecutionException If the compilation fails.
+     * @throws MojoExecutionException If the invocation of JJTree failed.
+     * @throws MojoFailureException If JJTree reported a non-zero exit code.
      */
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         if ( !this.sourceDirectory.isDirectory() )
         {
@@ -213,11 +216,6 @@ public class JJTreeMojo
         if ( this.nodePackage != null )
         {
             this.packageName = StringUtils.replace( this.nodePackage, '.', File.separatorChar );
-        }
-
-        if ( !this.outputDirectory.exists() )
-        {
-            this.outputDirectory.mkdirs();
         }
 
         if ( !this.timestampDirectory.exists() )
@@ -247,22 +245,20 @@ public class JJTreeMojo
             {
                 File jjtFile = (File) i.next();
                 File outputDir = getOutputDirectory( jjtFile );
+
+                // generate final grammar file
+                runJJTree( jjtFile, outputDir );
+
+                // create timestamp file
                 try
                 {
-                    JJTree jjtree = new JJTree();
-                    int exitCode = jjtree.main( generateArgumentList( jjtFile, outputDir ) );
-                    if ( exitCode != 0 )
-                    {
-                        throw new MojoExecutionException( "JJTree reported non-zero exit code: " + exitCode );
-                    }
-
                     URI relativeURI = this.sourceDirectory.toURI().relativize( jjtFile.toURI() );
                     File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
                     FileUtils.copyFile( jjtFile, timestampFile );
                 }
                 catch ( Exception e )
                 {
-                    throw new MojoExecutionException( "JJTree execution failed", e );
+                    getLog().warn( "Failed to create copy for timestamp check: " + jjtFile, e );
                 }
             }
         }
@@ -290,14 +286,55 @@ public class JJTreeMojo
     }
 
     /**
-     * Create the argument list to be passed to JJTree on the command line.
+     * Runs JJTree on the specified decorated grammar file to generate a grammar file annotated with node actions. The
+     * options for JJTree are derived from the current values of the corresponding mojo parameters.
      * 
-     * @param jjtFile The path of the file to compile.
-     * @param outputDir The output directory for the generated Java files. This path should already contain the package
-     *            hierarchy.
+     * @param jjtFile The absolute path to the grammar file to pass into JJTree for preprocessing, must not be
+     *            <code>null</code>.
+     * @param grammarDirectory The absolute path to the output directory for the generated grammar file, must not be
+     *            <code>null</code>. If this directory does not exist yet, it is created. Note that this path should
+     *            already include the desired package hierarchy because JJTree will not append the required sub
+     *            directories automatically.
+     * @throws MojoExecutionException If JJTree could not be invoked.
+     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     */
+    private void runJJTree( File jjtFile, File grammarDirectory )
+        throws MojoExecutionException, MojoFailureException
+    {
+        int exitCode;
+        try
+        {
+            String[] args = generateArgumentsForJJTree( jjtFile, grammarDirectory );
+            getLog().debug( "Running JJTree: " + Arrays.asList( args ) );
+            if ( !grammarDirectory.exists() )
+            {
+                grammarDirectory.mkdirs();
+            }
+            JJTree jjtree = new JJTree();
+            exitCode = jjtree.main( args );
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to execute JJTree", e );
+        }
+        if ( exitCode != 0 )
+        {
+            throw new MojoFailureException( "JJTree reported exit code " + exitCode + ": " + jjtFile );
+        }
+    }
+
+    /**
+     * Assembles the command line arguments for the invocation of JJTree according to the mojo configuration.<br/><br/>
+     * <strong>Note:</strong> To prevent conflicts with JavaCC options that might be set directly in the grammar file,
+     * only those mojo parameters that have been explicitly set by the user are passed on the command line.
+     * 
+     * @param jjtFile The absolute path of the grammar file to compile, must not be <code>null</code>.
+     * @param grammarDirectory The absolute path to the output directory for the generated grammar file, must not be
+     *            <code>null</code>. Note that this path should already include the desired package hierarchy because
+     *            JJTree will not append the required sub directories automatically.
      * @return A string array that represents the arguments to use for JJTree.
      */
-    private String[] generateArgumentList( File jjtFile, File outputDir )
+    private String[] generateArgumentsForJJTree( File jjtFile, File grammarDirectory )
     {
         List argsList = new ArrayList();
 
@@ -361,11 +398,9 @@ public class JJTreeMojo
             argsList.add( "-VISITOR_EXCEPTION=" + this.visitorException );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY=" + outputDir );
+        argsList.add( "-OUTPUT_DIRECTORY=" + grammarDirectory );
 
         argsList.add( jjtFile.getAbsolutePath() );
-
-        getLog().debug( "argslist: " + argsList.toString() );
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
     }

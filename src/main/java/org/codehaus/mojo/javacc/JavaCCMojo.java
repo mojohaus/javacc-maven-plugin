@@ -166,7 +166,8 @@ public class JavaCCMojo
                 }
                 catch ( IOException e )
                 {
-                    throw new MojoExecutionException( "Unable to copy overriden java files.", e );
+                    throw new MojoExecutionException( "Failed to copy custom source files to output directory:"
+                        + jjFile.getParent() + " -> " + outputDir, e );
                 }
 
                 // generate parser file
@@ -181,7 +182,7 @@ public class JavaCCMojo
                 }
                 catch ( Exception e )
                 {
-                    throw new MojoExecutionException( "JavaCC execution failed", e );
+                    getLog().warn( "Failed to create copy for timestamp check: " + jjFile, e );
                 }
             }
         }
