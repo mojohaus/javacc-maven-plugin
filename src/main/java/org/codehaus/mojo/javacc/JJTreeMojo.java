@@ -358,7 +358,7 @@ public class JJTreeMojo
 
         if ( this.visitorException != null )
         {
-            argsList.add( "-VISITOR_EXCEPTION=\'" + this.visitorException + "\'" );
+            argsList.add( "-VISITOR_EXCEPTION=" + this.visitorException );
         }
 
         argsList.add( "-OUTPUT_DIRECTORY=" + outputDir );

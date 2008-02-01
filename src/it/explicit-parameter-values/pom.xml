@@ -60,15 +60,27 @@
               <jdkVersion>1.4</jdkVersion>
               <buildNodeFiles>true</buildNodeFiles>
               <multi>true</multi>
-              <nodeDefaultVoid>true</nodeDefaultVoid>
+              <nodeDefaultVoid>false</nodeDefaultVoid>
               <nodeFactory>SimpleNode</nodeFactory>
-              <nodePackage>nodes</nodePackage>
+              <nodePackage>org</nodePackage>
               <nodePrefix>Ast</nodePrefix>
               <nodeScopeHook>true</nodeScopeHook>
               <nodeUsesParser>true</nodeUsesParser>
               <isStatic>false</isStatic>
               <visitor>true</visitor>
-              <visitorException>java.lang.RuntimeException</visitorException>
+              <visitorException>java.lang.Exception</visitorException>
+            </configuration>
+          </execution>
+          <execution>
+            <id>post-jjtree-javacc</id>
+            <goals>
+              <goal>javacc</goal>
+            </goals>
+            <configuration>
+              <sourceDirectory>target/jjtree</sourceDirectory>
+              <outputDirectory>target/javacc</outputDirectory>
+              <timestampDirectory>target/javacc-ts</timestampDirectory>
+              <isStatic>false</isStatic>
             </configuration>
           </execution>
         </executions>

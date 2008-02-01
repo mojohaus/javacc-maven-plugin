@@ -1,7 +1,6 @@
-
-
-
 PARSER_BEGIN(Simple)
+
+package org;
 
 class Simple {
   public static void main(String args[]) {
@@ -16,6 +15,10 @@ class Simple {
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
+  }
+  public void jjtreeOpenNodeScope(Node n) {
+  }
+  public void jjtreeCloseNodeScope(Node n) {
   }
 }
 
