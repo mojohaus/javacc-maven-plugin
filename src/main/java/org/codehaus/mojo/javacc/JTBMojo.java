@@ -23,7 +23,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
@@ -31,8 +30,9 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -228,41 +228,17 @@ public class JTBMojo
             this.excludes = Collections.EMPTY_SET;
         }
 
-        Set staleGrammars = computeStaleGrammars();
+        GrammarInfo[] grammarInfos = scanForGrammars();
 
-        if ( staleGrammars.isEmpty() )
+        if ( grammarInfos.length <= 0 )
         {
             getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
         }
         else
         {
-            for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
+            for ( int i = 0; i < grammarInfos.length; i++ )
             {
-                File jtbFile = (File) i.next();
-                String nodePackage = getNodePackageName();
-                String visitorPackage = getVisitorPackageName();
-
-                // generate final grammar file and the node/visitor files
-                runJTB( jtbFile, this.outputDirectory );
-
-                /*
-                 * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
-                 * therefore, the files must be moved to the correct locations.
-                 */
-                movePackage( nodePackage );
-                movePackage( visitorPackage );
-
-                // create timestamp file
-                try
-                {
-                    URI relativeURI = this.sourceDirectory.toURI().relativize( jtbFile.toURI() );
-                    File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
-                    FileUtils.copyFile( jtbFile, timestampFile );
-                }
-                catch ( Exception e )
-                {
-                    getLog().warn( "Failed to create copy for timestamp check: " + jtbFile, e );
-                }
+                processGrammar( grammarInfos[i] );
             }
         }
 
@@ -272,6 +248,78 @@ public class JTBMojo
             this.project.addCompileSourceRoot( this.outputDirectory.getPath() );
         }
 
+    }
+
+    /**
+     * Scans the configured source directory for grammar files which need processing.
+     * 
+     * @return An array of grammar infos describing the found grammar files, never <code>null</code>.
+     * @throws MojoExecutionException If the source directory could not be scanned.
+     */
+    private GrammarInfo[] scanForGrammars()
+        throws MojoExecutionException
+    {
+        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
+        Collection grammarInfos = new ArrayList();
+        try
+        {
+            SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
+
+            scanner.addSourceMapping( new SuffixMapping( ".jtb", ".jtb" ) );
+            scanner.addSourceMapping( new SuffixMapping( ".JTB", ".JTB" ) );
+
+            Collection staleSources = scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory );
+
+            for ( Iterator it = staleSources.iterator(); it.hasNext(); )
+            {
+                File grammarFile = (File) it.next();
+                grammarInfos.add( new GrammarInfo( grammarFile ) );
+            }
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to scan source root for grammars: " + this.sourceDirectory, e );
+        }
+        getLog().debug( "Found grammars: " + grammarInfos );
+        return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
+    }
+
+    /**
+     * Passes the specified grammar file through JTB.
+     * 
+     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
+     * @throws MojoExecutionException If the invocation of JTB failed.
+     * @throws MojoFailureException If JTB reported a non-zero exit code.
+     */
+    private void processGrammar( GrammarInfo grammarInfo )
+        throws MojoExecutionException, MojoFailureException
+    {
+        File jtbFile = grammarInfo.getGrammarFile();
+
+        String nodePackage = getNodePackageName();
+        String visitorPackage = getVisitorPackageName();
+
+        // generate final grammar file and the node/visitor files
+        runJTB( jtbFile, new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() ) );
+
+        /*
+         * since jtb was meant to be run as a command-line tool, it only outputs to the current directory. therefore,
+         * the files must be moved to the correct locations.
+         */
+        movePackage( nodePackage );
+        movePackage( visitorPackage );
+
+        // create timestamp file
+        try
+        {
+            URI relativeURI = this.sourceDirectory.toURI().relativize( jtbFile.toURI() );
+            File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
+            FileUtils.copyFile( jtbFile, timestampFile );
+        }
+        catch ( Exception e )
+        {
+            getLog().warn( "Failed to create copy for timestamp check: " + jtbFile, e );
+        }
     }
 
     /**
@@ -428,36 +476,6 @@ public class JTBMojo
         {
             getLog().debug( "Keeping non empty JTB output directory: " + sourceDir );
         }
-    }
-
-    /**
-     * @return A set of <code>File</code> objects to compile.
-     * @throws MojoExecutionException If it fails.
-     */
-    private Set computeStaleGrammars()
-        throws MojoExecutionException
-    {
-        SuffixMapping mapping = new SuffixMapping( ".jtb", ".jtb" );
-        SuffixMapping mappingCAP = new SuffixMapping( ".JTB", ".JTB" );
-
-        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
-
-        scanner.addSourceMapping( mapping );
-        scanner.addSourceMapping( mappingCAP );
-
-        Set staleSources = new HashSet();
-
-        try
-        {
-            staleSources.addAll( scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory ) );
-        }
-        catch ( InclusionScanException e )
-        {
-            throw new MojoExecutionException( "Error scanning source root: \'" + this.sourceDirectory
-                + "\' for stale grammars to reprocess.", e );
-        }
-
-        return staleSources;
     }
 
 }
