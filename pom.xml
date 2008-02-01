@@ -129,6 +129,7 @@
               </pomIncludes>
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <showErrors>true</showErrors>
               <goals>
                 <goal>clean</goal>
                 <goal>compile</goal>
