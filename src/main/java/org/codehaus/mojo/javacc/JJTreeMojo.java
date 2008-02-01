@@ -20,17 +20,16 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
@@ -229,101 +228,96 @@ public class JJTreeMojo
             this.excludes = Collections.EMPTY_SET;
         }
 
-        Set staleGrammars = computeStaleGrammars();
+        GrammarInfo[] grammarInfos = scanForGrammars();
 
-        if ( staleGrammars.isEmpty() )
+        if ( grammarInfos.length <= 0 )
         {
             getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
         }
         else
         {
-            for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
+            for ( int i = 0; i < grammarInfos.length; i++ )
             {
-                File jjtFile = (File) i.next();
-                File outputDir = getOutputDirectory( jjtFile );
-
-                // generate final grammar file
-                JJTree jjtree = new JJTree();
-                jjtree.setInputFile( jjtFile );
-                jjtree.setOutputDirectory( outputDir );
-                jjtree.setJdkVersion( this.jdkVersion );
-                jjtree.setStatic( this.isStatic );
-                jjtree.setBuildNodeFiles( this.buildNodeFiles );
-                jjtree.setMulti( this.multi );
-                jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
-                jjtree.setNodeFactory( this.nodeFactory );
-                jjtree.setNodePackage( this.nodePackage );
-                jjtree.setNodePrefix( this.nodePrefix );
-                jjtree.setNodeScopeHook( this.nodeScopeHook );
-                jjtree.setNodeUsesParser( this.nodeUsesParser );
-                jjtree.setVisitor( this.visitor );
-                jjtree.setVisitorException( this.visitorException );
-                jjtree.run( getLog() );
-
-                // create timestamp file
-                try
-                {
-                    URI relativeURI = this.sourceDirectory.toURI().relativize( jjtFile.toURI() );
-                    File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
-                    FileUtils.copyFile( jjtFile, timestampFile );
-                }
-                catch ( Exception e )
-                {
-                    getLog().warn( "Failed to create copy for timestamp check: " + jjtFile, e );
-                }
+                processGrammar( grammarInfos[i] );
             }
         }
     }
 
     /**
-     * Get the output directory for the JavaCC files.
+     * Scans the configured source directory for grammar files which need processing.
      * 
-     * @param jjtFile The JJTree input file.
-     * @return The directory that will contain the generated code.
-     * @throws MojoExecutionException If there is a problem getting the package name.
+     * @return An array of grammar infos describing the found grammar files, never <code>null</code>.
+     * @throws MojoExecutionException If the source directory could not be scanned.
      */
-    private File getOutputDirectory( File jjtFile )
+    private GrammarInfo[] scanForGrammars()
         throws MojoExecutionException
     {
+        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
+        Collection grammarInfos = new ArrayList();
         try
         {
-            GrammarInfo info = new GrammarInfo( jjtFile, this.packageName );
-            return new File( this.outputDirectory, info.getPackageDirectory().getPath() );
+            SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
+
+            scanner.addSourceMapping( new SuffixMapping( ".jjt", ".jjt" ) );
+            scanner.addSourceMapping( new SuffixMapping( ".JJT", ".JJT" ) );
+
+            Collection staleSources = scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory );
+
+            for ( Iterator it = staleSources.iterator(); it.hasNext(); )
+            {
+                File grammarFile = (File) it.next();
+                grammarInfos.add( new GrammarInfo( grammarFile, this.packageName ) );
+            }
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
-            throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
+            throw new MojoExecutionException( "Failed to scan source root for grammars: " + this.sourceDirectory, e );
         }
+        getLog().debug( "Found grammars: " + grammarInfos );
+        return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
     }
 
     /**
-     * @return A set of <code>File</code> objects to compile.
-     * @throws MojoExecutionException If it fails.
+     * Passes the specified grammar file through JJTree.
+     * 
+     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
+     * @throws MojoExecutionException If the invocation of JJTree failed.
+     * @throws MojoFailureException If JJTree reported a non-zero exit code.
      */
-    private Set computeStaleGrammars()
-        throws MojoExecutionException
+    private void processGrammar( GrammarInfo grammarInfo )
+        throws MojoExecutionException, MojoFailureException
     {
-        SuffixMapping mapping = new SuffixMapping( ".jjt", ".jjt" );
-        SuffixMapping mappingCAP = new SuffixMapping( ".JJT", ".JJT" );
+        File jjtFile = grammarInfo.getGrammarFile();
 
-        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
+        // generate final grammar file
+        JJTree jjtree = new JJTree();
+        jjtree.setInputFile( jjtFile );
+        jjtree.setOutputDirectory( new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() ) );
+        jjtree.setJdkVersion( this.jdkVersion );
+        jjtree.setStatic( this.isStatic );
+        jjtree.setBuildNodeFiles( this.buildNodeFiles );
+        jjtree.setMulti( this.multi );
+        jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
+        jjtree.setNodeFactory( this.nodeFactory );
+        jjtree.setNodePackage( this.nodePackage );
+        jjtree.setNodePrefix( this.nodePrefix );
+        jjtree.setNodeScopeHook( this.nodeScopeHook );
+        jjtree.setNodeUsesParser( this.nodeUsesParser );
+        jjtree.setVisitor( this.visitor );
+        jjtree.setVisitorException( this.visitorException );
+        jjtree.run( getLog() );
 
-        scanner.addSourceMapping( mapping );
-        scanner.addSourceMapping( mappingCAP );
-
-        Set staleSources = new HashSet();
-
+        // create timestamp file
         try
         {
-            staleSources.addAll( scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory ) );
+            URI relativeURI = this.sourceDirectory.toURI().relativize( jjtFile.toURI() );
+            File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
+            FileUtils.copyFile( jjtFile, timestampFile );
         }
-        catch ( InclusionScanException e )
+        catch ( Exception e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + this.sourceDirectory
-                + "\' for stale grammars to reprocess.", e );
+            getLog().warn( "Failed to create copy for timestamp check: " + jjtFile, e );
         }
-
-        return staleSources;
     }
 
 }
