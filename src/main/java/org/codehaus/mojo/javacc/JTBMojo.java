@@ -19,9 +19,9 @@ package org.codehaus.mojo.javacc;
  * under the License.
  */
 
-import EDU.purdue.jtb.JTB;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
@@ -30,10 +30,9 @@ import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -49,6 +48,7 @@ import java.util.Set;
 public class JTBMojo
     extends AbstractMojo
 {
+
     /**
      * This option is short for <code>nodePackageName</code> = <code>&lt;packageName&gt;.syntaxtree</code> and
      * <code>visitorPackageName</code> = <code>&lt;packageName&gt;.visitor</code>. Note that this option takes
@@ -186,10 +186,11 @@ public class JTBMojo
     /**
      * Execute the JTB preprocessor.
      * 
-     * @throws MojoExecutionException If the compilation fails.
+     * @throws MojoExecutionException If the invocation of JTB failed.
+     * @throws MojoFailureException If JTB reported a non-zero exit code.
      */
     public void execute()
-        throws MojoExecutionException
+        throws MojoExecutionException, MojoFailureException
     {
         if ( !this.sourceDirectory.isDirectory() )
         {
@@ -219,22 +220,27 @@ public class JTBMojo
                 File jtbFile = (File) i.next();
                 String nodePackage = getNodePackageName();
                 String visitorPackage = getVisitorPackageName();
+
+                // generate final grammar file and the node/visitor files
+                runJTB( jtbFile, this.outputDirectory );
+
+                /*
+                 * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
+                 * therefore, the files must be moved to the correct locations.
+                 */
+                movePackage( nodePackage );
+                movePackage( visitorPackage );
+
+                // create timestamp file
                 try
                 {
-                    JTB.main( generateArgumentsForJTB( jtbFile ) );
-
-                    /*
-                     * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
-                     * therefore, the files must be moved to the correct locations.
-                     */
-                    movePackage( nodePackage );
-                    movePackage( visitorPackage );
-
-                    FileUtils.copyFileToDirectory( jtbFile, this.timestampDirectory );
+                    URI relativeURI = this.sourceDirectory.toURI().relativize( jtbFile.toURI() );
+                    File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
+                    FileUtils.copyFile( jtbFile, timestampFile );
                 }
                 catch ( Exception e )
                 {
-                    throw new MojoExecutionException( "JTB execution failed", e );
+                    getLog().warn( "Failed to create copy for timestamp check: " + jtbFile, e );
                 }
             }
         }
@@ -286,6 +292,49 @@ public class JTBMojo
         else
         {
             return this.visitorPackageName;
+        }
+    }
+
+    /**
+     * @param jtbFile The absolute path to the grammar file to pass into JTB for preprocessing, must not be
+     *            <code>null</code>.
+     * @param grammarDirectory The absolute path to the output directory for the generated grammar file and its AST node
+     *            files, must not be <code>null</code>. If this directory does not exist yet, it is created. Note
+     *            that this path should already include the desired package hierarchy because JTB will not append the
+     *            required sub directories automatically.
+     * @throws MojoExecutionException If JJTree could not be invoked.
+     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     */
+    private void runJTB( File jtbFile, File grammarDirectory )
+        throws MojoExecutionException, MojoFailureException
+    {
+        int exitCode;
+        try
+        {
+            JTB jtb = new JTB();
+            jtb.setInputFile( jtbFile );
+            jtb.setOutputDirectory( grammarDirectory );
+            jtb.setDescriptiveFieldNames( this.descriptiveFieldNames );
+            jtb.setJavadocFriendlyComments( this.javadocFriendlyComments );
+            jtb.setNodePackageName( this.nodePackageName );
+            jtb.setNodeParentClass( this.nodeParentClass );
+            jtb.setPackageName( this.packageName );
+            jtb.setParentPointers( this.parentPointers );
+            jtb.setPrinter( this.printer );
+            jtb.setScheme( this.scheme );
+            jtb.setSpecialTokens( this.specialTokens );
+            jtb.setSupressErrorChecking( this.supressErrorChecking );
+            jtb.setVisitorPackageName( this.visitorPackageName );
+            getLog().debug( "Running JTB: " + jtb );
+            exitCode = jtb.run();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to execute JTB", e );
+        }
+        if ( exitCode != 0 )
+        {
+            throw new MojoFailureException( "JTB reported exit code " + exitCode + ": " + jtbFile );
         }
     }
 
@@ -358,76 +407,6 @@ public class JTBMojo
         {
             getLog().debug( "Keeping non empty JTB output directory: " + sourceDir );
         }
-    }
-
-    /**
-     * Assembles the command line arguments for the invocation of JTB according to the mojo configuration.
-     * 
-     * @param jtbFile The absolute path of the grammar file to compile, must not be <code>null</code>.
-     * @return A string array that represents the arguments to use for JJTree.
-     */
-    private String[] generateArgumentsForJTB( File jtbFile )
-    {
-        List argsList = new ArrayList();
-
-        argsList.add( "-o" );
-        argsList.add( this.outputDirectory + File.separator + FileUtils.basename( jtbFile.getName() ) + "jj" );
-        if ( this.packageName != null )
-        {
-            argsList.add( "-p" );
-            argsList.add( this.packageName );
-        }
-        else
-        {
-            if ( this.nodePackageName != null )
-            {
-                argsList.add( "-np" );
-                argsList.add( this.nodePackageName );
-            }
-            if ( this.visitorPackageName != null )
-            {
-                argsList.add( "-vp" );
-                argsList.add( this.visitorPackageName );
-            }
-        }
-        if ( ( this.supressErrorChecking != null ) && this.supressErrorChecking.booleanValue() )
-        {
-            argsList.add( "-e" );
-        }
-        if ( ( this.javadocFriendlyComments != null ) && this.javadocFriendlyComments.booleanValue() )
-        {
-            argsList.add( "-jd" );
-        }
-        if ( ( this.descriptiveFieldNames != null ) && this.descriptiveFieldNames.booleanValue() )
-        {
-            argsList.add( "-f" );
-        }
-        if ( this.nodeParentClass != null )
-        {
-            argsList.add( "-ns" );
-            argsList.add( this.nodeParentClass );
-        }
-        if ( ( this.parentPointers != null ) && this.parentPointers.booleanValue() )
-        {
-            argsList.add( "-pp" );
-        }
-        if ( ( this.specialTokens != null ) && this.specialTokens.booleanValue() )
-        {
-            argsList.add( "-tk" );
-        }
-        if ( ( this.scheme != null ) && this.scheme.booleanValue() )
-        {
-            argsList.add( "-scheme" );
-        }
-        if ( ( this.printer != null ) && this.printer.booleanValue() )
-        {
-            argsList.add( "-printer" );
-        }
-        argsList.add( jtbFile.getAbsolutePath() );
-
-        getLog().debug( "Using arguments: " + argsList );
-
-        return (String[]) argsList.toArray( new String[argsList.size()] );
     }
 
     /**

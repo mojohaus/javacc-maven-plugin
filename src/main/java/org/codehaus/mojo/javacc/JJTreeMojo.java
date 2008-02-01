@@ -294,7 +294,7 @@ public class JJTreeMojo
         }
         nodeDirectory = new File( this.outputDirectory, nodeDirectory.getPath() );
 
-        // generate final grammar file
+        // generate final grammar file and node files
         runJJTree( jjtFile, nodeDirectory, nodePackageName );
 
         // create timestamp file

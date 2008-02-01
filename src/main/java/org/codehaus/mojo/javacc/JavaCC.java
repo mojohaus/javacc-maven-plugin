@@ -158,7 +158,7 @@ public class JavaCC
     private Boolean keepLineColumn;
 
     /**
-     * Sets The absolute path to the grammar file to pass into JavaCC for compilation.
+     * Sets the absolute path to the grammar file to pass into JavaCC for compilation.
      * 
      * @param value The absolute path to the grammar file to pass into JavaCC for compilation.
      */
