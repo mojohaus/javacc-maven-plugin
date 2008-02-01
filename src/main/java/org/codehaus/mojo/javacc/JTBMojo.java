@@ -31,6 +31,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -145,6 +146,20 @@ public class JTBMojo
     private File sourceDirectory;
 
     /**
+     * A set of Ant-like inclusion patterns for the compiler.
+     * 
+     * @parameter
+     */
+    private Set includes;
+
+    /**
+     * A set of Ant-like exclusion patterns for the compiler.
+     * 
+     * @parameter
+     */
+    private Set excludes;
+
+    /**
      * The directory where the output Java files will be located.
      * 
      * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/jtb"
@@ -198,13 +213,19 @@ public class JTBMojo
             return;
         }
 
-        if ( !this.outputDirectory.exists() )
-        {
-            this.outputDirectory.mkdirs();
-        }
         if ( !this.timestampDirectory.exists() )
         {
             this.timestampDirectory.mkdirs();
+        }
+
+        if ( this.includes == null )
+        {
+            this.includes = Collections.singleton( "**/*" );
+        }
+
+        if ( this.excludes == null )
+        {
+            this.excludes = Collections.EMPTY_SET;
         }
 
         Set staleGrammars = computeStaleGrammars();
@@ -419,7 +440,7 @@ public class JTBMojo
         SuffixMapping mapping = new SuffixMapping( ".jtb", ".jtb" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JTB", ".JTB" );
 
-        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis );
+        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
 
         scanner.addSourceMapping( mapping );
         scanner.addSourceMapping( mappingCAP );
