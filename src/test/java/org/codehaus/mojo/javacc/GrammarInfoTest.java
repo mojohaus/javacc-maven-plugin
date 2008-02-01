@@ -121,4 +121,24 @@ public class GrammarInfoTest
         assertEquals( new File( "SimpleParser.java" ), info.getParserFile() );
     }
 
+    public void testResolvePackageNameDeclaredPackage()
+        throws Exception
+    {
+        File grammarFile = new File( getClass().getResource( "/Parser1.jj" ).toURI() );
+        GrammarInfo info = new GrammarInfo( grammarFile );
+        assertEquals( "org.codehaus.mojo.javacc.test.node", info.resolvePackageName( "*.node" ) );
+        assertEquals( "org.codehaus.mojo.javacc.testnode", info.resolvePackageName( "*node" ) );
+        assertEquals( "node", info.resolvePackageName( "node" ) );
+    }
+
+    public void testResolvePackageNameDefaultPackage()
+        throws Exception
+    {
+        File grammarFile = new File( getClass().getResource( "/Parser2.jj" ).toURI() );
+        GrammarInfo info = new GrammarInfo( grammarFile );
+        assertEquals( "node", info.resolvePackageName( "*.node" ) );
+        assertEquals( "node", info.resolvePackageName( "*node" ) );
+        assertEquals( "node", info.resolvePackageName( "node" ) );
+    }
+
 }

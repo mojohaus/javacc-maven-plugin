@@ -34,7 +34,6 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Parses a JJTree grammar file (<code>*.jjt</code>) and transforms it to Java source files and a JavaCC grammar
@@ -90,7 +89,10 @@ public class JJTreeMojo
     private Boolean nodeFactory;
 
     /**
-     * The package to generate the node classes into. By default, the package of the corresponding parser is used.
+     * The package to generate the AST node classes into. This value may use a leading asterisk to reference the package
+     * of the corresponding parser. For example, if the parser package is <code>org.apache</code> and this parameter
+     * is set to <code>*.node</code>, the tree node classes will be located in the package
+     * <code>org.apache.node</code>. By default, the package of the corresponding parser is used.
      * 
      * @parameter expression="${nodePackage}"
      */
@@ -189,11 +191,6 @@ public class JJTreeMojo
     private Set excludes;
 
     /**
-     * Contains the package name to use for the generated code.
-     */
-    private String packageName;
-
-    /**
      * Execute the JJTree preprocessor.
      * 
      * @throws MojoExecutionException If the invocation of JJTree failed.
@@ -206,11 +203,6 @@ public class JJTreeMojo
         {
             getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
             return;
-        }
-
-        if ( this.nodePackage != null )
-        {
-            this.packageName = StringUtils.replace( this.nodePackage, '.', File.separatorChar );
         }
 
         if ( !this.timestampDirectory.exists() )
@@ -266,7 +258,7 @@ public class JJTreeMojo
             for ( Iterator it = staleSources.iterator(); it.hasNext(); )
             {
                 File grammarFile = (File) it.next();
-                grammarInfos.add( new GrammarInfo( grammarFile, this.packageName ) );
+                grammarInfos.add( new GrammarInfo( grammarFile ) );
             }
         }
         catch ( Exception e )
@@ -289,23 +281,21 @@ public class JJTreeMojo
     {
         File jjtFile = grammarInfo.getGrammarFile();
 
+        // determine target directory for tree node files
+        String nodePackageName = grammarInfo.resolvePackageName( this.nodePackage );
+        File nodeDirectory;
+        if ( nodePackageName != null )
+        {
+            nodeDirectory = new File( nodePackageName.replace( '.', File.separatorChar ) );
+        }
+        else
+        {
+            nodeDirectory = grammarInfo.getPackageDirectory();
+        }
+        nodeDirectory = new File( this.outputDirectory, nodeDirectory.getPath() );
+
         // generate final grammar file
-        JJTree jjtree = new JJTree();
-        jjtree.setInputFile( jjtFile );
-        jjtree.setOutputDirectory( new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() ) );
-        jjtree.setJdkVersion( this.jdkVersion );
-        jjtree.setStatic( this.isStatic );
-        jjtree.setBuildNodeFiles( this.buildNodeFiles );
-        jjtree.setMulti( this.multi );
-        jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
-        jjtree.setNodeFactory( this.nodeFactory );
-        jjtree.setNodePackage( this.nodePackage );
-        jjtree.setNodePrefix( this.nodePrefix );
-        jjtree.setNodeScopeHook( this.nodeScopeHook );
-        jjtree.setNodeUsesParser( this.nodeUsesParser );
-        jjtree.setVisitor( this.visitor );
-        jjtree.setVisitorException( this.visitorException );
-        jjtree.run( getLog() );
+        runJJTree( jjtFile, nodeDirectory, nodePackageName );
 
         // create timestamp file
         try
@@ -318,6 +308,42 @@ public class JJTreeMojo
         {
             getLog().warn( "Failed to create copy for timestamp check: " + jjtFile, e );
         }
+    }
+
+    /**
+     * Runs JJTree on the specified grammar file to generate a annotated grammar file. The options for JJTree are
+     * derived from the current values of the corresponding mojo parameters.
+     * 
+     * @param jjtFile The absolute path to the grammar file to pass into JJTree for preprocessing, must not be
+     *            <code>null</code>.
+     * @param grammarDirectory The absolute path to the output directory for the generated grammar file and its AST node
+     *            files, must not be <code>null</code>. If this directory does not exist yet, it is created. Note
+     *            that this path should already include the desired package hierarchy because JJTree will not append the
+     *            required sub directories automatically.
+     * @param nodePackageName The qualified name of the package for the AST nodes, may be <code>null</code> to use the
+     *            parser package.
+     * @throws MojoExecutionException If JJTree could not be invoked.
+     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     */
+    protected void runJJTree( File jjtFile, File grammarDirectory, String nodePackageName )
+        throws MojoExecutionException, MojoFailureException
+    {
+        JJTree jjtree = new JJTree();
+        jjtree.setInputFile( jjtFile );
+        jjtree.setOutputDirectory( grammarDirectory );
+        jjtree.setJdkVersion( this.jdkVersion );
+        jjtree.setStatic( this.isStatic );
+        jjtree.setBuildNodeFiles( this.buildNodeFiles );
+        jjtree.setMulti( this.multi );
+        jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
+        jjtree.setNodeFactory( this.nodeFactory );
+        jjtree.setNodePackage( nodePackageName );
+        jjtree.setNodePrefix( this.nodePrefix );
+        jjtree.setNodeScopeHook( this.nodeScopeHook );
+        jjtree.setNodeUsesParser( this.nodeUsesParser );
+        jjtree.setVisitor( this.visitor );
+        jjtree.setVisitorException( this.visitorException );
+        jjtree.run( getLog() );
     }
 
 }

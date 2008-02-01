@@ -183,6 +183,29 @@ class GrammarInfo
     }
 
     /**
+     * Resolves the specified package name against the package name of the parser generated from this grammar. To
+     * reference the parser package, the input string may use the prefix "*". For example, if the package for the parser
+     * is "org.apache" and the input string is "*.node", the resolved package is "org.apache.node". The period after the
+     * asterisk is significant, i.e. in the previous example the input string "*node" would resolve to "org.apachenode".
+     * 
+     * @param pkgName The package name to resolve, may be <code>null</code>.
+     * @return The resolved package name of <code>null</code> if the input string was <code>null</code>.
+     */
+    public String resolvePackageName( String pkgName )
+    {
+        String resolvedPackageName = pkgName;
+        if ( resolvedPackageName != null && resolvedPackageName.startsWith( "*" ) )
+        {
+            resolvedPackageName = getPackageName() + resolvedPackageName.substring( 1 );
+            if ( resolvedPackageName.startsWith( "." ) )
+            {
+                resolvedPackageName = resolvedPackageName.substring( 1 );
+            }
+        }
+        return resolvedPackageName;
+    }
+
+    /**
      * Gets the declared package for the generated parser (e.g. "org.apache"). This value will be an empty string if no
      * package declaration was found, it is never <code>null</code>.
      * 
