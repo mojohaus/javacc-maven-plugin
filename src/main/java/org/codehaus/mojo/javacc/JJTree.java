@@ -345,7 +345,7 @@ class JJTree
             argsList.add( "-VISITOR_EXCEPTION=" + this.visitorException );
         }
 
-        argsList.add( "-JJTREE_OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
+        argsList.add( "-OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
 
         argsList.add( this.inputFile.getAbsolutePath() );
 
