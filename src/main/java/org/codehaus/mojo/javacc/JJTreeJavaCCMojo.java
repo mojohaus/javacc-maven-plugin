@@ -20,16 +20,12 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
-import org.javacc.jjtree.JJTree;
 
 /**
  * Preprocesses decorated grammar files (<code>*.jjt</code>) with JJTree and passes the output to JavaCC in order to
@@ -70,15 +66,14 @@ public class JJTreeJavaCCMojo
     private Boolean nodeDefaultVoid;
 
     /**
-     * The name of a custom factory class to create <code>Node</code> objects. Default value is <code>""</code>.
+     * The name of a custom factory class to create <code>Node</code> objects.
      * 
      * @parameter expression="${nodeFactory}"
      */
     private Boolean nodeFactory;
 
     /**
-     * The package to generate the node classes into. Default value is <code>""</code> meaning to use the package of
-     * the corresponding parser.
+     * The package to generate the node classes into. By default, the package of the corresponding parser is used.
      * 
      * @parameter expression="${nodePackage}"
      */
@@ -86,7 +81,7 @@ public class JJTreeJavaCCMojo
 
     /**
      * The prefix used to construct node class names from node identifiers in multi mode. Default value is
-     * <code>"AST"</code>.
+     * <code>AST</code>.
      * 
      * @parameter expression="${nodePrefix}"
      */
@@ -118,8 +113,8 @@ public class JJTreeJavaCCMojo
 
     /**
      * The qualified name of an exception class to include in the signature of the generated <code>jjtAccept()</code>
-     * and <code>visit()</code> methods. By default, the <code>throws</code> clause of the generated methods is empty
-     * such that only unchecked exceptions can be thrown.
+     * and <code>visit()</code> methods. By default, the <code>throws</code> clause of the generated methods is
+     * empty such that only unchecked exceptions can be thrown.
      * 
      * @parameter expression="${visitorException}"
      */
@@ -289,7 +284,22 @@ public class JJTreeJavaCCMojo
         nodeDirectory = new File( this.outputDirectory, nodeDirectory.getPath() );
 
         // generate final grammar file
-        runJJTree( jjtFile, jjDirectory );
+        JJTree jjtree = new JJTree();
+        jjtree.setInputFile( jjtFile );
+        jjtree.setOutputDirectory( jjDirectory );
+        jjtree.setJdkVersion( getJdkVersion() );
+        jjtree.setStatic( getIsStatic() );
+        jjtree.setBuildNodeFiles( this.buildNodeFiles );
+        jjtree.setMulti( this.multi );
+        jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
+        jjtree.setNodeFactory( this.nodeFactory );
+        jjtree.setNodePackage( this.nodePackage );
+        jjtree.setNodePrefix( this.nodePrefix );
+        jjtree.setNodeScopeHook( this.nodeScopeHook );
+        jjtree.setNodeUsesParser( this.nodeUsesParser );
+        jjtree.setVisitor( this.visitor );
+        jjtree.setVisitorException( this.visitorException );
+        jjtree.run( getLog() );
 
         // copy generated tree node files to output directory
         try
@@ -297,7 +307,7 @@ public class JJTreeJavaCCMojo
             getLog().debug( "Copying tree nodes files: " + jjDirectory + " -> " + nodeDirectory );
             FileUtils.copyDirectory( jjDirectory, nodeDirectory, "*.java", "" );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Failed to copy tree nodes files to output directory: " + jjDirectory
                 + " -> " + nodeDirectory, e );
@@ -309,7 +319,7 @@ public class JJTreeJavaCCMojo
             getLog().debug( "Copying custom source files: " + jjtDirectory + " -> " + parserDirectory );
             FileUtils.copyDirectory( jjtDirectory, parserDirectory, "*.java", "" );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Failed to copy custom source files to output directory:" + jjtDirectory
                 + " -> " + parserDirectory, e );
@@ -317,126 +327,6 @@ public class JJTreeJavaCCMojo
 
         // generate parser file
         runJavaCC( jjFile, parserDirectory );
-    }
-
-    /**
-     * Runs JJTree on the specified decorated grammar file to generate a grammar file annotated with node actions. The
-     * options for JJTree are derived from the current values of the corresponding mojo parameters.
-     * 
-     * @param jjtFile The absolute path to the grammar file to pass into JJTree for preprocessing, must not be
-     *            <code>null</code>.
-     * @param grammarDirectory The absolute path to the output directory for the generated grammar file, must not be
-     *            <code>null</code>. If this directory does not exist yet, it is created. Note that this path should
-     *            already include the desired package hierarchy because JJTree will not append the required sub
-     *            directories automatically.
-     * @throws MojoExecutionException If JJTree could not be invoked.
-     * @throws MojoFailureException If JJTree reported a non-zero exit code.
-     */
-    private void runJJTree( File jjtFile, File grammarDirectory )
-        throws MojoExecutionException, MojoFailureException
-    {
-        int exitCode;
-        try
-        {
-            String[] args = generateArgumentsForJJTree( jjtFile, grammarDirectory );
-            getLog().debug( "Running JJTree: " + Arrays.asList( args ) );
-            if ( !grammarDirectory.exists() )
-            {
-                grammarDirectory.mkdirs();
-            }
-            JJTree jjtree = new JJTree();
-            exitCode = jjtree.main( args );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to execute JJTree", e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "JJTree reported exit code " + exitCode + ": " + jjtFile );
-        }
-    }
-
-    /**
-     * Assembles the command line arguments for the invocation of JJTree according to the mojo configuration.<br/><br/>
-     * <strong>Note:</strong> To prevent conflicts with JavaCC options that might be set directly in the grammar file,
-     * only those mojo parameters that have been explicitly set by the user are passed on the command line.
-     * 
-     * @param jjtFile The absolute path of the grammar file to compile, must not be <code>null</code>.
-     * @param grammarDirectory The absolute path to the output directory for the generated grammar file, must not be
-     *            <code>null</code>. Note that this path should already include the desired package hierarchy because
-     *            JJTree will not append the required sub directories automatically.
-     * @return A string array that represents the arguments to use for JJTree.
-     */
-    private String[] generateArgumentsForJJTree( File jjtFile, File grammarDirectory )
-    {
-        List argsList = new ArrayList();
-
-        if ( getJdkVersion() != null )
-        {
-            argsList.add( "-JDK_VERSION=" + getJdkVersion() );
-        }
-
-        if ( this.buildNodeFiles != null )
-        {
-            argsList.add( "-BUILD_NODE_FILES=" + this.buildNodeFiles );
-        }
-
-        if ( this.multi != null )
-        {
-            argsList.add( "-MULTI=" + this.multi );
-        }
-
-        if ( this.nodeDefaultVoid != null )
-        {
-            argsList.add( "-NODE_DEFAULT_VOID=" + this.nodeDefaultVoid );
-        }
-
-        if ( this.nodeFactory != null )
-        {
-            argsList.add( "-NODE_FACTORY=" + this.nodeFactory );
-        }
-
-        if ( this.nodePackage != null )
-        {
-            argsList.add( "-NODE_PACKAGE=" + this.nodePackage );
-        }
-
-        if ( this.nodePrefix != null )
-        {
-            argsList.add( "-NODE_PREFIX=" + this.nodePrefix );
-        }
-
-        if ( this.nodeScopeHook != null )
-        {
-            argsList.add( "-NODE_SCOPE_HOOK=" + this.nodeScopeHook );
-        }
-
-        if ( this.nodeUsesParser != null )
-        {
-            argsList.add( "-NODE_USES_PARSER=" + this.nodeUsesParser );
-        }
-
-        if ( getIsStatic() != null )
-        {
-            argsList.add( "-STATIC=" + getIsStatic() );
-        }
-
-        if ( this.visitor != null )
-        {
-            argsList.add( "-VISITOR=" + this.visitor );
-        }
-
-        if ( this.visitorException != null )
-        {
-            argsList.add( "-VISITOR_EXCEPTION=\'" + this.visitorException + "\'" );
-        }
-
-        argsList.add( "-OUTPUT_DIRECTORY=" + grammarDirectory.getAbsolutePath() );
-
-        argsList.add( jjtFile.getAbsolutePath() );
-
-        return (String[]) argsList.toArray( new String[argsList.size()] );
     }
 
 }
