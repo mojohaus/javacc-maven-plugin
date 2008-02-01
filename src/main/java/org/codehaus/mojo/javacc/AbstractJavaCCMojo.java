@@ -20,14 +20,10 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.javacc.parser.Main;
 
 /**
  * Exposes all JavaCC options as mojo parameters such that subclasses can share this boilerplate code.
@@ -190,7 +186,7 @@ public abstract class AbstractJavaCCMojo
      * When set to <code>true</code>, the generated token manager will include a field called <code>parser</code>
      * that references the instantiating parser instance. Default value is <code>false</code>.
      * 
-     * @parameter
+     * @parameter expression="${tokenManagerUsesParser}"
      */
     private Boolean tokenManagerUsesParser;
 
@@ -263,158 +259,32 @@ public abstract class AbstractJavaCCMojo
     protected void runJavaCC( File jjFile, File parserDirectory )
         throws MojoExecutionException, MojoFailureException
     {
-        int exitCode;
-        try
-        {
-            String[] args = generateArgumentsForJavaCC( jjFile, parserDirectory );
-            getLog().debug( "Running JavaCC: " + Arrays.asList( args ) );
-            if ( !parserDirectory.exists() )
-            {
-                parserDirectory.mkdirs();
-            }
-            exitCode = Main.mainProgram( args );
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to execute JavaCC", e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "JavaCC reported exit code " + exitCode + ": " + jjFile );
-        }
-    }
-
-    /**
-     * Assembles the command line arguments for the invocation of JavaCC according to the mojo configuration.<br/><br/>
-     * <strong>Note:</strong> To prevent conflicts with JavaCC options that might be set directly in the grammar file,
-     * only those mojo parameters that have been explicitly set by the user are passed on the command line.
-     * 
-     * @param jjFile The absolute path to the grammar file to pass into JavaCC for compilation, must not be
-     *            <code>null</code>.
-     * @param parserDirectory The absolute path to the output directory for the generated parser file, must not be
-     *            <code>null</code>. Note that this path should already include the desired package hierarchy because
-     *            JavaCC will not append the required sub directories automatically.
-     * @return A string array that represents the command line arguments to use for JavaCC.
-     */
-    private String[] generateArgumentsForJavaCC( File jjFile, File parserDirectory )
-    {
-        List argsList = new ArrayList();
-
-        if ( this.jdkVersion != null )
-        {
-            argsList.add( "-JDK_VERSION=" + this.jdkVersion );
-        }
-
-        if ( this.lookAhead != null )
-        {
-            argsList.add( "-LOOKAHEAD=" + this.lookAhead );
-        }
-
-        if ( this.choiceAmbiguityCheck != null )
-        {
-            argsList.add( "-CHOICE_AMBIGUITY_CHECK=" + this.choiceAmbiguityCheck );
-        }
-
-        if ( this.otherAmbiguityCheck != null )
-        {
-            argsList.add( "-OTHER_AMBIGUITY_CHECK=" + this.otherAmbiguityCheck );
-        }
-
-        if ( this.isStatic != null )
-        {
-            argsList.add( "-STATIC=" + this.isStatic );
-        }
-
-        if ( this.debugParser != null )
-        {
-            argsList.add( "-DEBUG_PARSER=" + this.debugParser );
-        }
-
-        if ( this.debugLookAhead != null )
-        {
-            argsList.add( "-DEBUG_LOOKAHEAD=" + this.debugLookAhead );
-        }
-
-        if ( this.debugTokenManager != null )
-        {
-            argsList.add( "-DEBUG_TOKEN_MANAGER=" + this.debugTokenManager );
-        }
-
-        if ( this.errorReporting != null )
-        {
-            argsList.add( "-ERROR_REPORTING=" + this.errorReporting );
-        }
-
-        if ( this.javaUnicodeEscape != null )
-        {
-            argsList.add( "-JAVA_UNICODE_ESCAPE=" + this.javaUnicodeEscape );
-        }
-
-        if ( this.unicodeInput != null )
-        {
-            argsList.add( "-UNICODE_INPUT=" + this.unicodeInput );
-        }
-
-        if ( this.ignoreCase != null )
-        {
-            argsList.add( "-IGNORE_CASE=" + this.ignoreCase );
-        }
-
-        if ( this.commonTokenAction != null )
-        {
-            argsList.add( "-COMMON_TOKEN_ACTION=" + this.commonTokenAction );
-        }
-
-        if ( this.userTokenManager != null )
-        {
-            argsList.add( "-USER_TOKEN_MANAGER=" + this.userTokenManager );
-        }
-
-        if ( this.userCharStream != null )
-        {
-            argsList.add( "-USER_CHAR_STREAM=" + this.userCharStream );
-        }
-
-        if ( this.buildParser != null )
-        {
-            argsList.add( "-BUILD_PARSER=" + this.buildParser );
-        }
-
-        if ( this.buildTokenManager != null )
-        {
-            argsList.add( "-BUILD_TOKEN_MANAGER=" + this.buildTokenManager );
-        }
-
-        if ( this.tokenManagerUsesParser != null )
-        {
-            argsList.add( "-TOKEN_MANAGER_USES_PARSER=" + this.tokenManagerUsesParser );
-        }
-
-        if ( this.sanityCheck != null )
-        {
-            argsList.add( "-SANITY_CHECK=" + this.sanityCheck );
-        }
-
-        if ( this.forceLaCheck != null )
-        {
-            argsList.add( "-FORCE_LA_CHECK=" + this.forceLaCheck );
-        }
-
-        if ( this.cacheTokens != null )
-        {
-            argsList.add( "-CACHE_TOKENS=" + this.cacheTokens );
-        }
-
-        if ( this.keepLineColumn != null )
-        {
-            argsList.add( "-KEEP_LINE_COLUMN=" + this.keepLineColumn );
-        }
-
-        argsList.add( "-OUTPUT_DIRECTORY:" + parserDirectory.getAbsolutePath() );
-
-        argsList.add( jjFile.getAbsolutePath() );
-
-        return (String[]) argsList.toArray( new String[argsList.size()] );
+        JavaCC javacc = new JavaCC();
+        javacc.setInputFile( jjFile );
+        javacc.setOutputDirectory( parserDirectory );
+        javacc.setJdkVersion( this.jdkVersion );
+        javacc.setStatic( this.isStatic );
+        javacc.setBuildParser( this.buildParser );
+        javacc.setBuildTokenManager( this.buildTokenManager );
+        javacc.setCacheTokens( this.cacheTokens );
+        javacc.setChoiceAmbiguityCheck( this.choiceAmbiguityCheck );
+        javacc.setCommonTokenAction( this.commonTokenAction );
+        javacc.setDebugLookAhead( this.debugLookAhead );
+        javacc.setDebugParser( this.debugParser );
+        javacc.setDebugTokenManager( this.debugTokenManager );
+        javacc.setErrorReporting( this.errorReporting );
+        javacc.setForceLaCheck( this.forceLaCheck );
+        javacc.setIgnoreCase( this.ignoreCase );
+        javacc.setJavaUnicodeEscape( this.javaUnicodeEscape );
+        javacc.setKeepLineColumn( this.keepLineColumn );
+        javacc.setLookAhead( this.lookAhead );
+        javacc.setOtherAmbiguityCheck( this.otherAmbiguityCheck );
+        javacc.setSanityCheck( this.sanityCheck );
+        javacc.setTokenManagerUsesParser( this.tokenManagerUsesParser );
+        javacc.setUnicodeInput( this.unicodeInput );
+        javacc.setUserCharStream( this.userCharStream );
+        javacc.setUserTokenManager( this.userTokenManager );
+        javacc.run( getLog() );
     }
 
 }

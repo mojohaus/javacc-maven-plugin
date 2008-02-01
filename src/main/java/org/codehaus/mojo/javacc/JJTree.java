@@ -251,8 +251,7 @@ class JJTree
     }
 
     /**
-     * Runs JJTree on the specified decorated grammar file to generate a grammar file annotated with node actions. The
-     * options for JJTree are derived from the current values of the corresponding mojo parameters.
+     * Runs JJTree using the previously set parameters.
      * 
      * @param log A logger used to output diagnostic messages, may be <code>null</code>.
      * @throws MojoExecutionException If JJTree could not be invoked.
@@ -298,7 +297,7 @@ class JJTree
     /**
      * Assembles the command line arguments for the invocation of JJTree according to the configuration.<br/><br/>
      * <strong>Note:</strong> To prevent conflicts with JavaCC options that might be set directly in the grammar file,
-     * only those parameters that have been explicitly set by the user are passed on the command line.
+     * only those parameters that have been explicitly set are passed on the command line.
      * 
      * @return A string array that represents the arguments to use for JJTree.
      */
