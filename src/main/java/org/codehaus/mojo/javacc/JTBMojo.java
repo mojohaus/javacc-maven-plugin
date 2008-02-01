@@ -28,7 +28,6 @@ import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -59,13 +58,6 @@ public class JTBMojo
     private String packageName;
 
     /**
-     * The path of the package name relate to <code>packageName</code>
-     * 
-     * @see #packageName
-     */
-    private String packagePath;
-
-    /**
      * This option specifies the package for the generated AST nodes.
      * 
      * @parameter expression=${nodePackageName}"
@@ -73,25 +65,11 @@ public class JTBMojo
     private String nodePackageName;
 
     /**
-     * The path of the package name relate to <code>nodePackageName</code>
-     * 
-     * @see #nodePackageName
-     */
-    private String nodePackagePath;
-
-    /**
      * This option specifies the package for the generated visitors.
      * 
      * @parameter expression=${visitorPackageName}"
      */
     private String visitorPackageName;
-
-    /**
-     * The path of the package name relate to <code>visitorPackageName</code>
-     * 
-     * @see #visitorPackageName
-     */
-    private String visitorPackagePath;
 
     /**
      * If true, JTB will supress its semantic error checking.
@@ -207,81 +185,58 @@ public class JTBMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( !sourceDirectory.isDirectory() )
+        if ( !this.sourceDirectory.isDirectory() )
         {
-            getLog().info( "Skipping non-existing source directory: " + sourceDirectory );
+            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
             return;
         }
 
-        if ( packageName != null )
+        if ( !this.outputDirectory.exists() )
         {
-            packagePath = StringUtils.replace( packageName, '.', File.separatorChar );
-
-            getLog().debug( "Using packagePath: " + packagePath );
+            this.outputDirectory.mkdirs();
         }
-        else
+        if ( !this.timestampDirectory.exists() )
         {
-            if ( visitorPackageName != null )
-            {
-                visitorPackagePath = StringUtils.replace( visitorPackageName, '.', File.separatorChar );
-
-                getLog().debug( "Using visitorPackagePath: " + visitorPackagePath );
-            }
-
-            if ( nodePackageName != null )
-            {
-                nodePackagePath = StringUtils.replace( nodePackageName, '.', File.separatorChar );
-
-                getLog().debug( "Using nodePackagePath: " + nodePackagePath );
-            }
-        }
-        if ( !outputDirectory.exists() )
-        {
-            outputDirectory.mkdirs();
-        }
-        if ( !timestampDirectory.exists() )
-        {
-            timestampDirectory.mkdirs();
+            this.timestampDirectory.mkdirs();
         }
 
         Set staleGrammars = computeStaleGrammars();
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info( "Nothing to process - all grammars are up to date" );
-            if ( project != null )
+            getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
+        }
+        else
+        {
+            for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
             {
-                project.addCompileSourceRoot( outputDirectory.getPath() );
+                File jtbFile = (File) i.next();
+                String nodePackage = getNodePackageName();
+                String visitorPackage = getVisitorPackageName();
+                try
+                {
+                    JTB.main( generateArgumentList( jtbFile ) );
+
+                    /*
+                     * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
+                     * therefore, the files must be moved to the correct locations.
+                     */
+                    movePackage( nodePackage );
+                    movePackage( visitorPackage );
+
+                    FileUtils.copyFileToDirectory( jtbFile, this.timestampDirectory );
+                }
+                catch ( Exception e )
+                {
+                    throw new MojoExecutionException( "JTB execution failed", e );
+                }
             }
-            return;
         }
 
-        for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
+        if ( this.project != null )
         {
-            File jtbFile = (File) i.next();
-            String nodePackage = getNodePackageName();
-            String visitorPackage = getVisitorPackageName();
-            try
-            {
-                JTB.main( generateArgumentList( jtbFile ) );
-
-                /*
-                 * since jtb was meant to be run as a command-line tool, it only outputs to the current directory.
-                 * therefore, the files must be moved to the correct locations.
-                 */
-                movePackage( nodePackage );
-                movePackage( visitorPackage );
-
-                FileUtils.copyFileToDirectory( jtbFile, timestampDirectory );
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( "JTB execution failed", e );
-            }
-        }
-        if ( project != null )
-        {
-            project.addCompileSourceRoot( outputDirectory.getPath() );
+            getLog().debug( "Adding compile source root: " + this.outputDirectory );
+            this.project.addCompileSourceRoot( this.outputDirectory.getPath() );
         }
 
     }
@@ -408,55 +363,55 @@ public class JTBMojo
         List argsList = new ArrayList();
 
         argsList.add( "-o" );
-        argsList.add( outputDirectory + File.separator + FileUtils.basename( jtbFile.getName() ) + "jj" );
-        if ( packageName != null )
+        argsList.add( this.outputDirectory + File.separator + FileUtils.basename( jtbFile.getName() ) + "jj" );
+        if ( this.packageName != null )
         {
             argsList.add( "-p" );
-            argsList.add( packageName );
+            argsList.add( this.packageName );
         }
         else
         {
-            if ( nodePackageName != null )
+            if ( this.nodePackageName != null )
             {
                 argsList.add( "-np" );
-                argsList.add( nodePackageName );
+                argsList.add( this.nodePackageName );
             }
-            if ( visitorPackageName != null )
+            if ( this.visitorPackageName != null )
             {
                 argsList.add( "-vp" );
-                argsList.add( visitorPackageName );
+                argsList.add( this.visitorPackageName );
             }
         }
-        if ( ( supressErrorChecking != null ) && supressErrorChecking.booleanValue() )
+        if ( ( this.supressErrorChecking != null ) && this.supressErrorChecking.booleanValue() )
         {
             argsList.add( "-e" );
         }
-        if ( ( javadocFriendlyComments != null ) && javadocFriendlyComments.booleanValue() )
+        if ( ( this.javadocFriendlyComments != null ) && this.javadocFriendlyComments.booleanValue() )
         {
             argsList.add( "-jd" );
         }
-        if ( ( descriptiveFieldNames != null ) && descriptiveFieldNames.booleanValue() )
+        if ( ( this.descriptiveFieldNames != null ) && this.descriptiveFieldNames.booleanValue() )
         {
             argsList.add( "-f" );
         }
-        if ( nodeParentClass != null )
+        if ( this.nodeParentClass != null )
         {
             argsList.add( "-ns" );
-            argsList.add( nodeParentClass );
+            argsList.add( this.nodeParentClass );
         }
-        if ( ( parentPointers != null ) && parentPointers.booleanValue() )
+        if ( ( this.parentPointers != null ) && this.parentPointers.booleanValue() )
         {
             argsList.add( "-pp" );
         }
-        if ( ( specialTokens != null ) && specialTokens.booleanValue() )
+        if ( ( this.specialTokens != null ) && this.specialTokens.booleanValue() )
         {
             argsList.add( "-tk" );
         }
-        if ( ( scheme != null ) && scheme.booleanValue() )
+        if ( ( this.scheme != null ) && this.scheme.booleanValue() )
         {
             argsList.add( "-scheme" );
         }
-        if ( ( printer != null ) && printer.booleanValue() )
+        if ( ( this.printer != null ) && this.printer.booleanValue() )
         {
             argsList.add( "-printer" );
         }
@@ -477,7 +432,7 @@ public class JTBMojo
         SuffixMapping mapping = new SuffixMapping( ".jtb", ".jtb" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JTB", ".JTB" );
 
-        SourceInclusionScanner scanner = new StaleSourceScanner( staleMillis );
+        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis );
 
         scanner.addSourceMapping( mapping );
         scanner.addSourceMapping( mappingCAP );
@@ -486,11 +441,11 @@ public class JTBMojo
 
         try
         {
-            staleSources.addAll( scanner.getIncludedSources( sourceDirectory, timestampDirectory ) );
+            staleSources.addAll( scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory ) );
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
+            throw new MojoExecutionException( "Error scanning source root: \'" + this.sourceDirectory
                 + "\' for stale grammars to reprocess.", e );
         }
 

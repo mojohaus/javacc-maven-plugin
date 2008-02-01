@@ -305,38 +305,38 @@ public class JavaCCMojo
     public void execute()
         throws MojoExecutionException
     {
-        // check packageName for . vs /
-        if ( packageName != null )
+        if ( !this.sourceDirectory.isDirectory() )
         {
-            packageName = StringUtils.replace( packageName, '.', File.separatorChar );
-        }
-
-        if ( !sourceDirectory.isDirectory() )
-        {
-            getLog().info( "Skipping non-existing source directory: " + sourceDirectory );
+            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
             return;
         }
 
-        if ( !timestampDirectory.exists() )
+        // check packageName for . vs /
+        if ( this.packageName != null )
         {
-            timestampDirectory.mkdirs();
+            this.packageName = StringUtils.replace( this.packageName, '.', File.separatorChar );
         }
 
-        if ( includes == null )
+        if ( !this.timestampDirectory.exists() )
         {
-            includes = Collections.singleton( "**/*" );
+            this.timestampDirectory.mkdirs();
         }
 
-        if ( excludes == null )
+        if ( this.includes == null )
         {
-            excludes = Collections.EMPTY_SET;
+            this.includes = Collections.singleton( "**/*" );
         }
 
-        Set staleGrammars = computeStaleGrammars( sourceDirectory, timestampDirectory );
+        if ( this.excludes == null )
+        {
+            this.excludes = Collections.EMPTY_SET;
+        }
+
+        Set staleGrammars = computeStaleGrammars( this.sourceDirectory, this.timestampDirectory );
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info( "Nothing to process - all grammars in " + sourceDirectory + " are up to date." );
+            getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
         }
         else
         {
@@ -369,8 +369,8 @@ public class JavaCCMojo
                         throw new MojoExecutionException( "JavaCC reported non-zero exit code: " + exitCode );
                     }
 
-                    URI relativeURI = sourceDirectory.toURI().relativize( jjFile.toURI() );
-                    File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
+                    URI relativeURI = this.sourceDirectory.toURI().relativize( jjFile.toURI() );
+                    File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
                     FileUtils.copyFile( jjFile, timestampFile );
                 }
                 catch ( Exception e )
@@ -380,9 +380,10 @@ public class JavaCCMojo
             }
         }
 
-        if ( project != null )
+        if ( this.project != null )
         {
-            project.addCompileSourceRoot( outputDirectory.getPath() );
+            getLog().debug( "Adding compile source root: " + this.outputDirectory );
+            this.project.addCompileSourceRoot( this.outputDirectory.getAbsolutePath() );
         }
     }
 
@@ -417,114 +418,114 @@ public class JavaCCMojo
     {
         List argsList = new ArrayList();
 
-        if ( jdkVersion != null )
+        if ( this.jdkVersion != null )
         {
-            argsList.add( "-JDK_VERSION=" + jdkVersion );
+            argsList.add( "-JDK_VERSION=" + this.jdkVersion );
         }
 
-        if ( lookAhead != null )
+        if ( this.lookAhead != null )
         {
-            argsList.add( "-LOOKAHEAD=" + lookAhead );
+            argsList.add( "-LOOKAHEAD=" + this.lookAhead );
         }
 
-        if ( choiceAmbiguityCheck != null )
+        if ( this.choiceAmbiguityCheck != null )
         {
-            argsList.add( "-CHOICE_AMBIGUITY_CHECK=" + choiceAmbiguityCheck );
+            argsList.add( "-CHOICE_AMBIGUITY_CHECK=" + this.choiceAmbiguityCheck );
         }
 
-        if ( otherAmbiguityCheck != null )
+        if ( this.otherAmbiguityCheck != null )
         {
-            argsList.add( "-OTHER_AMBIGUITY_CHECK=" + otherAmbiguityCheck );
+            argsList.add( "-OTHER_AMBIGUITY_CHECK=" + this.otherAmbiguityCheck );
         }
 
-        if ( isStatic != null )
+        if ( this.isStatic != null )
         {
-            argsList.add( "-STATIC=" + isStatic );
+            argsList.add( "-STATIC=" + this.isStatic );
         }
 
-        if ( debugParser != null )
+        if ( this.debugParser != null )
         {
-            argsList.add( "-DEBUG_PARSER=" + debugParser );
+            argsList.add( "-DEBUG_PARSER=" + this.debugParser );
         }
 
-        if ( debugLookAhead != null )
+        if ( this.debugLookAhead != null )
         {
-            argsList.add( "-DEBUG_LOOKAHEAD=" + debugLookAhead );
+            argsList.add( "-DEBUG_LOOKAHEAD=" + this.debugLookAhead );
         }
 
-        if ( debugTokenManager != null )
+        if ( this.debugTokenManager != null )
         {
-            argsList.add( "-DEBUG_TOKEN_MANAGER=" + debugTokenManager );
+            argsList.add( "-DEBUG_TOKEN_MANAGER=" + this.debugTokenManager );
         }
 
-        if ( errorReporting != null )
+        if ( this.errorReporting != null )
         {
-            argsList.add( "-ERROR_REPORTING=" + errorReporting );
+            argsList.add( "-ERROR_REPORTING=" + this.errorReporting );
         }
 
-        if ( javaUnicodeEscape != null )
+        if ( this.javaUnicodeEscape != null )
         {
-            argsList.add( "-JAVA_UNICODE_ESCAPE=" + javaUnicodeEscape );
+            argsList.add( "-JAVA_UNICODE_ESCAPE=" + this.javaUnicodeEscape );
         }
 
-        if ( unicodeInput != null )
+        if ( this.unicodeInput != null )
         {
-            argsList.add( "-UNICODE_INPUT=" + unicodeInput );
+            argsList.add( "-UNICODE_INPUT=" + this.unicodeInput );
         }
 
-        if ( ignoreCase != null )
+        if ( this.ignoreCase != null )
         {
-            argsList.add( "-IGNORE_CASE=" + ignoreCase );
+            argsList.add( "-IGNORE_CASE=" + this.ignoreCase );
         }
 
-        if ( commonTokenAction != null )
+        if ( this.commonTokenAction != null )
         {
-            argsList.add( "-COMMON_TOKEN_ACTION=" + commonTokenAction );
+            argsList.add( "-COMMON_TOKEN_ACTION=" + this.commonTokenAction );
         }
 
-        if ( userTokenManager != null )
+        if ( this.userTokenManager != null )
         {
-            argsList.add( "-USER_TOKEN_MANAGER=" + userTokenManager );
+            argsList.add( "-USER_TOKEN_MANAGER=" + this.userTokenManager );
         }
 
-        if ( userCharStream != null )
+        if ( this.userCharStream != null )
         {
-            argsList.add( "-USER_CHAR_STREAM=" + userCharStream );
+            argsList.add( "-USER_CHAR_STREAM=" + this.userCharStream );
         }
 
-        if ( buildParser != null )
+        if ( this.buildParser != null )
         {
-            argsList.add( "-BUILD_PARSER=" + buildParser );
+            argsList.add( "-BUILD_PARSER=" + this.buildParser );
         }
 
-        if ( buildTokenManager != null )
+        if ( this.buildTokenManager != null )
         {
-            argsList.add( "-BUILD_TOKEN_MANAGER=" + buildTokenManager );
+            argsList.add( "-BUILD_TOKEN_MANAGER=" + this.buildTokenManager );
         }
 
-        if ( tokenManagerUsesParser != null )
+        if ( this.tokenManagerUsesParser != null )
         {
-            argsList.add( "-TOKEN_MANAGER_USES_PARSER=" + tokenManagerUsesParser );
+            argsList.add( "-TOKEN_MANAGER_USES_PARSER=" + this.tokenManagerUsesParser );
         }
 
-        if ( sanityCheck != null )
+        if ( this.sanityCheck != null )
         {
-            argsList.add( "-SANITY_CHECK=" + sanityCheck );
+            argsList.add( "-SANITY_CHECK=" + this.sanityCheck );
         }
 
-        if ( forceLaCheck != null )
+        if ( this.forceLaCheck != null )
         {
-            argsList.add( "-FORCE_LA_CHECK=" + forceLaCheck );
+            argsList.add( "-FORCE_LA_CHECK=" + this.forceLaCheck );
         }
 
-        if ( cacheTokens != null )
+        if ( this.cacheTokens != null )
         {
-            argsList.add( "-CACHE_TOKENS=" + cacheTokens );
+            argsList.add( "-CACHE_TOKENS=" + this.cacheTokens );
         }
 
-        if ( keepLineColumn != null )
+        if ( this.keepLineColumn != null )
         {
-            argsList.add( "-KEEP_LINE_COLUMN=" + keepLineColumn );
+            argsList.add( "-KEEP_LINE_COLUMN=" + this.keepLineColumn );
         }
 
         argsList.add( "-OUTPUT_DIRECTORY:" + outputDir );
@@ -548,7 +549,7 @@ public class JavaCCMojo
         SuffixMapping mapping = new SuffixMapping( ".jj", ".jj" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JJ", ".JJ" );
 
-        SourceInclusionScanner scanner = new StaleSourceScanner( staleMillis, includes, excludes );
+        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
 
         scanner.addSourceMapping( mapping );
         scanner.addSourceMapping( mappingCAP );

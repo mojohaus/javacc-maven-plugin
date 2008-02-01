@@ -176,7 +176,7 @@ public class JJDocMojo
      */
     protected MavenProject getProject()
     {
-        return project;
+        return this.project;
     }
 
     /**
@@ -187,7 +187,7 @@ public class JJDocMojo
      */
     protected Renderer getSiteRenderer()
     {
-        return siteRenderer;
+        return this.siteRenderer;
     }
 
     /**
@@ -198,7 +198,7 @@ public class JJDocMojo
      */
     protected String getOutputDirectory()
     {
-        return outputDirectory.toString();
+        return this.outputDirectory.toString();
     }
 
     /**
@@ -209,7 +209,7 @@ public class JJDocMojo
      */
     private File getJJDocOutputDirectory()
     {
-        return new File( getReportOutputDirectory(), jjdocDirectory );
+        return new File( getReportOutputDirectory(), this.jjdocDirectory );
     }
 
     /**
@@ -220,23 +220,23 @@ public class JJDocMojo
     private File[] getSourceDirectories()
     {
         List directories = new ArrayList();
-        if ( sourceDirectories != null && sourceDirectories.length > 0 )
+        if ( this.sourceDirectories != null && this.sourceDirectories.length > 0 )
         {
-            directories.addAll( Arrays.asList( sourceDirectories ) );
+            directories.addAll( Arrays.asList( this.sourceDirectories ) );
         }
         else
         {
-            if ( defaultGrammarDirectoryJavaCC != null )
+            if ( this.defaultGrammarDirectoryJavaCC != null )
             {
-                directories.add( defaultGrammarDirectoryJavaCC );
+                directories.add( this.defaultGrammarDirectoryJavaCC );
             }
-            if ( defaultGrammarDirectoryJJTree != null )
+            if ( this.defaultGrammarDirectoryJJTree != null )
             {
-                directories.add( defaultGrammarDirectoryJJTree );
+                directories.add( this.defaultGrammarDirectoryJJTree );
             }
-            if ( defaultGrammarDirectoryJTB != null )
+            if ( this.defaultGrammarDirectoryJTB != null )
             {
-                directories.add( defaultGrammarDirectoryJTB );
+                directories.add( this.defaultGrammarDirectoryJTB );
             }
         }
         return (File[]) directories.toArray( new File[directories.size()] );
@@ -272,7 +272,7 @@ public class JJDocMojo
      */
     public String getOutputName()
     {
-        return jjdocDirectory + "/index";
+        return this.jjdocDirectory + "/index";
     }
 
     /**
@@ -370,7 +370,7 @@ public class JJDocMojo
      */
     private String getOutputFileExtension()
     {
-        if ( text )
+        if ( this.text )
         {
             return ".txt";
         }
@@ -520,7 +520,7 @@ public class JJDocMojo
     {
         StringBuffer classpath = new StringBuffer();
 
-        for ( Iterator i = pluginArtifacts.iterator(); i.hasNext(); )
+        for ( Iterator i = this.pluginArtifacts.iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
             if ( artifact.getArtifactId().contains( "javacc" ) )
@@ -648,7 +648,7 @@ public class JJDocMojo
             {
                 getLog().warn( line.substring( WARN_PREFIX.length() ) );
             }
-            else if ( err )
+            else if ( this.err )
             {
                 getLog().error( line );
             }

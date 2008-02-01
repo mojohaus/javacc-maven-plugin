@@ -204,65 +204,66 @@ public class JJTreeMojo
     public void execute()
         throws MojoExecutionException
     {
-        if ( !sourceDirectory.isDirectory() )
+        if ( !this.sourceDirectory.isDirectory() )
         {
-            getLog().info( "Skipping non-existing source directory: " + sourceDirectory );
+            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
             return;
         }
 
-        if ( nodePackage != null )
+        if ( this.nodePackage != null )
         {
-            packageName = StringUtils.replace( nodePackage, '.', File.separatorChar );
+            this.packageName = StringUtils.replace( this.nodePackage, '.', File.separatorChar );
         }
 
-        if ( !outputDirectory.exists() )
+        if ( !this.outputDirectory.exists() )
         {
-            outputDirectory.mkdirs();
+            this.outputDirectory.mkdirs();
         }
 
-        if ( !timestampDirectory.exists() )
+        if ( !this.timestampDirectory.exists() )
         {
-            timestampDirectory.mkdirs();
+            this.timestampDirectory.mkdirs();
         }
 
-        if ( includes == null )
+        if ( this.includes == null )
         {
-            includes = Collections.singleton( "**/*" );
+            this.includes = Collections.singleton( "**/*" );
         }
 
-        if ( excludes == null )
+        if ( this.excludes == null )
         {
-            excludes = Collections.EMPTY_SET;
+            this.excludes = Collections.EMPTY_SET;
         }
 
         Set staleGrammars = computeStaleGrammars();
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info( "Nothing to process - all grammars in " + sourceDirectory + " are up to date." );
-            return;
+            getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
         }
-
-        for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
+        else
         {
-            File jjtFile = (File) i.next();
-            File outputDir = getOutputDirectory( jjtFile );
-            try
+            for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
             {
-                JJTree jjtree = new JJTree();
-                int exitCode = jjtree.main( generateArgumentList( jjtFile, outputDir ) );
-                if ( exitCode != 0 )
+                File jjtFile = (File) i.next();
+                File outputDir = getOutputDirectory( jjtFile );
+                try
                 {
-                    throw new MojoExecutionException( "JJTree reported non-zero exit code: " + exitCode );
-                }
+                    JJTree jjtree = new JJTree();
+                    int exitCode = jjtree.main( generateArgumentList( jjtFile, outputDir ) );
+                    if ( exitCode != 0 )
+                    {
+                        throw new MojoExecutionException( "JJTree reported non-zero exit code: " + exitCode );
+                    }
 
-                URI relativeURI = sourceDirectory.toURI().relativize( jjtFile.toURI() );
-                File timestampFile = new File( timestampDirectory.toURI().resolve( relativeURI ) );
-                FileUtils.copyFile( jjtFile, timestampFile );
-            }
-            catch ( Exception e )
-            {
-                throw new MojoExecutionException( "JJTree execution failed", e );
+                    URI relativeURI = this.sourceDirectory.toURI().relativize( jjtFile.toURI() );
+                    File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
+                    FileUtils.copyFile( jjtFile, timestampFile );
+                }
+                catch ( Exception e )
+                {
+                    throw new MojoExecutionException( "JJTree execution failed", e );
+                }
             }
         }
     }
@@ -300,64 +301,64 @@ public class JJTreeMojo
     {
         List argsList = new ArrayList();
 
-        if ( jdkVersion != null )
+        if ( this.jdkVersion != null )
         {
-            argsList.add( "-JDK_VERSION=" + jdkVersion );
+            argsList.add( "-JDK_VERSION=" + this.jdkVersion );
         }
 
-        if ( buildNodeFiles != null )
+        if ( this.buildNodeFiles != null )
         {
-            argsList.add( "-BUILD_NODE_FILES=" + buildNodeFiles );
+            argsList.add( "-BUILD_NODE_FILES=" + this.buildNodeFiles );
         }
 
-        if ( multi != null )
+        if ( this.multi != null )
         {
-            argsList.add( "-MULTI=" + multi );
+            argsList.add( "-MULTI=" + this.multi );
         }
 
-        if ( nodeDefaultVoid != null )
+        if ( this.nodeDefaultVoid != null )
         {
-            argsList.add( "-NODE_DEFAULT_VOID=" + nodeDefaultVoid );
+            argsList.add( "-NODE_DEFAULT_VOID=" + this.nodeDefaultVoid );
         }
 
-        if ( nodeFactory != null )
+        if ( this.nodeFactory != null )
         {
-            argsList.add( "-NODE_FACTORY=" + nodeFactory );
+            argsList.add( "-NODE_FACTORY=" + this.nodeFactory );
         }
 
-        if ( nodePackage != null )
+        if ( this.nodePackage != null )
         {
-            argsList.add( "-NODE_PACKAGE=" + nodePackage );
+            argsList.add( "-NODE_PACKAGE=" + this.nodePackage );
         }
 
-        if ( nodePrefix != null )
+        if ( this.nodePrefix != null )
         {
-            argsList.add( "-NODE_PREFIX=" + nodePrefix );
+            argsList.add( "-NODE_PREFIX=" + this.nodePrefix );
         }
 
-        if ( nodeScopeHook != null )
+        if ( this.nodeScopeHook != null )
         {
-            argsList.add( "-NODE_SCOPE_HOOK=" + nodeScopeHook );
+            argsList.add( "-NODE_SCOPE_HOOK=" + this.nodeScopeHook );
         }
 
-        if ( nodeUsesParser != null )
+        if ( this.nodeUsesParser != null )
         {
-            argsList.add( "-NODE_USES_PARSER=" + nodeUsesParser );
+            argsList.add( "-NODE_USES_PARSER=" + this.nodeUsesParser );
         }
 
-        if ( isStatic != null )
+        if ( this.isStatic != null )
         {
-            argsList.add( "-STATIC=" + isStatic );
+            argsList.add( "-STATIC=" + this.isStatic );
         }
 
-        if ( visitor != null )
+        if ( this.visitor != null )
         {
-            argsList.add( "-VISITOR=" + visitor );
+            argsList.add( "-VISITOR=" + this.visitor );
         }
 
-        if ( visitorException != null )
+        if ( this.visitorException != null )
         {
-            argsList.add( "-VISITOR_EXCEPTION=\'" + visitorException + "\'" );
+            argsList.add( "-VISITOR_EXCEPTION=\'" + this.visitorException + "\'" );
         }
 
         argsList.add( "-OUTPUT_DIRECTORY=" + outputDir );
@@ -379,7 +380,7 @@ public class JJTreeMojo
         SuffixMapping mapping = new SuffixMapping( ".jjt", ".jjt" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JJT", ".JJT" );
 
-        SourceInclusionScanner scanner = new StaleSourceScanner( staleMillis, includes, excludes );
+        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
 
         scanner.addSourceMapping( mapping );
         scanner.addSourceMapping( mappingCAP );
@@ -388,11 +389,11 @@ public class JJTreeMojo
 
         try
         {
-            staleSources.addAll( scanner.getIncludedSources( sourceDirectory, timestampDirectory ) );
+            staleSources.addAll( scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory ) );
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
+            throw new MojoExecutionException( "Error scanning source root: \'" + this.sourceDirectory
                 + "\' for stale grammars to reprocess.", e );
         }
 
