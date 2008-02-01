@@ -44,6 +44,12 @@
         <artifactId>javacc-maven-plugin</artifactId>
         <version>@pom.version@</version>
       </plugin>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet/>
+        </reportSets>
+      </plugin>
     </plugins>
   </reporting>
  

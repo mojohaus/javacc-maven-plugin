@@ -8,8 +8,12 @@ try
         File target = new File( basedir, "target" );
         if ( target.exists() )
         {
-            System.err.println( "Parent project has unexpected output folder: " + target );
-            return false;
+            String[] files = target.list();
+            if ( files != null && ( files.length > 1 || !"site".equals( files[0] ) ) )
+            {
+                System.err.println( "Parent project has unexpected output: " + Arrays.asList( files ) );
+                return false;
+            }
         }
     }
 
@@ -35,7 +39,7 @@ try
             return false;
         }
 
-        File jjdoc = new File( target, "jjdoc/jjdoc/BasicParser.html" );
+        File jjdoc = new File( target, "site/jjdoc/BasicParser.html" );
         if ( !jjdoc.isFile() )
         {
             System.err.println( "Sub module has no JJDoc output: " + jjdoc );
@@ -65,7 +69,7 @@ try
             return false;
         }
 
-        File jjdoc = new File( target, "jjdoc/jjdoc/org/Simple.html" );
+        File jjdoc = new File( target, "site/jjdoc/org/Simple.html" );
         if ( !jjdoc.isFile() )
         {
             System.err.println( "Sub module has no JJDoc output: " + jjdoc );
@@ -95,7 +99,7 @@ try
             return false;
         }
 
-        File jjdoc = new File( target, "jjdoc/jjdoc/org/SubScheme.html" );
+        File jjdoc = new File( target, "site/jjdoc/org/SubScheme.html" );
         if ( !jjdoc.isFile() )
         {
             System.err.println( "Sub module has no JJDoc output: " + jjdoc );

@@ -24,6 +24,12 @@
           <outputDirectory>target/it-site</outputDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet/>
+        </reportSets>
+      </plugin>
     </plugins>
   </reporting>
 
