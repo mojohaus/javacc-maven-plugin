@@ -1,12 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.codehaus.mojo.javacc</groupId>
-  <artifactId>jjtree-custom-node-package</artifactId>
-  <packaging>jar</packaging>
+  <artifactId>it-test</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>Integration Test</name>
   <url>http://maven.apache.org</url>
+  <description>
+    Check handling of custom node package with static value.
+  </description>
 
   <build>
     <plugins>
@@ -21,7 +26,7 @@
               <goal>jjtree</goal>
             </goals>
             <configuration>
-              <outputDirectory>target/jjtree</outputDirectory>
+              <outputDirectory>target/generated-sources/jjtree</outputDirectory>
               <nodePackage>it.nodes</nodePackage>
             </configuration>
           </execution>
@@ -38,7 +43,7 @@
               <goal>run</goal>
             </goals>
             <configuration>
-              <sourceRoot>target/jjtree</sourceRoot>
+              <sourceRoot>target/generated-sources/jjtree</sourceRoot>
             </configuration>
           </execution>
         </executions>

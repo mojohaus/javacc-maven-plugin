@@ -7,14 +7,14 @@ try
     File outputFolder = new File( basedir, "target/generated-sources/jjtree" );
     
     File nodeFile = new File( outputFolder, "Node.java");
-    if ( !nodeFile.exists() || nodeFile.isDirectory() )
+    if ( nodeFile.length() <= 0 )
     {
         System.err.println( "Could not find generated java file: " + nodeFile );
         return false;
     }
     
     File parserFile = new File( outputFolder, "Simple.jj");
-    if ( !parserFile.exists() || parserFile.isDirectory() )
+    if ( parserFile.length() <= 0 )
     {
         System.err.println( "Could not find generated jj file: " + parserFile );
         return false;
