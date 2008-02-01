@@ -336,22 +336,35 @@ public class JJTreeJavaCCMojo
     protected void runJJTree( File jjtFile, File grammarDirectory, String nodePackageName )
         throws MojoExecutionException, MojoFailureException
     {
-        JJTree jjtree = new JJTree();
-        jjtree.setInputFile( jjtFile );
-        jjtree.setOutputDirectory( grammarDirectory );
-        jjtree.setJdkVersion( getJdkVersion() );
-        jjtree.setStatic( getIsStatic() );
-        jjtree.setBuildNodeFiles( this.buildNodeFiles );
-        jjtree.setMulti( this.multi );
-        jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
-        jjtree.setNodeFactory( this.nodeFactory );
-        jjtree.setNodePackage( nodePackageName );
-        jjtree.setNodePrefix( this.nodePrefix );
-        jjtree.setNodeScopeHook( this.nodeScopeHook );
-        jjtree.setNodeUsesParser( this.nodeUsesParser );
-        jjtree.setVisitor( this.visitor );
-        jjtree.setVisitorException( this.visitorException );
-        jjtree.run( getLog() );
+        int exitCode;
+        try
+        {
+            JJTree jjtree = new JJTree();
+            jjtree.setInputFile( jjtFile );
+            jjtree.setOutputDirectory( grammarDirectory );
+            jjtree.setJdkVersion( getJdkVersion() );
+            jjtree.setStatic( getIsStatic() );
+            jjtree.setBuildNodeFiles( this.buildNodeFiles );
+            jjtree.setMulti( this.multi );
+            jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
+            jjtree.setNodeFactory( this.nodeFactory );
+            jjtree.setNodePackage( nodePackageName );
+            jjtree.setNodePrefix( this.nodePrefix );
+            jjtree.setNodeScopeHook( this.nodeScopeHook );
+            jjtree.setNodeUsesParser( this.nodeUsesParser );
+            jjtree.setVisitor( this.visitor );
+            jjtree.setVisitorException( this.visitorException );
+            getLog().debug( "Running JJTree: " + jjtree );
+            exitCode = jjtree.run();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to execute JJTree", e );
+        }
+        if ( exitCode != 0 )
+        {
+            throw new MojoFailureException( "JJTree reported exit code " + exitCode + ": " + jjtFile );
+        }
     }
 
 }

@@ -24,10 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
-
 /**
  * Provides a facade for the mojos to invoke JJTree.
  * 
@@ -253,12 +249,11 @@ class JJTree
     /**
      * Runs JJTree using the previously set parameters.
      * 
-     * @param log A logger used to output diagnostic messages, may be <code>null</code>.
-     * @throws MojoExecutionException If JJTree could not be invoked.
-     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     * @return The exit code of JJTree.
+     * @throws Exception If the invocation failed.
      */
-    public void run( Log log )
-        throws MojoExecutionException, MojoFailureException
+    public int run()
+        throws Exception
     {
         if ( this.inputFile == null )
         {
@@ -269,29 +264,14 @@ class JJTree
             throw new IllegalStateException( "output directory not specified" );
         }
 
-        int exitCode;
-        try
+        if ( !this.outputDirectory.exists() )
         {
-            String[] args = generateArguments();
-            if ( log != null && log.isDebugEnabled() )
-            {
-                log.debug( "Running JJTree: " + Arrays.asList( args ) );
-            }
-            if ( !this.outputDirectory.exists() )
-            {
-                this.outputDirectory.mkdirs();
-            }
-            org.javacc.jjtree.JJTree jjtree = new org.javacc.jjtree.JJTree();
-            exitCode = jjtree.main( args );
+            this.outputDirectory.mkdirs();
         }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to execute JJTree", e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "JJTree reported exit code " + exitCode + ": " + this.inputFile );
-        }
+
+        String[] args = generateArguments();
+        org.javacc.jjtree.JJTree jjtree = new org.javacc.jjtree.JJTree();
+        return jjtree.main( args );
     }
 
     /**
@@ -370,6 +350,16 @@ class JJTree
         argsList.add( this.inputFile.getAbsolutePath() );
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
+    }
+
+    /**
+     * Gets a string representation of the command line arguments.
+     * 
+     * @return A string representation of the command line arguments.
+     */
+    public String toString()
+    {
+        return Arrays.asList( generateArguments() ).toString();
     }
 
 }

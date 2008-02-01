@@ -24,9 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.javacc.parser.Main;
 
 /**
@@ -405,12 +402,11 @@ public class JavaCC
     /**
      * Runs JavaCC using the previously set parameters.
      * 
-     * @param log A logger used to output diagnostic messages, may be <code>null</code>.
-     * @throws MojoExecutionException If JavaCC could not be invoked.
-     * @throws MojoFailureException If JavaCC reported a non-zero exit code.
+     * @return The exit code of JavaCC.
+     * @throws Exception If the invocation failed.
      */
-    public void run( Log log )
-        throws MojoExecutionException, MojoFailureException
+    public int run()
+        throws Exception
     {
         if ( this.inputFile == null )
         {
@@ -421,28 +417,13 @@ public class JavaCC
             throw new IllegalStateException( "output directory not specified" );
         }
 
-        int exitCode;
-        try
+        if ( !this.outputDirectory.exists() )
         {
-            String[] args = generateArguments();
-            if ( log != null && log.isDebugEnabled() )
-            {
-                log.debug( "Running JavaCC: " + Arrays.asList( args ) );
-            }
-            if ( !this.outputDirectory.exists() )
-            {
-                this.outputDirectory.mkdirs();
-            }
-            exitCode = Main.mainProgram( args );
+            this.outputDirectory.mkdirs();
         }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to execute JavaCC", e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "JavaCC reported exit code " + exitCode + ": " + this.inputFile );
-        }
+
+        String[] args = generateArguments();
+        return Main.mainProgram( args );
     }
 
     /**
@@ -566,11 +547,21 @@ public class JavaCC
             argsList.add( "-KEEP_LINE_COLUMN=" + this.keepLineColumn );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY:" + this.outputDirectory.getAbsolutePath() );
+        argsList.add( "-OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
 
         argsList.add( this.inputFile.getAbsolutePath() );
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
+    }
+
+    /**
+     * Gets a string representation of the command line arguments.
+     * 
+     * @return A string representation of the command line arguments.
+     */
+    public String toString()
+    {
+        return Arrays.asList( generateArguments() ).toString();
     }
 
 }
