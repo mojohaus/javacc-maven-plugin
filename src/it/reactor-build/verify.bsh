@@ -51,7 +51,7 @@ try
             return false;
         }
 
-        File jjtree = new File( target, "jjtree/Simple.jj" );
+        File jjtree = new File( target, "jjtree/org/Simple.jj" );
         if ( !jjtree.isFile() )
         {
             System.err.println( "Sub module has no JJTree output: " + jjtree );
@@ -65,7 +65,37 @@ try
             return false;
         }
 
-        File jjdoc = new File( target, "jjdoc/jjdoc/Simple.html" );
+        File jjdoc = new File( target, "jjdoc/jjdoc/org/Simple.html" );
+        if ( !jjdoc.isFile() )
+        {
+            System.err.println( "Sub module has no JJDoc output: " + jjdoc );
+            return false;
+        }
+    }
+
+    {
+        File target = new File( basedir, "module-three/target" );
+        if ( !target.isDirectory() )
+        {
+            System.err.println( "Sub module has no output folder: " + target );
+            return false;
+        }
+
+        File jtb = new File( target, "jtb/org/SubScheme.jj" );
+        if ( !jtb.isFile() )
+        {
+            System.err.println( "Sub module has no JTB output: " + jtb );
+            return false;
+        }
+
+        File timestamp = new File( target, "jtb-timestamps/SubScheme.jtb" );
+        if ( !timestamp.isFile() )
+        {
+            System.err.println( "Sub module has no JTB timestamp: " + timestamp );
+            return false;
+        }
+
+        File jjdoc = new File( target, "jjdoc/jjdoc/org/SubScheme.html" );
         if ( !jjdoc.isFile() )
         {
             System.err.println( "Sub module has no JJDoc output: " + jjdoc );

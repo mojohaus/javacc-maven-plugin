@@ -37,7 +37,28 @@
               <timestampDirectory>target/jj tree ts</timestampDirectory>
             </configuration>
           </execution>
+          <execution>
+            <id>jtb</id>
+            <goals>
+              <goal>jtb</goal>
+            </goals>
+            <configuration>
+              <sourceDirectory>sour ces/jtb</sourceDirectory>
+              <outputDirectory>target/j t b</outputDirectory>
+              <timestampDirectory>target/j t b ts</timestampDirectory>
+              <packageName>org</packageName>
+            </configuration>
+          </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <!-- required for JTB -->
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -52,6 +73,7 @@
           <sourceDirectories>
             <sourceDirectory>sour ces/javacc</sourceDirectory>
             <sourceDirectory>target/jj tree</sourceDirectory>
+            <sourceDirectory>target/j t b</sourceDirectory>
           </sourceDirectories>
           <outputDirectory>target/jj doc</outputDirectory>
         </configuration>

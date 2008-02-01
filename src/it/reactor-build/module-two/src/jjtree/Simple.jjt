@@ -1,12 +1,11 @@
-
-
-
 PARSER_BEGIN(Simple)
+
+package org;
 
 class Simple {
   public static void main(String args[]) {
     System.out.println("Reading from standard input...");
-    eg1 t = new eg1(System.in);
+    Simple t = new Simple(System.in);
     try {
       SimpleNode n = t.Start();
       n.dump("");
