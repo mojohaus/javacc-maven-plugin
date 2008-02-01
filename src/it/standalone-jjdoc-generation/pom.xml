@@ -16,9 +16,15 @@
         <version>@pom.version@</version>
         <executions>
           <execution>
-            <id>jjtree-exec</id>
+            <id>jjtree</id>
             <goals>
               <goal>jjtree</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jtb</id>
+            <goals>
+              <goal>jtb</goal>
             </goals>
           </execution>
         </executions>

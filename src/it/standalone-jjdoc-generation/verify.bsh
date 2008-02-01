@@ -17,6 +17,13 @@ try
         System.err.println( "Could not find generated jjdoc file: " + file2 );
         return false;
     }
+    
+    File file3 = new File( basedir, "target/site/jjdoc/SubScheme.html" );
+    if ( !file3.isFile() )
+    {
+        System.err.println( "Could not find generated jjdoc file: " + file3 );
+        return false;
+    }
 
 }
 catch( Throwable t )
