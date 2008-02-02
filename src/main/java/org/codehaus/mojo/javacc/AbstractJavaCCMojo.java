@@ -259,45 +259,33 @@ public abstract class AbstractJavaCCMojo
     protected void runJavaCC( File jjFile, File parserDirectory )
         throws MojoExecutionException, MojoFailureException
     {
-        int exitCode;
-        try
-        {
-            JavaCC javacc = new JavaCC();
-            javacc.setInputFile( jjFile );
-            javacc.setOutputDirectory( parserDirectory );
-            javacc.setJdkVersion( this.jdkVersion );
-            javacc.setStatic( this.isStatic );
-            javacc.setBuildParser( this.buildParser );
-            javacc.setBuildTokenManager( this.buildTokenManager );
-            javacc.setCacheTokens( this.cacheTokens );
-            javacc.setChoiceAmbiguityCheck( this.choiceAmbiguityCheck );
-            javacc.setCommonTokenAction( this.commonTokenAction );
-            javacc.setDebugLookAhead( this.debugLookAhead );
-            javacc.setDebugParser( this.debugParser );
-            javacc.setDebugTokenManager( this.debugTokenManager );
-            javacc.setErrorReporting( this.errorReporting );
-            javacc.setForceLaCheck( this.forceLaCheck );
-            javacc.setIgnoreCase( this.ignoreCase );
-            javacc.setJavaUnicodeEscape( this.javaUnicodeEscape );
-            javacc.setKeepLineColumn( this.keepLineColumn );
-            javacc.setLookAhead( this.lookAhead );
-            javacc.setOtherAmbiguityCheck( this.otherAmbiguityCheck );
-            javacc.setSanityCheck( this.sanityCheck );
-            javacc.setTokenManagerUsesParser( this.tokenManagerUsesParser );
-            javacc.setUnicodeInput( this.unicodeInput );
-            javacc.setUserCharStream( this.userCharStream );
-            javacc.setUserTokenManager( this.userTokenManager );
-            getLog().debug( "Running JavaCC: " + javacc );
-            exitCode = javacc.run();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to execute JavaCC", e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "JavaCC reported exit code " + exitCode + ": " + jjFile );
-        }
+        JavaCC javacc = new JavaCC();
+        javacc.setInputFile( jjFile );
+        javacc.setOutputDirectory( parserDirectory );
+        javacc.setJdkVersion( this.jdkVersion );
+        javacc.setStatic( this.isStatic );
+        javacc.setBuildParser( this.buildParser );
+        javacc.setBuildTokenManager( this.buildTokenManager );
+        javacc.setCacheTokens( this.cacheTokens );
+        javacc.setChoiceAmbiguityCheck( this.choiceAmbiguityCheck );
+        javacc.setCommonTokenAction( this.commonTokenAction );
+        javacc.setDebugLookAhead( this.debugLookAhead );
+        javacc.setDebugParser( this.debugParser );
+        javacc.setDebugTokenManager( this.debugTokenManager );
+        javacc.setErrorReporting( this.errorReporting );
+        javacc.setForceLaCheck( this.forceLaCheck );
+        javacc.setIgnoreCase( this.ignoreCase );
+        javacc.setJavaUnicodeEscape( this.javaUnicodeEscape );
+        javacc.setKeepLineColumn( this.keepLineColumn );
+        javacc.setLookAhead( this.lookAhead );
+        javacc.setOtherAmbiguityCheck( this.otherAmbiguityCheck );
+        javacc.setSanityCheck( this.sanityCheck );
+        javacc.setTokenManagerUsesParser( this.tokenManagerUsesParser );
+        javacc.setUnicodeInput( this.unicodeInput );
+        javacc.setUserCharStream( this.userCharStream );
+        javacc.setUserTokenManager( this.userTokenManager );
+        javacc.setLog( getLog() );
+        javacc.run();
     }
 
 }

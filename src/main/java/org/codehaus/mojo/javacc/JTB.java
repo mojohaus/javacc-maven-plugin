@@ -33,7 +33,8 @@ import org.codehaus.plexus.util.FileUtils;
  * @version $Id$
  * @see <a href="http://compilers.cs.ucla.edu/jtb/">Java Tree Builder</a>
  */
-public class JTB
+class JTB
+    extends ToolFacade
 {
 
     /**
@@ -257,29 +258,18 @@ public class JTB
     }
 
     /**
-     * Runs JTB using the previously set parameters.
-     * 
-     * @return The exit code of JTB.
-     * @throws Exception If the invocation failed.
+     * {@inheritDoc}
      */
-    public int run()
+    protected int execute()
         throws Exception
     {
-        if ( this.inputFile == null )
-        {
-            throw new IllegalStateException( "input grammar not specified" );
-        }
-        if ( this.outputDirectory == null )
-        {
-            throw new IllegalStateException( "output directory not specified" );
-        }
+        String[] args = generateArguments();
 
-        if ( !this.outputDirectory.exists() )
+        if ( this.outputDirectory != null && !this.outputDirectory.exists() )
         {
             this.outputDirectory.mkdirs();
         }
 
-        String[] args = generateArguments();
         EDU.purdue.jtb.JTB.main( args );
         return 0;
     }
@@ -353,10 +343,16 @@ public class JTB
             argsList.add( "-printer" );
         }
 
-        argsList.add( "-o" );
-        argsList.add( this.outputFile.getAbsolutePath() );
+        if ( this.outputFile != null )
+        {
+            argsList.add( "-o" );
+            argsList.add( this.outputFile.getAbsolutePath() );
+        }
 
-        argsList.add( this.inputFile.getAbsolutePath() );
+        if ( this.inputFile != null )
+        {
+            argsList.add( this.inputFile.getAbsolutePath() );
+        }
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
     }

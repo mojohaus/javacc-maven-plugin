@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.javacc.parser.Main;
-
 /**
  * Provides a facade for the mojos to invoke JavaCC.
  * 
@@ -33,8 +31,8 @@ import org.javacc.parser.Main;
  * @version $Id$
  * @see <a href="https://javacc.dev.java.net/doc/commandline.html">JavaCC Command Line Syntax</a>
  */
-public class JavaCC
-
+class JavaCC
+    extends ToolFacade
 {
 
     /**
@@ -400,30 +398,19 @@ public class JavaCC
     }
 
     /**
-     * Runs JavaCC using the previously set parameters.
-     * 
-     * @return The exit code of JavaCC.
-     * @throws Exception If the invocation failed.
+     * {@inheritDoc}
      */
-    public int run()
+    protected int execute()
         throws Exception
     {
-        if ( this.inputFile == null )
-        {
-            throw new IllegalStateException( "input grammar not specified" );
-        }
-        if ( this.outputDirectory == null )
-        {
-            throw new IllegalStateException( "output directory not specified" );
-        }
+        String[] args = generateArguments();
 
-        if ( !this.outputDirectory.exists() )
+        if ( this.outputDirectory != null && !this.outputDirectory.exists() )
         {
             this.outputDirectory.mkdirs();
         }
 
-        String[] args = generateArguments();
-        return Main.mainProgram( args );
+        return org.javacc.parser.Main.mainProgram( args );
     }
 
     /**
@@ -547,9 +534,15 @@ public class JavaCC
             argsList.add( "-KEEP_LINE_COLUMN=" + this.keepLineColumn );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
+        if ( this.outputDirectory != null )
+        {
+            argsList.add( "-OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
+        }
 
-        argsList.add( this.inputFile.getAbsolutePath() );
+        if ( this.inputFile != null )
+        {
+            argsList.add( this.inputFile.getAbsolutePath() );
+        }
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
     }

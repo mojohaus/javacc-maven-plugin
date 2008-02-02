@@ -32,6 +32,7 @@ import java.util.List;
  * @see <a href="https://javacc.dev.java.net/doc/JJTree.html">JJTree Reference</a>
  */
 class JJTree
+    extends ToolFacade
 {
 
     /**
@@ -247,29 +248,18 @@ class JJTree
     }
 
     /**
-     * Runs JJTree using the previously set parameters.
-     * 
-     * @return The exit code of JJTree.
-     * @throws Exception If the invocation failed.
+     * {@inheritDoc}
      */
-    public int run()
+    protected int execute()
         throws Exception
     {
-        if ( this.inputFile == null )
-        {
-            throw new IllegalStateException( "input grammar not specified" );
-        }
-        if ( this.outputDirectory == null )
-        {
-            throw new IllegalStateException( "output directory not specified" );
-        }
+        String[] args = generateArguments();
 
-        if ( !this.outputDirectory.exists() )
+        if ( this.outputDirectory != null && !this.outputDirectory.exists() )
         {
             this.outputDirectory.mkdirs();
         }
 
-        String[] args = generateArguments();
         org.javacc.jjtree.JJTree jjtree = new org.javacc.jjtree.JJTree();
         return jjtree.main( args );
     }
@@ -345,9 +335,15 @@ class JJTree
             argsList.add( "-VISITOR_EXCEPTION=" + this.visitorException );
         }
 
-        argsList.add( "-OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
+        if ( this.outputDirectory != null )
+        {
+            argsList.add( "-OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
+        }
 
-        argsList.add( this.inputFile.getAbsolutePath() );
+        if ( this.inputFile != null )
+        {
+            argsList.add( this.inputFile.getAbsolutePath() );
+        }
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
     }

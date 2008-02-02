@@ -377,34 +377,22 @@ public class JTBMojo
     private void runJTB( File jtbFile, File grammarDirectory )
         throws MojoExecutionException, MojoFailureException
     {
-        int exitCode;
-        try
-        {
-            JTB jtb = new JTB();
-            jtb.setInputFile( jtbFile );
-            jtb.setOutputDirectory( grammarDirectory );
-            jtb.setDescriptiveFieldNames( this.descriptiveFieldNames );
-            jtb.setJavadocFriendlyComments( this.javadocFriendlyComments );
-            jtb.setNodePackageName( this.nodePackageName );
-            jtb.setNodeParentClass( this.nodeParentClass );
-            jtb.setPackageName( this.packageName );
-            jtb.setParentPointers( this.parentPointers );
-            jtb.setPrinter( this.printer );
-            jtb.setScheme( this.scheme );
-            jtb.setSpecialTokens( this.specialTokens );
-            jtb.setSupressErrorChecking( this.supressErrorChecking );
-            jtb.setVisitorPackageName( this.visitorPackageName );
-            getLog().debug( "Running JTB: " + jtb );
-            exitCode = jtb.run();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to execute JTB", e );
-        }
-        if ( exitCode != 0 )
-        {
-            throw new MojoFailureException( "JTB reported exit code " + exitCode + ": " + jtbFile );
-        }
+        JTB jtb = new JTB();
+        jtb.setInputFile( jtbFile );
+        jtb.setOutputDirectory( grammarDirectory );
+        jtb.setDescriptiveFieldNames( this.descriptiveFieldNames );
+        jtb.setJavadocFriendlyComments( this.javadocFriendlyComments );
+        jtb.setNodePackageName( this.nodePackageName );
+        jtb.setNodeParentClass( this.nodeParentClass );
+        jtb.setPackageName( this.packageName );
+        jtb.setParentPointers( this.parentPointers );
+        jtb.setPrinter( this.printer );
+        jtb.setScheme( this.scheme );
+        jtb.setSpecialTokens( this.specialTokens );
+        jtb.setSupressErrorChecking( this.supressErrorChecking );
+        jtb.setVisitorPackageName( this.visitorPackageName );
+        jtb.setLog( getLog() );
+        jtb.run();
     }
 
     /**
@@ -445,6 +433,10 @@ public class JTBMojo
          * created by JTB. Therefore, we do a defensive move and only delete the expected Java source files.
          */
         File[] sourceFiles = sourceDir.listFiles();
+        if ( sourceFiles == null )
+        {
+            return;
+        }
         for ( int i = 0; i < sourceFiles.length; i++ )
         {
             File sourceFile = sourceFiles[i];
