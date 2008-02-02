@@ -15,6 +15,13 @@ try
                 return false;
             }
         }
+
+        File jjdoc = new File( target, "site/jjdoc" );
+        if ( jjdoc.exists() )
+        {
+            System.err.println( "Parent project has unexpected JJDoc output: " + jjdoc );
+            return false;
+        }
     }
 
     {

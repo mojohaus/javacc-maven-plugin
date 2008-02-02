@@ -215,7 +215,7 @@ public class JJDocMojo
     /**
      * Get the source directories that should be scanned for grammar files.
      * 
-     * @return The source directories that should be scanned for grammar files.
+     * @return The source directories that should be scanned for grammar files, never <code>null</code>.
      */
     private File[] getSourceDirectories()
     {
@@ -286,11 +286,21 @@ public class JJDocMojo
 
     /**
      * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
-     * @return Always returns true because this mojo can generate a report.
+     * @return <code>true</code> if the configured source directories are not empty, <code>false</code> otherwise.
      */
     public boolean canGenerateReport()
     {
-        return true;
+        File sourceDirs[] = getSourceDirectories();
+        for ( int i = 0; i < sourceDirs.length; i++ )
+        {
+            File sourceDir = sourceDirs[i];
+            String[] files = sourceDir.list();
+            if ( files != null && files.length > 0 )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
