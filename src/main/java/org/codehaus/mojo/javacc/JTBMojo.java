@@ -365,6 +365,9 @@ public class JTBMojo
     }
 
     /**
+     * Runs JTB on the specified grammar file to generate a annotated grammar file. The options for JTB are derived from
+     * the current values of the corresponding mojo parameters.
+     * 
      * @param jtbFile The absolute path to the grammar file to pass into JTB for preprocessing, must not be
      *            <code>null</code>.
      * @param grammarDirectory The absolute path to the output directory for the generated grammar file and its AST node

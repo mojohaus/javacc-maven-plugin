@@ -20,7 +20,6 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,20 +31,15 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SimpleSourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
  * <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc</a> takes a JavaCC parser specification and produces
@@ -63,11 +57,6 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
 public class JJDocMojo
     extends AbstractMavenReport
 {
-
-    /**
-     * The jjdoc classname that is used to call JJDoc from the command line.
-     */
-    private static final String JJDOC_CLASSNAME = "jjdoc";
 
     // ----------------------------------------------------------------------
     // Mojo Parameters
@@ -88,15 +77,6 @@ public class JJDocMojo
      * @component
      */
     private Renderer siteRenderer;
-
-    /**
-     * The plugin dependencies.
-     * 
-     * @parameter expression="${plugin.artifacts}"
-     * @required
-     * @readonly
-     */
-    private List pluginArtifacts;
 
     /**
      * Directories where the JavaCC grammar files (<code>*.jj</code>) are located. By default, the directories
@@ -316,67 +296,57 @@ public class JJDocMojo
      * Run the actual report.
      * 
      * @param locale The locale to use for this report.
+     * @throws MavenReportException If the report generation failed.
      */
     public void executeReport( Locale locale )
+        throws MavenReportException
     {
         Sink sink = getSink();
 
         createReportHeader( getBundle( locale ), sink );
 
-        try
+        File[] sourceDirs = getSourceDirectories();
+        for ( int i = 0; i < sourceDirs.length; i++ )
         {
-            File[] sourceDirs = getSourceDirectories();
-            for ( int i = 0; i < sourceDirs.length; i++ )
+            File sourceDir = sourceDirs[i];
+            if ( !sourceDir.isDirectory() )
             {
-                File sourceDir = sourceDirs[i];
-                if ( !sourceDir.isDirectory() )
-                {
-                    getLog().debug( "Skipping non-existing source directory: " + sourceDir );
-                    continue;
-                }
-                else
-                {
-                    getLog().debug( "Scanning source directory: " + sourceDir );
-                }
-
-                Set grammarFiles = scanForGrammarFiles( sourceDir );
-
-                for ( Iterator it = grammarFiles.iterator(); it.hasNext(); )
-                {
-                    File grammarFile = (File) it.next();
-
-                    URI relativeOutputFileURI = sourceDir.toURI().relativize( grammarFile.toURI() );
-                    String relativeOutputFileName =
-                        relativeOutputFileURI.toString().replaceAll( "(.jj|.JJ)$", getOutputFileExtension() );
-
-                    File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
-                    jjdocOutputFile.getParentFile().mkdirs();
-
-                    String[] jjdocArgs = generateArgumentList( grammarFile, jjdocOutputFile );
-
-                    // Fork jjdoc because of calls to System.exit().
-                    forkJJDoc( jjdocArgs );
-
-                    createReportLink( sink, sourceDir, grammarFile, relativeOutputFileName );
-                }
+                getLog().debug( "Skipping non-existing source directory: " + sourceDir );
+                continue;
             }
-        }
-        catch ( MojoExecutionException e )
-        {
-            e.printStackTrace();
+            else
+            {
+                getLog().debug( "Scanning source directory: " + sourceDir );
+            }
+
+            Set grammarFiles = scanForGrammarFiles( sourceDir );
+
+            for ( Iterator it = grammarFiles.iterator(); it.hasNext(); )
+            {
+                File grammarFile = (File) it.next();
+
+                URI relativeOutputFileURI = sourceDir.toURI().relativize( grammarFile.toURI() );
+                String relativeOutputFileName =
+                    relativeOutputFileURI.toString().replaceAll( "(?i)\\.jj$", getOutputFileExtension() );
+
+                File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
+
+                runJJDoc( grammarFile, jjdocOutputFile );
+
+                createReportLink( sink, sourceDir, grammarFile, relativeOutputFileName );
+            }
         }
 
         createReportFooter( sink );
         sink.flush();
         sink.close();
-
     }
 
     /**
-     * The JJDoc output file will have a <code>.html</code> or <code>.txt</code> extension depending on the value
-     * of the parameter {@link #text}.
+     * The JJDoc output file will have a <code>.html</code> or <code>.txt</code> extension depending on the value of
+     * the parameter {@link #text}.
      * 
-     * @return The file extension to be used for the JJDoc output files.
+     * @return The file extension (including the leading period) to be used for the JJDoc output files.
      */
     private String getOutputFileExtension()
     {
@@ -420,7 +390,6 @@ public class JJDocMojo
         sink.text( bundle.getString( "report.jjdoc.table.heading" ) );
         sink.tableHeaderCell_();
         sink.tableRow_();
-
     }
 
     /**
@@ -463,25 +432,31 @@ public class JJDocMojo
     }
 
     /**
-     * Generate the command line arguments for calling JJDoc.
+     * Runs JJDoc on the specified grammar file to generate a BNF documentation. The options for JJDoc are derived from
+     * the current values of the corresponding mojo parameters.
      * 
-     * @param javaccFile The grammar file to be documented.
-     * @param outputFile The path to the report output.
-     * @return An array of the parameters.
+     * @param grammarFile The absolute path to the grammar file to pass into JJDoc for documentation, must not be
+     *            <code>null</code>.
+     * @param outputFile The absolute path to the HTML/text file generated by JJDoc, must not be <code>null</code>.
+     * @throws MavenReportException If JJDoc could not be invoked or reported an error.
      */
-    private String[] generateArgumentList( File javaccFile, File outputFile )
+    private void runJJDoc( File grammarFile, File outputFile )
+        throws MavenReportException
     {
-        List argsList = new ArrayList();
-
-        argsList.add( "-OUTPUT_FILE=" + outputFile );
-
-        argsList.add( "-TEXT=" + this.text );
-
-        argsList.add( "-ONE_TABLE=" + this.oneTable );
-
-        argsList.add( javaccFile.getPath() );
-
-        return (String[]) argsList.toArray( new String[argsList.size()] );
+        try
+        {
+            JJDoc jjdoc = new JJDoc();
+            jjdoc.setInputFile( grammarFile );
+            jjdoc.setOutputFile( outputFile );
+            jjdoc.setText( Boolean.valueOf( this.text ) );
+            jjdoc.setOneTable( Boolean.valueOf( this.oneTable ) );
+            jjdoc.setLog( getLog() );
+            jjdoc.run();
+        }
+        catch ( Exception e )
+        {
+            throw new MavenReportException( "Failed to create BNF documentation: " + grammarFile, e );
+        }
     }
 
     /**
@@ -489,10 +464,10 @@ public class JJDocMojo
      * 
      * @param sourceDirectory The source directory to scan for grammar files.
      * @return A set of the JavaCC grammar files.
-     * @throws MojoExecutionException If there is a problem while scanning for .jj files.
+     * @throws MavenReportException If there is a problem while scanning for .jj files.
      */
     private Set scanForGrammarFiles( File sourceDirectory )
-        throws MojoExecutionException
+        throws MavenReportException
     {
 
         SuffixMapping mapping = new SuffixMapping( ".jj", getOutputFileExtension() );
@@ -513,82 +488,10 @@ public class JJDocMojo
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDirectory
-                + "\' for stale grammars to reprocess.", e );
+            throw new MavenReportException( "Failed to scan source root for grammars: " + sourceDirectory, e );
         }
 
         return grammarFiles;
-
-    }
-
-    /**
-     * Create a classpath that contains the JavaCC JAR file with JJDoc.
-     * 
-     * @return The classpath string.
-     */
-    private String createJJDocClasspath()
-    {
-        StringBuffer classpath = new StringBuffer();
-
-        for ( Iterator i = this.pluginArtifacts.iterator(); i.hasNext(); )
-        {
-            Artifact artifact = (Artifact) i.next();
-            if ( artifact.getArtifactId().contains( "javacc" ) )
-            {
-                try
-                {
-                    classpath.append( artifact.getFile().getCanonicalPath() );
-                    classpath.append( File.pathSeparatorChar );
-                }
-                catch ( IOException e )
-                {
-                    getLog().warn( "Unable to get path to artifact: " + artifact.getFile(), e );
-                }
-            }
-        }
-        return classpath.toString();
-    }
-
-    /**
-     * Runs JJDoc in a forked JVM. This must be done because of the calls to <code>System.exit()</code> in JJDoc.
-     * 
-     * @param jjdocArgs The arguments to pass to JJDoc.
-     * @throws MojoExecutionException If there is a problem while running JJDoc.
-     */
-    private void forkJJDoc( String[] jjdocArgs )
-        throws MojoExecutionException
-    {
-        Commandline cli = new Commandline();
-
-        // use the same JVM as the one used to run Maven (the "java.home" one)
-        String jvm = System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
-        cli.setExecutable( jvm );
-
-        String[] jvmArgs = { "-cp", createJJDocClasspath(), JJDOC_CLASSNAME };
-
-        cli.addArguments( jvmArgs );
-
-        cli.addArguments( jjdocArgs );
-
-        StreamConsumer out = new MojoLogStreamConsumer();
-        StreamConsumer err = new MojoLogStreamConsumer( true );
-
-        getLog().debug( "Forking Command Line: " );
-        getLog().debug( cli.toString() );
-        getLog().debug( "" );
-
-        try
-        {
-            int returnCode = CommandLineUtils.executeCommandLine( cli, out, err );
-            if ( returnCode != 0 )
-            {
-                throw new MojoExecutionException( "There were errors while generating the jjdoc" );
-            }
-        }
-        catch ( CommandLineException e )
-        {
-            throw new MojoExecutionException( "Error while executing forked JJDoc.", e );
-        }
 
     }
 
@@ -601,72 +504,6 @@ public class JJDocMojo
     private ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "jjdoc-report", locale, getClass().getClassLoader() );
-    }
-
-    /**
-     * Consume and log command line output from the JJDoc process.
-     */
-    class MojoLogStreamConsumer
-        implements StreamConsumer
-    {
-
-        /**
-         * The line prefix used by JJDoc to report errors.
-         */
-        private static final String ERROR_PREFIX = "Error: ";
-
-        /**
-         * The line prefix used by JJDoc to report warnings.
-         */
-        private static final String WARN_PREFIX = "Warning: ";
-
-        /**
-         * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
-         */
-        private boolean err;
-
-        /**
-         * Default constructor with err set to false. All consumed lines will be logged at the debug level.
-         */
-        public MojoLogStreamConsumer()
-        {
-            this( false );
-        }
-
-        /**
-         * Single param constructor.
-         * 
-         * @param error If set to true, all consumed lines will be logged at the info level.
-         */
-        public MojoLogStreamConsumer( boolean error )
-        {
-            this.err = error;
-        }
-
-        /**
-         * Consume a line of text.
-         * 
-         * @param line The line to consume.
-         */
-        public void consumeLine( String line )
-        {
-            if ( line.startsWith( ERROR_PREFIX ) )
-            {
-                getLog().error( line.substring( ERROR_PREFIX.length() ) );
-            }
-            else if ( line.startsWith( WARN_PREFIX ) )
-            {
-                getLog().warn( line.substring( WARN_PREFIX.length() ) );
-            }
-            else if ( this.err )
-            {
-                getLog().error( line );
-            }
-            else
-            {
-                getLog().debug( line );
-            }
-        }
     }
 
 }
