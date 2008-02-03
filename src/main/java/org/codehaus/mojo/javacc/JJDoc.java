@@ -115,7 +115,7 @@ class JJDoc
         ForkedJvm jvm = new ForkedJvm();
         jvm.setMainClass( org.javacc.jjdoc.JJDocMain.class );
         jvm.addArguments( args );
-        jvm.setSystemOut( new MojoLogStreamConsumer() );
+        jvm.setSystemOut( new MojoLogStreamConsumer( false ) );
         jvm.setSystemErr( new MojoLogStreamConsumer( true ) );
         if ( getLog().isDebugEnabled() )
         {
@@ -189,17 +189,9 @@ class JJDoc
         private boolean err;
 
         /**
-         * Default constructor with err set to false. All consumed lines will be logged at the debug level.
-         */
-        public MojoLogStreamConsumer()
-        {
-            this( false );
-        }
-
-        /**
          * Single param constructor.
          * 
-         * @param error If set to true, all consumed lines will be logged at the info level.
+         * @param error If set to <code>true</code>, all consumed lines will be logged at the error level.
          */
         public MojoLogStreamConsumer( boolean error )
         {

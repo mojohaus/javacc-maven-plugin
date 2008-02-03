@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
  * Provides a facade for the mojos to invoke JTB.
@@ -270,8 +271,17 @@ class JTB
             this.outputDirectory.mkdirs();
         }
 
-        EDU.purdue.jtb.JTB.main( args );
-        return 0;
+        // fork JTB because of its lack to re-initialize its static parser
+        ForkedJvm jvm = new ForkedJvm();
+        jvm.setMainClass( EDU.purdue.jtb.JTB.class );
+        jvm.addArguments( args );
+        jvm.setSystemOut( new MojoLogStreamConsumer( false ) );
+        jvm.setSystemErr( new MojoLogStreamConsumer( true ) );
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( "Forking: " + jvm );
+        }
+        return jvm.run();
     }
 
     /**
@@ -365,6 +375,59 @@ class JTB
     public String toString()
     {
         return Arrays.asList( generateArguments() ).toString();
+    }
+
+    /**
+     * Consume and log command line output from the JJDoc process.
+     */
+    class MojoLogStreamConsumer
+        implements StreamConsumer
+    {
+
+        /**
+         * The line prefix used by JTB to report infos.
+         */
+        private static final String INFO_PREFIX = "JTB: ";
+
+        /**
+         * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
+         */
+        private boolean err;
+
+        /**
+         * Single param constructor.
+         * 
+         * @param error If set to <code>true</code>, all consumed lines will be logged at the error level.
+         */
+        public MojoLogStreamConsumer( boolean error )
+        {
+            this.err = error;
+        }
+
+        /**
+         * Consume a line of text.
+         * 
+         * @param line The line to consume.
+         */
+        public void consumeLine( String line )
+        {
+            if ( line.startsWith( "JTB version" ) )
+            {
+                getLog().debug( line );
+            }
+            else if ( line.startsWith( INFO_PREFIX ) )
+            {
+                getLog().debug( line.substring( INFO_PREFIX.length() ) );
+            }
+            else if ( this.err && line.length() > 0 )
+            {
+                getLog().error( line );
+            }
+            else
+            {
+                getLog().debug( line );
+            }
+        }
     }
 
 }
