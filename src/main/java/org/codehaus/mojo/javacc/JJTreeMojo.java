@@ -91,8 +91,8 @@ public class JJTreeMojo
     /**
      * The package to generate the AST node classes into. This value may use a leading asterisk to reference the package
      * of the corresponding parser. For example, if the parser package is <code>org.apache</code> and this parameter
-     * is set to <code>*.node</code>, the tree node classes will be located in the package
-     * <code>org.apache.node</code>. By default, the package of the corresponding parser is used.
+     * is set to <code>*.demo</code>, the tree node classes will be located in the package
+     * <code>org.apache.demo</code>. By default, the package of the corresponding parser is used.
      * 
      * @parameter expression="${nodePackage}"
      */

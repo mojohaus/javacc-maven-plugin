@@ -20,6 +20,10 @@
             <goals>
               <goal>jtb</goal>
             </goals>
+            <configuration>
+              <nodePackageName>*.ast</nodePackageName>
+              <visitorPackageName>*.visit</visitorPackageName>
+            </configuration>
           </execution>
         </executions>
       </plugin>

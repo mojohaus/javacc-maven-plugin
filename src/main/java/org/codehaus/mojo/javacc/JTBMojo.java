@@ -60,14 +60,20 @@ public class JTBMojo
     private String packageName;
 
     /**
-     * This option specifies the package for the generated AST nodes. Default value is <code>syntaxtree</code>.
+     * This option specifies the package for the generated AST nodes. This value may use a leading asterisk to reference
+     * the package of the corresponding parser. For example, if the parser package is <code>org.apache</code> and this
+     * parameter is set to <code>*.demo</code>, the tree node classes will be located in the package
+     * <code>org.apache.demo</code>. Default value is <code>*.syntaxtree</code>.
      * 
      * @parameter expression="${nodePackageName}"
      */
     private String nodePackageName;
 
     /**
-     * This option specifies the package for the generated visitors. Default value is <code>visitor</code>.
+     * This option specifies the package for the generated visitors. This value may use a leading asterisk to reference
+     * the package of the corresponding parser. For example, if the parser package is <code>org.apache</code> and this
+     * parameter is set to <code>*.demo</code>, the visitor classes will be located in the package
+     * <code>org.apache.demo</code>. Default value is <code>*.visitor</code>.
      * 
      * @parameter expression="${visitorPackageName}"
      */
@@ -295,12 +301,13 @@ public class JTBMojo
         throws MojoExecutionException, MojoFailureException
     {
         File jtbFile = grammarInfo.getGrammarFile();
+        File jjDirectory = new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() );
 
-        String nodePackage = getNodePackageName();
-        String visitorPackage = getVisitorPackageName();
+        String nodePackage = grammarInfo.resolvePackageName( getNodePackageName() );
+        String visitorPackage = grammarInfo.resolvePackageName( getVisitorPackageName() );
 
         // generate final grammar file and the node/visitor files
-        runJTB( jtbFile, new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() ) );
+        runJTB( jtbFile, jjDirectory, nodePackage, visitorPackage );
 
         /*
          * since jtb was meant to be run as a command-line tool, it only outputs to the current directory. therefore,
@@ -333,13 +340,13 @@ public class JTBMojo
         {
             return this.packageName + ".syntaxtree";
         }
-        else if ( this.nodePackageName == null )
+        else if ( this.nodePackageName != null )
         {
-            return "syntaxtree";
+            return this.nodePackageName;
         }
         else
         {
-            return this.nodePackageName;
+            return "*.syntaxtree";
         }
     }
 
@@ -354,13 +361,13 @@ public class JTBMojo
         {
             return this.packageName + ".visitor";
         }
-        else if ( this.visitorPackageName == null )
+        else if ( this.visitorPackageName != null )
         {
-            return "visitor";
+            return this.visitorPackageName;
         }
         else
         {
-            return this.visitorPackageName;
+            return "*.visitor";
         }
     }
 
@@ -374,10 +381,12 @@ public class JTBMojo
      *            files, must not be <code>null</code>. If this directory does not exist yet, it is created. Note
      *            that this path should already include the desired package hierarchy because JTB will not append the
      *            required sub directories automatically.
+     * @param nodePackage The qualified name of the package for the AST nodes.
+     * @param visitorPackage The qualified name of the package for the visitor files.
      * @throws MojoExecutionException If JJTree could not be invoked.
      * @throws MojoFailureException If JJTree reported a non-zero exit code.
      */
-    private void runJTB( File jtbFile, File grammarDirectory )
+    private void runJTB( File jtbFile, File grammarDirectory, String nodePackage, String visitorPackage )
         throws MojoExecutionException, MojoFailureException
     {
         JTB jtb = new JTB();
@@ -385,15 +394,14 @@ public class JTBMojo
         jtb.setOutputDirectory( grammarDirectory );
         jtb.setDescriptiveFieldNames( this.descriptiveFieldNames );
         jtb.setJavadocFriendlyComments( this.javadocFriendlyComments );
-        jtb.setNodePackageName( this.nodePackageName );
+        jtb.setNodePackageName( nodePackage );
         jtb.setNodeParentClass( this.nodeParentClass );
-        jtb.setPackageName( this.packageName );
         jtb.setParentPointers( this.parentPointers );
         jtb.setPrinter( this.printer );
         jtb.setScheme( this.scheme );
         jtb.setSpecialTokens( this.specialTokens );
         jtb.setSupressErrorChecking( this.supressErrorChecking );
-        jtb.setVisitorPackageName( this.visitorPackageName );
+        jtb.setVisitorPackageName( visitorPackage );
         jtb.setLog( getLog() );
         jtb.run();
     }
