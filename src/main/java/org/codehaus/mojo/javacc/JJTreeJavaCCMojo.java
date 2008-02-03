@@ -204,7 +204,7 @@ public class JJTreeJavaCCMojo
 
         if ( grammarInfos.length <= 0 )
         {
-            getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
+            getLog().info( "Skipping - all grammars up to date" );
         }
         else
         {
@@ -212,6 +212,7 @@ public class JJTreeJavaCCMojo
             {
                 processGrammar( grammarInfos[i] );
             }
+            getLog().info( "Processed " + grammarInfos.length + " grammars" );
         }
 
         if ( this.project != null )

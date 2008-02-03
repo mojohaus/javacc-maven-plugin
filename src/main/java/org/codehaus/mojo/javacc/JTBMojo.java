@@ -238,7 +238,7 @@ public class JTBMojo
 
         if ( grammarInfos.length <= 0 )
         {
-            getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
+            getLog().info( "Skipping - all grammars up to date" );
         }
         else
         {
@@ -246,6 +246,7 @@ public class JTBMojo
             {
                 processGrammar( grammarInfos[i] );
             }
+            getLog().info( "Processed " + grammarInfos.length + " grammars" );
         }
 
         if ( this.project != null )

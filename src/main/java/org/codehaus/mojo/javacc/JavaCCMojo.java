@@ -145,11 +145,11 @@ public class JavaCCMojo
             this.excludes = Collections.EMPTY_SET;
         }
 
-        Set staleGrammars = computeStaleGrammars( this.sourceDirectory, this.timestampDirectory );
+        Set staleGrammars = computeStaleGrammars();
 
         if ( staleGrammars.isEmpty() )
         {
-            getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
+            getLog().info( "Skipping - all grammars up to date" );
         }
         else
         {
@@ -185,6 +185,7 @@ public class JavaCCMojo
                     getLog().warn( "Failed to create copy for timestamp check: " + jjFile, e );
                 }
             }
+            getLog().info( "Processed " + staleGrammars.size() + " grammars" );
         }
 
         if ( this.project != null )
@@ -216,14 +217,14 @@ public class JavaCCMojo
     }
 
     /**
-     * @param sourceDir The source directory to scan for grammar files.
-     * @param timestampDir The output directory for timestamp files.
      * @return A set of <code>File</code> objects to compile.
      * @throws MojoExecutionException If it fails.
      */
-    private Set computeStaleGrammars( File sourceDir, File timestampDir )
+    private Set computeStaleGrammars()
         throws MojoExecutionException
     {
+        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
+
         SuffixMapping mapping = new SuffixMapping( ".jj", ".jj" );
         SuffixMapping mappingCAP = new SuffixMapping( ".JJ", ".JJ" );
 
@@ -236,11 +237,11 @@ public class JavaCCMojo
 
         try
         {
-            staleSources.addAll( scanner.getIncludedSources( sourceDir, timestampDir ) );
+            staleSources.addAll( scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory ) );
         }
         catch ( InclusionScanException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + sourceDir
+            throw new MojoExecutionException( "Error scanning source root: \'" + this.sourceDirectory
                 + "\' for stale grammars to reprocess.", e );
         }
 

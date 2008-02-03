@@ -224,7 +224,7 @@ public class JJTreeMojo
 
         if ( grammarInfos.length <= 0 )
         {
-            getLog().info( "Skipping - all grammars up to date: " + this.sourceDirectory );
+            getLog().info( "Skipping - all grammars up to date" );
         }
         else
         {
@@ -232,6 +232,7 @@ public class JJTreeMojo
             {
                 processGrammar( grammarInfos[i] );
             }
+            getLog().info( "Processed " + grammarInfos.length + " grammars" );
         }
     }
 
