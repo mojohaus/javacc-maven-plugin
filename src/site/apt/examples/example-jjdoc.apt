@@ -9,7 +9,7 @@
 JJDoc Examples
 
   The following example can be used to create a JJDoc site report.  For a list of configuration
-  parameters, consult the <<<{{{../jjdoc-mojo.html}jjdoc}}>>> mojo documentation.  The <<<jjdoc>>> goal does 
+  parameters, consult the <<<{{{../jjdoc-mojo.html}jjdoc}}>>> goal documentation.  The <<<jjdoc>>> goal does 
   not need to be specified since it will automatically be used during site generation.
 
 -------------------

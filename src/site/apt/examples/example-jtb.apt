@@ -8,8 +8,8 @@
 
 JTB Examples
 
- This example shows how the <<<jtb>>> mojo can be used.
- A list of all configuration options can be seen on the <<<{{{../jtb-mojo.html}jtb}}>>> mojo page.
+ This example shows how the <<<jtb>>> goal can be used.
+ A list of all configuration options can be seen on the <<<{{{../jtb-mojo.html}jtb}}>>> goal page.
 
 -------------------
 <project>

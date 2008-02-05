@@ -28,20 +28,20 @@ Maven 2 JavaCC Plugin
   JTB (Java Tree Builder) is a syntax tree builder.  More information about JTB can be found on the 
   {{{http://compilers.cs.ucla.edu/jtb/} JTB}} web site.
   
-  This plugin also contains a mojo for running JJDoc.  JJDoc is a simple tool that generates 
+  This plugin also contains a goal for running JJDoc.  JJDoc is a simple tool that generates 
   {{{http://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form} BNF }} documentation for the JavaCC 
   grammar files.  This can be used to generate a report for your project site using the Maven
   reporting tools.
    
 * Goals Overview
 
-  * {{{javacc-mojo.html}javacc:javacc}} This mojo uses JavaCC to process <<<.jj>>> grammar files and generate a java parser.
+  * {{{javacc-mojo.html}javacc:javacc}} This goal uses JavaCC to process <<<.jj>>> grammar files and generate a java parser.
   
-  * {{{jjtree-mojo.html}javacc:jjtree}} This mojo uses JJTree to process <<<.jjt>>> files and generate <<<.jj>>> files.
+  * {{{jjtree-mojo.html}javacc:jjtree}} This goal uses JJTree to process <<<.jjt>>> files and generate <<<.jj>>> files.
   
-  * {{{jtb-mojo.html}javacc:jtb}} This mojo uses JTB to process <<<.jtb>>> files and generate <<<.jj>>> files.
+  * {{{jtb-mojo.html}javacc:jtb}} This goal uses JTB to process <<<.jtb>>> files and generate <<<.jj>>> files.
   
-  * {{{jjdoc-mojo.html}javacc:jjdoc}} This mojo is used to create a JJDoc site report.
+  * {{{jjdoc-mojo.html}javacc:jjdoc}} This goal is used to create a JJDoc site report.
    
 * Usage
 
@@ -50,7 +50,7 @@ Maven 2 JavaCC Plugin
 
 * Examples
 
-  Below is a basic example of configuring your project build to use the JavaCC mojo.  More examples can be found 
+  Below is a basic example of configuring your project build to use the <<<javacc>>> goal.  More examples can be found 
   using the links in the menu.
 
 -------------------

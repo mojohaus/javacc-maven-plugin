@@ -8,12 +8,12 @@
 
 Javacc Examples
 
-  This page provides examples of how to use the <<<javacc>>> mojo.
+  This page provides examples of how to use the <<<javacc>>> goal.
 
 * Basic Example
 
   This example shows how to pass parameters to JavaCC.  A list of all 
-  configuration options can be seen on the <<<{{{../javacc-mojo.html}javacc}}>>> mojo page.
+  configuration options can be seen on the <<<{{{../javacc-mojo.html}javacc}}>>> goal page.
   
 -------------------
 <project>
