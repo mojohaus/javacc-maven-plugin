@@ -57,6 +57,7 @@ public class ForkedJvmTest
         jvm.addClassPathEntry( (String) null );
         jvm.setMainClass( (Class) null );
         jvm.setMainClass( (String) null );
+        jvm.setWorkingDirectory( null );
         jvm.setSystemOut( null );
         jvm.setSystemErr( null );
     }
@@ -64,6 +65,7 @@ public class ForkedJvmTest
     public void testFork()
         throws Exception
     {
+        File workDir = new File( System.getProperty( "user.home" ) ).getAbsoluteFile();
         File file = new File( "test" ).getAbsoluteFile();
         String nonce = Integer.toString( hashCode() );
 
@@ -71,6 +73,7 @@ public class ForkedJvmTest
         StringStreamConsumer stderr = new StringStreamConsumer();
 
         ForkedJvm jvm = new ForkedJvm();
+        jvm.setWorkingDirectory( workDir );
         jvm.setSystemOut( stdout );
         jvm.setSystemErr( stderr );
         jvm.setMainClass( MainStub.class );
@@ -84,7 +87,7 @@ public class ForkedJvmTest
 
         assertEquals( 27, exitcode );
 
-        assertEquals( "stderr", err.trim() );
+        assertEquals( workDir.getPath(), err.trim() );
 
         assertEquals( 4, args.length );
         assertEquals( nonce, args[0] );

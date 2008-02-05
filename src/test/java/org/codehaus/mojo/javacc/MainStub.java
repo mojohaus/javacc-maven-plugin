@@ -34,7 +34,9 @@ public class MainStub
         {
             System.out.println( args[i] );
         }
-        System.err.println( "stderr" );
+
+        System.err.println( System.getProperty( "user.dir" ) );
+
         System.exit( 27 );
     }
 

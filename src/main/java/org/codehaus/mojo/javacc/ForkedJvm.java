@@ -59,6 +59,11 @@ class ForkedJvm
     private String executable;
 
     /**
+     * The working directory for the forked JVM.
+     */
+    private File workingDirectory;
+
+    /**
      * The class path entries for the forked JVM, given as strings.
      */
     private Set classPathEntries = new LinkedHashSet();
@@ -89,6 +94,17 @@ class ForkedJvm
     private static String getDefaultExecutable()
     {
         return System.getProperty( "java.home" ) + File.separator + "bin" + File.separator + "java";
+    }
+
+    /**
+     * Sets the working directory for the forked JVM.
+     * 
+     * @param directory The working directory for the forked JVM, may be <code>null</code> to inherit the working
+     *            directory of the current JVM.
+     */
+    public void setWorkingDirectory( File directory )
+    {
+        this.workingDirectory = directory;
     }
 
     /**
@@ -285,6 +301,8 @@ class ForkedJvm
         Commandline cli = new Commandline();
 
         cli.setExecutable( this.executable );
+
+        cli.setWorkingDirectory( this.workingDirectory );
 
         String classPath = getClassPath();
         if ( classPath != null && classPath.length() > 0 )
