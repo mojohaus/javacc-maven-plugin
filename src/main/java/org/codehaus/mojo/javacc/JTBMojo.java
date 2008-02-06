@@ -195,16 +195,6 @@ public class JTBMojo
     private MavenProject project;
 
     /**
-     * The current working directory. Unfortunately, JTB always outputs in this directory so we need it to find the
-     * generated files.
-     * 
-     * @parameter expression="${user.dir}"
-     * @required
-     * @readonly
-     */
-    private File workingDirectory;
-
-    /**
      * Execute the JTB preprocessor.
      * 
      * @throws MojoExecutionException If the invocation of JTB failed.
@@ -310,13 +300,6 @@ public class JTBMojo
         // generate final grammar file and the node/visitor files
         runJTB( jtbFile, jjDirectory, nodePackage, visitorPackage );
 
-        /*
-         * since jtb was meant to be run as a command-line tool, it only outputs to the current directory. therefore,
-         * the files must be moved to the correct locations.
-         */
-        movePackage( nodePackage );
-        movePackage( visitorPackage );
-
         // create timestamp file
         try
         {
@@ -333,7 +316,7 @@ public class JTBMojo
     /**
      * Gets the effective package name for the AST node files.
      * 
-     * @return The effective package name for the AST node files.
+     * @return The effective package name for the AST node files, never <code>null</code>.
      */
     private String getNodePackageName()
     {
@@ -354,7 +337,7 @@ public class JTBMojo
     /**
      * Gets the effective package name for the visitor files.
      * 
-     * @return The effective package name for the visitor files.
+     * @return The effective package name for the visitor files, never <code>null</code>.
      */
     private String getVisitorPackageName()
     {
@@ -382,17 +365,22 @@ public class JTBMojo
      *            files, must not be <code>null</code>. If this directory does not exist yet, it is created. Note
      *            that this path should already include the desired package hierarchy because JTB will not append the
      *            required sub directories automatically.
-     * @param nodePackage The qualified name of the package for the AST nodes.
-     * @param visitorPackage The qualified name of the package for the visitor files.
+     * @param nodePackage The qualified name of the package for the AST nodes, must not be <code>null</code>.
+     * @param visitorPackage The qualified name of the package for the visitor files, must not be <code>null</code>.
      * @throws MojoExecutionException If JJTree could not be invoked.
      * @throws MojoFailureException If JJTree reported a non-zero exit code.
      */
     private void runJTB( File jtbFile, File grammarDirectory, String nodePackage, String visitorPackage )
         throws MojoExecutionException, MojoFailureException
     {
+        File nodeDirectory = new File( this.outputDirectory, nodePackage.replace( '.', File.separatorChar ) );
+        File visitorDirectory = new File( this.outputDirectory, visitorPackage.replace( '.', File.separatorChar ) );
+
         JTB jtb = new JTB();
         jtb.setInputFile( jtbFile );
         jtb.setOutputDirectory( grammarDirectory );
+        jtb.setNodeDirectory( nodeDirectory );
+        jtb.setVisitorDirectory( visitorDirectory );
         jtb.setDescriptiveFieldNames( this.descriptiveFieldNames );
         jtb.setJavadocFriendlyComments( this.javadocFriendlyComments );
         jtb.setNodePackageName( nodePackage );
@@ -405,81 +393,6 @@ public class JTBMojo
         jtb.setVisitorPackageName( visitorPackage );
         jtb.setLog( getLog() );
         jtb.run();
-    }
-
-    /**
-     * Moves the specified output package from JTB to the given target directory. JTB assumes that the current working
-     * directory represents the parent package of the configured node/visitor package.
-     * 
-     * @param pkgName The qualified name of the package to move, must not be <code>null</code>.
-     * @throws MojoExecutionException If the move failed.
-     */
-    private void movePackage( String pkgName )
-        throws MojoExecutionException
-    {
-        String pkgPath = pkgName.replace( '.', File.separatorChar );
-        String subDir = pkgPath.substring( pkgPath.lastIndexOf( File.separatorChar ) + 1 );
-        File sourceDir = new File( this.workingDirectory, subDir );
-        File targetDir = new File( this.outputDirectory, pkgPath );
-        moveDirectory( sourceDir, targetDir );
-    }
-
-    /**
-     * Moves all JTB output files from the specified source directory to the given target directory. Existing files in
-     * the target directory will be overwritten. Note that this move assumes a flat source directory, i.e. copying of
-     * sub directories is not supported.<br/><br/>This method must be used instead of
-     * {@link java.io.File#renameTo(java.io.File)} which would fail if the target directory already existed (at least on
-     * Windows).
-     * 
-     * @param sourceDir The absolute path to the source directory, must not be <code>null</code>.
-     * @param targetDir The absolute path to the target directory, must not be <code>null</code>.
-     * @throws MojoExecutionException If the move failed.
-     */
-    private void moveDirectory( File sourceDir, File targetDir )
-        throws MojoExecutionException
-    {
-        getLog().debug( "Moving JTB output files: " + sourceDir + " -> " + targetDir );
-        /*
-         * NOTE: The source directory might be the current working directory if JTB was told to output into the default
-         * package. The current working directory might be quite anything and will likely contain sub directories not
-         * created by JTB. Therefore, we do a defensive move and only delete the expected Java source files.
-         */
-        File[] sourceFiles = sourceDir.listFiles();
-        if ( sourceFiles == null )
-        {
-            return;
-        }
-        for ( int i = 0; i < sourceFiles.length; i++ )
-        {
-            File sourceFile = sourceFiles[i];
-            if ( sourceFile.isFile() && sourceFile.getName().endsWith( ".java" ) )
-            {
-                try
-                {
-                    FileUtils.copyFileToDirectory( sourceFile, targetDir );
-                    if ( !sourceFile.delete() )
-                    {
-                        getLog().error( "Failed to delete original JTB output file: " + sourceFile );
-                    }
-                }
-                catch ( Exception e )
-                {
-                    throw new MojoExecutionException( "Failed to move JTB output file: " + sourceFile + " -> "
-                        + targetDir );
-                }
-            }
-        }
-        if ( sourceDir.list().length <= 0 )
-        {
-            if ( !sourceDir.delete() )
-            {
-                getLog().error( "Failed to delete original JTB output directory: " + sourceDir );
-            }
-        }
-        else
-        {
-            getLog().debug( "Keeping non empty JTB output directory: " + sourceDir );
-        }
     }
 
 }

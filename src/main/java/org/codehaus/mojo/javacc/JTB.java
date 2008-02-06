@@ -20,6 +20,7 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,16 @@ class JTB
 {
 
     /**
+     * The default package name for syntax tree files.
+     */
+    private static final String SYNTAX_TREE = "syntaxtree";
+
+    /**
+     * The default package name for visitor files.
+     */
+    private static final String VISITOR = "visitor";
+
+    /**
      * The input grammar.
      */
     private File inputFile;
@@ -52,6 +63,16 @@ class JTB
      * The option "-o".
      */
     private File outputFile;
+
+    /**
+     * The output directory for the syntax tree files.
+     */
+    private File nodeDirectory;
+
+    /**
+     * The output directory for the visitor files.
+     */
+    private File visitorDirectory;
 
     /**
      * The option "-p".
@@ -120,7 +141,7 @@ class JTB
     }
 
     /**
-     * Sets the absolute path to the output directory.
+     * Sets the absolute path to the output directory for the generated grammar file.
      * 
      * @param value The absolute path to the output directory for the generated grammar file. If this directory does not
      *            exist yet, it is created. Note that this path should already include the desired package hierarchy
@@ -149,7 +170,71 @@ class JTB
     }
 
     /**
-     * Sets the option "-p".
+     * Sets the absolute path to the output directory for the syntax tree files.
+     * 
+     * @param value The absolute path to the output directory for the generated syntax tree files, may be
+     *            <code>null</code> to use a sub directory in the output directory of the grammar file. If this
+     *            directory does not exist yet, it is created. Note that this path should already include the desired
+     *            package hierarchy because JTB will not append the required sub directories automatically.
+     */
+    public void setNodeDirectory( File value )
+    {
+        this.nodeDirectory = value;
+    }
+
+    /**
+     * Gets the absolute path to the output directory for the syntax tree files.
+     * 
+     * @return The absolute path to the output directory for the syntax tree files, only <code>null</code> if neither
+     *         {@link #outputDirectory} nor {@link #nodeDirectory} have been set.
+     */
+    private File getEffectiveNodeDirectory()
+    {
+        if ( this.nodeDirectory != null )
+        {
+            return this.nodeDirectory;
+        }
+        else if ( this.outputDirectory != null )
+        {
+            return new File( this.outputDirectory, getLastPackageName( getEffectiveNodePackageName() ) );
+        }
+        return null;
+    }
+
+    /**
+     * Sets the absolute path to the output directory for the visitor files.
+     * 
+     * @param value The absolute path to the output directory for the generated visitor files, may be <code>null</code>
+     *            to use a sub directory in the output directory of the grammar file. If this directory does not exist
+     *            yet, it is created. Note that this path should already include the desired package hierarchy because
+     *            JTB will not append the required sub directories automatically.
+     */
+    public void setVisitorDirectory( File value )
+    {
+        this.visitorDirectory = value;
+    }
+
+    /**
+     * Gets the absolute path to the output directory for the visitor files.
+     * 
+     * @return The absolute path to the output directory for the visitor, only <code>null</code> if neither
+     *         {@link #outputDirectory} nor {@link #visitorDirectory} have been set.
+     */
+    private File getEffectiveVisitorDirectory()
+    {
+        if ( this.visitorDirectory != null )
+        {
+            return this.visitorDirectory;
+        }
+        else if ( this.outputDirectory != null )
+        {
+            return new File( this.outputDirectory, getLastPackageName( getEffectiveVisitorPackageName() ) );
+        }
+        return null;
+    }
+
+    /**
+     * Sets the option "-p". Will overwrite the options "-np" and "-vp" if specified.
      * 
      * @param value The option value, may be <code>null</code>.
      */
@@ -169,6 +254,27 @@ class JTB
     }
 
     /**
+     * Gets the effective package name for the syntax tree files.
+     * 
+     * @return The effective package name for the syntax tree files, never <code>null</code>.
+     */
+    private String getEffectiveNodePackageName()
+    {
+        if ( this.packageName != null )
+        {
+            return ( this.packageName.length() <= 0 ) ? SYNTAX_TREE : this.packageName + '.' + SYNTAX_TREE;
+        }
+        else if ( this.nodePackageName != null )
+        {
+            return this.nodePackageName;
+        }
+        else
+        {
+            return SYNTAX_TREE;
+        }
+    }
+
+    /**
      * Sets the option "-vp".
      * 
      * @param value The option value, may be <code>null</code>.
@@ -176,6 +282,27 @@ class JTB
     public void setVisitorPackageName( String value )
     {
         this.visitorPackageName = value;
+    }
+
+    /**
+     * Gets the effective package name for the visitor files.
+     * 
+     * @return The effective package name for the visitor files, never <code>null</code>.
+     */
+    private String getEffectiveVisitorPackageName()
+    {
+        if ( this.packageName != null )
+        {
+            return ( this.packageName.length() <= 0 ) ? VISITOR : this.packageName + '.' + VISITOR;
+        }
+        else if ( this.visitorPackageName != null )
+        {
+            return this.visitorPackageName;
+        }
+        else
+        {
+            return VISITOR;
+        }
     }
 
     /**
@@ -281,7 +408,11 @@ class JTB
         {
             getLog().debug( "Forking: " + jvm );
         }
-        return jvm.run();
+        int exitcode = jvm.run();
+
+        moveJavaFiles();
+
+        return exitcode;
     }
 
     /**
@@ -293,24 +424,11 @@ class JTB
     {
         List argsList = new ArrayList();
 
-        if ( this.packageName != null )
-        {
-            argsList.add( "-p" );
-            argsList.add( this.packageName );
-        }
-        else
-        {
-            if ( this.nodePackageName != null )
-            {
-                argsList.add( "-np" );
-                argsList.add( this.nodePackageName );
-            }
-            if ( this.visitorPackageName != null )
-            {
-                argsList.add( "-vp" );
-                argsList.add( this.visitorPackageName );
-            }
-        }
+        argsList.add( "-np" );
+        argsList.add( getEffectiveNodePackageName() );
+
+        argsList.add( "-vp" );
+        argsList.add( getEffectiveVisitorPackageName() );
 
         if ( this.supressErrorChecking != null && this.supressErrorChecking.booleanValue() )
         {
@@ -365,6 +483,98 @@ class JTB
         }
 
         return (String[]) argsList.toArray( new String[argsList.size()] );
+    }
+
+    /**
+     * Gets the last identifier from the specified package name. For example, returns "apache" upon input of
+     * "org.apache". JTB uses this approach to derive the output directories for the visitor and syntax tree files.
+     * 
+     * @param name The package name from which to retrieve the last sub package, may be <code>null</code>.
+     * @return The name of the last sub package or <code>null</code> if the input was <code>null</code>
+     */
+    private String getLastPackageName( String name )
+    {
+        if ( name != null )
+        {
+            return name.substring( name.lastIndexOf( '.' ) + 1 );
+        }
+        return null;
+    }
+
+    /**
+     * Moves the previously generated Java files to their proper target directories. JTB simply assumes that the current
+     * working directory represents the parent package of the configured node/visitor packages which does not meet our
+     * needs.
+     * 
+     * @throws IOException If the move failed.
+     */
+    private void moveJavaFiles()
+        throws IOException
+    {
+        File nodeSrcDir = new File( getLastPackageName( getEffectiveNodePackageName() ) ).getAbsoluteFile();
+        File nodeDstDir = getEffectiveNodeDirectory();
+        moveDirectory( nodeSrcDir, nodeDstDir );
+
+        File visitorSrcDir = new File( getLastPackageName( getEffectiveVisitorPackageName() ) ).getAbsoluteFile();
+        File visitorDstDir = getEffectiveVisitorDirectory();
+        moveDirectory( visitorSrcDir, visitorDstDir );
+    }
+
+    /**
+     * Moves all Java files generated by JTB from the specified source directory to the given target directory. Existing
+     * files in the target directory will be overwritten. Note that this move assumes a flat source directory, i.e.
+     * copying of sub directories is not supported.<br/><br/>This method must be used instead of
+     * {@link java.io.File#renameTo(java.io.File)} which would fail if the target directory already existed (at least on
+     * Windows).
+     * 
+     * @param sourceDir The absolute path to the source directory, must not be <code>null</code>.
+     * @param targetDir The absolute path to the target directory, must not be <code>null</code>.
+     * @throws IOException If the move failed.
+     */
+    private void moveDirectory( File sourceDir, File targetDir )
+        throws IOException
+    {
+        getLog().debug( "Moving JTB output files: " + sourceDir + " -> " + targetDir );
+        /*
+         * NOTE: The source directory might be the current working directory if JTB was told to output into the default
+         * package. The current working directory might be quite anything and will likely contain sub directories not
+         * created by JTB. Therefore, we do a defensive move and only delete the expected Java source files.
+         */
+        File[] sourceFiles = sourceDir.listFiles();
+        if ( sourceFiles == null )
+        {
+            return;
+        }
+        for ( int i = 0; i < sourceFiles.length; i++ )
+        {
+            File sourceFile = sourceFiles[i];
+            if ( sourceFile.isFile() && sourceFile.getName().endsWith( ".java" ) )
+            {
+                try
+                {
+                    FileUtils.copyFileToDirectory( sourceFile, targetDir );
+                    if ( !sourceFile.delete() )
+                    {
+                        getLog().error( "Failed to delete original JTB output file: " + sourceFile );
+                    }
+                }
+                catch ( Exception e )
+                {
+                    throw new IOException( "Failed to move JTB output file: " + sourceFile + " -> " + targetDir );
+                }
+            }
+        }
+        if ( sourceDir.list().length <= 0 )
+        {
+            if ( !sourceDir.delete() )
+            {
+                getLog().error( "Failed to delete original JTB output directory: " + sourceDir );
+            }
+        }
+        else
+        {
+            getLog().debug( "Keeping non empty JTB output directory: " + sourceDir );
+        }
     }
 
     /**

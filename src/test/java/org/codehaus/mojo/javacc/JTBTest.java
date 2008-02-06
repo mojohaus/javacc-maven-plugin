@@ -46,6 +46,8 @@ public class JTBTest
         JTB tool = new JTB();
         tool.setInputFile( null );
         tool.setOutputDirectory( null );
+        tool.setNodeDirectory( null );
+        tool.setVisitorDirectory( null );
         tool.setDescriptiveFieldNames( null );
         tool.setJavadocFriendlyComments( null );
         tool.setNodePackageName( null );
