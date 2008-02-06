@@ -22,15 +22,15 @@ package org.codehaus.mojo.javacc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.compiler.util.scan.InclusionScanException;
 import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
 import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
 import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
@@ -118,21 +118,10 @@ public class JavaCCMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !this.sourceDirectory.isDirectory() )
-        {
-            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
-            return;
-        }
-
         // check packageName for . vs /
         if ( this.packageName != null )
         {
             this.packageName = StringUtils.replace( this.packageName, '.', File.separatorChar );
-        }
-
-        if ( !this.timestampDirectory.exists() )
-        {
-            this.timestampDirectory.mkdirs();
         }
 
         if ( this.includes == null )
@@ -145,47 +134,29 @@ public class JavaCCMojo
             this.excludes = Collections.EMPTY_SET;
         }
 
-        Set staleGrammars = computeStaleGrammars();
+        GrammarInfo[] grammarInfos = scanForGrammars();
 
-        if ( staleGrammars.isEmpty() )
+        if ( grammarInfos == null )
+        {
+            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
+            return;
+        }
+        else if ( grammarInfos.length <= 0 )
         {
             getLog().info( "Skipping - all grammars up to date" );
         }
         else
         {
-            for ( Iterator i = staleGrammars.iterator(); i.hasNext(); )
+            if ( !this.timestampDirectory.exists() )
             {
-                File jjFile = (File) i.next();
-                File outputDir = getOutputDirectory( jjFile );
-
-                // Copy all .java files from sourceDirectory to outputDirectory, in
-                // order to prevent regeneration of customized Token.java or similar
-                try
-                {
-                    FileUtils.copyDirectory( jjFile.getParentFile(), outputDir, "*.java", "*.jj,*.JJ" );
-                }
-                catch ( IOException e )
-                {
-                    throw new MojoExecutionException( "Failed to copy custom source files to output directory:"
-                        + jjFile.getParent() + " -> " + outputDir, e );
-                }
-
-                // generate parser file
-                runJavaCC( jjFile, outputDir );
-
-                // create timestamp file
-                try
-                {
-                    URI relativeURI = this.sourceDirectory.toURI().relativize( jjFile.toURI() );
-                    File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
-                    FileUtils.copyFile( jjFile, timestampFile );
-                }
-                catch ( Exception e )
-                {
-                    getLog().warn( "Failed to create copy for timestamp check: " + jjFile, e );
-                }
+                this.timestampDirectory.mkdirs();
             }
-            getLog().info( "Processed " + staleGrammars.size() + " grammars" );
+
+            for ( int i = 0; i < grammarInfos.length; i++ )
+            {
+                processGrammar( grammarInfos[i] );
+            }
+            getLog().info( "Processed " + grammarInfos.length + " grammars" );
         }
 
         if ( this.project != null )
@@ -196,56 +167,86 @@ public class JavaCCMojo
     }
 
     /**
-     * Get the output directory for the Java files.
+     * Scans the configured source directory for grammar files which need processing.
      * 
-     * @param jjFile The JavaCC input file.
-     * @return The directory that will contain the generated code.
-     * @throws MojoExecutionException If there is a problem getting the package name.
+     * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
+     *         directory does not exist.
+     * @throws MojoExecutionException If the source directory could not be scanned.
      */
-    private File getOutputDirectory( File jjFile )
+    private GrammarInfo[] scanForGrammars()
         throws MojoExecutionException
     {
+        if ( !this.sourceDirectory.isDirectory() )
+        {
+            return null;
+        }
+
+        Collection grammarInfos = new ArrayList();
+
+        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
         try
         {
-            GrammarInfo info = new GrammarInfo( jjFile, this.packageName );
-            return new File( this.outputDirectory, info.getPackageDirectory().getPath() );
+            SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
+
+            scanner.addSourceMapping( new SuffixMapping( ".jj", ".jj" ) );
+            scanner.addSourceMapping( new SuffixMapping( ".JJ", ".JJ" ) );
+
+            Collection staleSources = scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory );
+
+            for ( Iterator it = staleSources.iterator(); it.hasNext(); )
+            {
+                File grammarFile = (File) it.next();
+                grammarInfos.add( new GrammarInfo( grammarFile, this.packageName ) );
+            }
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
-            throw new MojoExecutionException( "Failed to retrieve package name from grammar file", e );
+            throw new MojoExecutionException( "Failed to scan for grammars: " + this.sourceDirectory, e );
         }
+        getLog().debug( "Found grammars: " + grammarInfos );
+
+        return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
     }
 
     /**
-     * @return A set of <code>File</code> objects to compile.
-     * @throws MojoExecutionException If it fails.
+     * Passes the specified grammar file through JavaCC.
+     * 
+     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
+     * @throws MojoExecutionException If the invocation of JavaCC failed.
+     * @throws MojoFailureException If JavaCC reported a non-zero exit code.
      */
-    private Set computeStaleGrammars()
-        throws MojoExecutionException
+    private void processGrammar( GrammarInfo grammarInfo )
+        throws MojoExecutionException, MojoFailureException
     {
-        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
+        File jjFile = grammarInfo.getGrammarFile();
+        File outputDir = new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() );
 
-        SuffixMapping mapping = new SuffixMapping( ".jj", ".jj" );
-        SuffixMapping mappingCAP = new SuffixMapping( ".JJ", ".JJ" );
-
-        SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
-
-        scanner.addSourceMapping( mapping );
-        scanner.addSourceMapping( mappingCAP );
-
-        Set staleSources = new HashSet();
-
+        // Copy all .java files from sourceDirectory to outputDirectory, in
+        // order to prevent regeneration of customized Token.java or similar
         try
         {
-            staleSources.addAll( scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory ) );
+            FileUtils.copyDirectory( jjFile.getParentFile(), outputDir, "*.java", "*.jj,*.JJ" );
         }
-        catch ( InclusionScanException e )
+        catch ( IOException e )
         {
-            throw new MojoExecutionException( "Error scanning source root: \'" + this.sourceDirectory
-                + "\' for stale grammars to reprocess.", e );
+            throw new MojoExecutionException( "Failed to copy custom source files to output directory:"
+                + jjFile.getParent() + " -> " + outputDir, e );
         }
 
-        return staleSources;
+        // generate parser file
+        runJavaCC( jjFile, outputDir );
+
+        // create timestamp file
+        try
+        {
+            URI relativeURI = this.sourceDirectory.toURI().relativize( jjFile.toURI() );
+            File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
+            FileUtils.copyFile( jjFile, timestampFile );
+        }
+        catch ( Exception e )
+        {
+            getLog().warn( "Failed to create copy for timestamp check: " + jjFile, e );
+        }
     }
 
 }

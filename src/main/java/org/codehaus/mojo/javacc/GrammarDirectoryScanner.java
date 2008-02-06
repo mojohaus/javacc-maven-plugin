@@ -68,7 +68,8 @@ class GrammarDirectoryScanner
     }
 
     /**
-     * Sets the absolute path to the source directory to scan for grammar files.
+     * Sets the absolute path to the source directory to scan for grammar files. This directory must exist or the
+     * scanner will report an error.
      * 
      * @param directory The absolute path to the source directory to scan, must not be <code>null</code>.
      */

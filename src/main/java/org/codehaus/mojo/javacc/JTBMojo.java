@@ -203,17 +203,6 @@ public class JTBMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( !this.sourceDirectory.isDirectory() )
-        {
-            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
-            return;
-        }
-
-        if ( !this.timestampDirectory.exists() )
-        {
-            this.timestampDirectory.mkdirs();
-        }
-
         if ( this.includes == null )
         {
             this.includes = Collections.singleton( "**/*" );
@@ -226,12 +215,22 @@ public class JTBMojo
 
         GrammarInfo[] grammarInfos = scanForGrammars();
 
-        if ( grammarInfos.length <= 0 )
+        if ( grammarInfos == null )
+        {
+            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
+            return;
+        }
+        else if ( grammarInfos.length <= 0 )
         {
             getLog().info( "Skipping - all grammars up to date" );
         }
         else
         {
+            if ( !this.timestampDirectory.exists() )
+            {
+                this.timestampDirectory.mkdirs();
+            }
+
             for ( int i = 0; i < grammarInfos.length; i++ )
             {
                 processGrammar( grammarInfos[i] );
@@ -250,14 +249,21 @@ public class JTBMojo
     /**
      * Scans the configured source directory for grammar files which need processing.
      * 
-     * @return An array of grammar infos describing the found grammar files, never <code>null</code>.
+     * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
+     *         directory does not exist.
      * @throws MojoExecutionException If the source directory could not be scanned.
      */
     private GrammarInfo[] scanForGrammars()
         throws MojoExecutionException
     {
-        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
+        if ( !this.sourceDirectory.isDirectory() )
+        {
+            return null;
+        }
+
         Collection grammarInfos = new ArrayList();
+
+        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
         try
         {
             SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
@@ -275,9 +281,10 @@ public class JTBMojo
         }
         catch ( Exception e )
         {
-            throw new MojoExecutionException( "Failed to scan source root for grammars: " + this.sourceDirectory, e );
+            throw new MojoExecutionException( "Failed to scan for grammars: " + this.sourceDirectory, e );
         }
         getLog().debug( "Found grammars: " + grammarInfos );
+
         return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
     }
 
