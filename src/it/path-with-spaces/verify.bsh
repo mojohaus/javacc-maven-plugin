@@ -18,13 +18,6 @@ try
             System.err.println( "Missing JavaCC output file: " + outFile );
             return false;
         }
-
-        File tsFile = new File( targetDir, "java cc ts/BasicParser.jj" );
-        if ( !tsFile.isFile() )
-        {
-            System.err.println( "Missing JavaCC timestamp file: " + tsFile );
-            return false;
-        }
     }
 
     {

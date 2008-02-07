@@ -103,6 +103,7 @@ class GrammarInfo
         // NOTE: JavaCC uses the platform default encoding to read files, so must we
         String grammar = FileUtils.fileRead( this.grammarFile );
 
+        // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove "packageDir", too.
         if ( packageDir == null )
         {
             this.packageName = findPackageName( grammar );

@@ -21,21 +21,12 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
-import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
-import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Parses a JavaCC grammar file (<code>*.jj</code>) and transforms it to Java source files. Detailed information
@@ -77,14 +68,6 @@ public class JavaCCMojo
     private File outputDirectory;
 
     /**
-     * The directory to store the processed input files for later detection of stale sources.
-     * 
-     * @parameter expression="${timestampDirectory}"
-     *            default-value="${project.build.directory}/generated-sources/javacc-timestamp"
-     */
-    private File timestampDirectory;
-
-    /**
      * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
      * 
      * @parameter expression="${lastModGranularityMs}" default-value="0"
@@ -96,14 +79,14 @@ public class JavaCCMojo
      * 
      * @parameter
      */
-    private Set includes;
+    private String[] includes;
 
     /**
      * A set of Ant-like exclusion patterns for the compiler.
      * 
      * @parameter
      */
-    private Set excludes;
+    private String[] excludes;
 
     /**
      * @parameter expression="${project}"
@@ -121,22 +104,6 @@ public class JavaCCMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        // check packageName for . vs /
-        if ( this.packageName != null )
-        {
-            this.packageName = StringUtils.replace( this.packageName, '.', File.separatorChar );
-        }
-
-        if ( this.includes == null )
-        {
-            this.includes = Collections.singleton( "**/*" );
-        }
-
-        if ( this.excludes == null )
-        {
-            this.excludes = Collections.EMPTY_SET;
-        }
-
         GrammarInfo[] grammarInfos = scanForGrammars();
 
         if ( grammarInfos == null )
@@ -150,11 +117,6 @@ public class JavaCCMojo
         }
         else
         {
-            if ( !this.timestampDirectory.exists() )
-            {
-                this.timestampDirectory.mkdirs();
-            }
-
             for ( int i = 0; i < grammarInfos.length; i++ )
             {
                 processGrammar( grammarInfos[i] );
@@ -184,31 +146,32 @@ public class JavaCCMojo
             return null;
         }
 
-        Collection grammarInfos = new ArrayList();
+        GrammarInfo[] grammarInfos;
 
         getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
         try
         {
-            SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
-
-            scanner.addSourceMapping( new SuffixMapping( ".jj", ".jj" ) );
-            scanner.addSourceMapping( new SuffixMapping( ".JJ", ".JJ" ) );
-
-            Collection staleSources = scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory );
-
-            for ( Iterator it = staleSources.iterator(); it.hasNext(); )
+            String[] defaultIncludes = { "**/*.jj", "**/*.JJ" };
+            GrammarDirectoryScanner scanner = new GrammarDirectoryScanner();
+            scanner.setSourceDirectory( this.sourceDirectory );
+            scanner.setIncludes( ( this.includes != null ) ? this.includes : defaultIncludes );
+            scanner.setExcludes( this.excludes );
+            scanner.setOutputDirectory( this.outputDirectory );
+            if ( this.packageName != null )
             {
-                File grammarFile = (File) it.next();
-                grammarInfos.add( new GrammarInfo( grammarFile, this.packageName ) );
+                scanner.setPackageDirectory( this.packageName.replace( '.', File.separatorChar ) );
             }
+            scanner.setStaleMillis( this.staleMillis );
+            scanner.scan();
+            grammarInfos = scanner.getIncludedGrammars();
         }
         catch ( Exception e )
         {
             throw new MojoExecutionException( "Failed to scan for grammars: " + this.sourceDirectory, e );
         }
-        getLog().debug( "Found grammars: " + grammarInfos );
+        getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
 
-        return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
+        return grammarInfos;
     }
 
     /**
@@ -238,18 +201,6 @@ public class JavaCCMojo
 
         // generate parser file
         runJavaCC( jjFile, outputDir );
-
-        // create timestamp file
-        try
-        {
-            URI relativeURI = this.sourceDirectory.toURI().relativize( jjFile.toURI() );
-            File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
-            FileUtils.copyFile( jjFile, timestampFile );
-        }
-        catch ( Exception e )
-        {
-            getLog().warn( "Failed to create copy for timestamp check: " + jjFile, e );
-        }
     }
 
 }

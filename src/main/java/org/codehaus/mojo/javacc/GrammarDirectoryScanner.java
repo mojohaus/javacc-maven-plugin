@@ -46,6 +46,13 @@ class GrammarDirectoryScanner
      */
     private File outputDirectory;
 
+    // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove this field, too.
+    /**
+     * The relative directory path for the generated parser, may be <code>null</code> to use the package declaration
+     * from the grammar file.
+     */
+    private String packageDirectory;
+
     /**
      * The granularity in milliseconds of the last modification date for testing whether a grammar file needs
      * recompilation because its corresponding target file is stale.
@@ -80,6 +87,17 @@ class GrammarDirectoryScanner
             throw new NullPointerException();
         }
         this.scanner.setBasedir( directory );
+    }
+
+    /**
+     * Sets the relative directory path for the generated parser.
+     * 
+     * @param directory The relative directory path for the generated parser, may be <code>null</code> to use the
+     *            package declaration from the grammar file.
+     */
+    public void setPackageDirectory( String directory )
+    {
+        this.packageDirectory = directory;
     }
 
     /**
@@ -141,7 +159,7 @@ class GrammarDirectoryScanner
         for ( int i = 0; i < files.length; i++ )
         {
             File sourceFile = new File( this.scanner.getBasedir(), files[i] );
-            GrammarInfo grammarInfo = new GrammarInfo( sourceFile );
+            GrammarInfo grammarInfo = new GrammarInfo( sourceFile, this.packageDirectory );
             if ( this.outputDirectory != null )
             {
                 File[] targetFiles = getTargetFiles( this.outputDirectory, grammarInfo );

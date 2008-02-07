@@ -39,13 +39,6 @@ try
             return false;
         }
 
-        File timestamp = new File( target, "javacc-timestamps/BasicParser.jj" );
-        if ( !timestamp.isFile() )
-        {
-            System.err.println( "Sub module has no JavaCC timestamp: " + timestamp );
-            return false;
-        }
-
         File jjdoc = new File( target, "site/jjdoc/BasicParser.html" );
         if ( !jjdoc.isFile() )
         {
