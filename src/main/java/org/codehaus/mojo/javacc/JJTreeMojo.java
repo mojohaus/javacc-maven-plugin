@@ -21,18 +21,9 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
-import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
-import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -46,7 +37,7 @@ import org.codehaus.plexus.util.FileUtils;
  * @version $Id$
  */
 public class JJTreeMojo
-    extends AbstractMojo
+    extends AbstractPreprocessorMojo
 {
 
     /**
@@ -177,114 +168,80 @@ public class JJTreeMojo
     private int staleMillis;
 
     /**
-     * A set of Ant-like inclusion patterns for the compiler.
+     * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default,
+     * the patterns <code>**&#47;*.jjt</code> and <code>**&#47;*.JJT</code> are used to select grammar files.
      * 
      * @parameter
      */
-    private Set includes;
+    private String[] includes;
 
     /**
-     * A set of Ant-like exclusion patterns for the compiler.
+     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set if
+     * empty such that no files are excluded.
      * 
      * @parameter
      */
-    private Set excludes;
+    private String[] excludes;
 
     /**
-     * Execute the JJTree preprocessor.
-     * 
-     * @throws MojoExecutionException If the invocation of JJTree failed.
-     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     * {@inheritDoc}
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    protected File getSourceDirectory()
     {
-        if ( this.includes == null )
-        {
-            this.includes = Collections.singleton( "**/*" );
-        }
+        return this.sourceDirectory;
+    }
 
-        if ( this.excludes == null )
+    /**
+     * {@inheritDoc}
+     */
+    protected String[] getIncludes()
+    {
+        if ( this.includes != null )
         {
-            this.excludes = Collections.EMPTY_SET;
-        }
-
-        GrammarInfo[] grammarInfos = scanForGrammars();
-
-        if ( grammarInfos == null )
-        {
-            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
-            return;
-        }
-        else if ( grammarInfos.length <= 0 )
-        {
-            getLog().info( "Skipping - all grammars up to date" );
+            return this.includes;
         }
         else
         {
-            if ( !this.timestampDirectory.exists() )
-            {
-                this.timestampDirectory.mkdirs();
-            }
-
-            for ( int i = 0; i < grammarInfos.length; i++ )
-            {
-                processGrammar( grammarInfos[i] );
-            }
-            getLog().info( "Processed " + grammarInfos.length + " grammars" );
+            return new String[] { "**/*.jjt", "**/*.JJT" };
         }
     }
 
     /**
-     * Scans the configured source directory for grammar files which need processing.
-     * 
-     * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
-     *         directory does not exist.
-     * @throws MojoExecutionException If the source directory could not be scanned.
+     * {@inheritDoc}
      */
-    private GrammarInfo[] scanForGrammars()
-        throws MojoExecutionException
+    protected String[] getExcludes()
     {
-        if ( !this.sourceDirectory.isDirectory() )
-        {
-            return null;
-        }
-
-        Collection grammarInfos = new ArrayList();
-
-        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
-        try
-        {
-            SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
-
-            scanner.addSourceMapping( new SuffixMapping( ".jjt", ".jjt" ) );
-            scanner.addSourceMapping( new SuffixMapping( ".JJT", ".JJT" ) );
-
-            Collection staleSources = scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory );
-
-            for ( Iterator it = staleSources.iterator(); it.hasNext(); )
-            {
-                File grammarFile = (File) it.next();
-                grammarInfos.add( new GrammarInfo( grammarFile ) );
-            }
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to scan for grammars: " + this.sourceDirectory, e );
-        }
-        getLog().debug( "Found grammars: " + grammarInfos );
-
-        return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
+        return this.excludes;
     }
 
     /**
-     * Passes the specified grammar file through JJTree.
-     * 
-     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
-     * @throws MojoExecutionException If the invocation of JJTree failed.
-     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     * {@inheritDoc}
      */
-    private void processGrammar( GrammarInfo grammarInfo )
+    protected File getOutputDirectory()
+    {
+        return this.outputDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected File getTimestampDirectory()
+    {
+        return this.timestampDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected int getStaleMillis()
+    {
+        return this.staleMillis;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void processGrammar( GrammarInfo grammarInfo )
         throws MojoExecutionException, MojoFailureException
     {
         File jjtFile = grammarInfo.getGrammarFile();
@@ -300,7 +257,7 @@ public class JJTreeMojo
         {
             nodeDirectory = grammarInfo.getPackageDirectory();
         }
-        nodeDirectory = new File( this.outputDirectory, nodeDirectory.getPath() );
+        nodeDirectory = new File( getOutputDirectory(), nodeDirectory.getPath() );
 
         // generate final grammar file and node files
         JJTree jjtree = newJJTree();
@@ -312,8 +269,8 @@ public class JJTreeMojo
         // create timestamp file
         try
         {
-            URI relativeURI = this.sourceDirectory.toURI().relativize( jjtFile.toURI() );
-            File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
+            URI relativeURI = getSourceDirectory().toURI().relativize( jjtFile.toURI() );
+            File timestampFile = new File( getTimestampDirectory().toURI().resolve( relativeURI ) );
             FileUtils.copyFile( jjtFile, timestampFile );
         }
         catch ( Exception e )
@@ -345,6 +302,15 @@ public class JJTreeMojo
         jjtree.setVisitor( this.visitor );
         jjtree.setVisitorException( this.visitorException );
         return jjtree;
+    }
+
+    /**
+     * Prevents registration of our output or a following invocation of the javacc mojo will cause duplicate sources
+     * which in turn will make compilation fail.
+     */
+    protected void addCompileSourceRoot()
+    {
+        // do nothing
     }
 
 }

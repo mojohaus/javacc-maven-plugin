@@ -28,7 +28,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Exposes all JavaCC options as mojo parameters such that subclasses can share this boilerplate code.
+ * Provides common services for all mojos that compile JavaCC grammar files.
  * 
  * @author jruiz@exist.com
  * @author jesse <jesse.mcconnell@gmail.com>

@@ -155,14 +155,15 @@ class GrammarDirectoryScanner
         this.includedGrammars.clear();
         this.scanner.scan();
 
-        String[] files = this.scanner.getIncludedFiles();
-        for ( int i = 0; i < files.length; i++ )
+        String[] includedFiles = this.scanner.getIncludedFiles();
+        for ( int i = 0; i < includedFiles.length; i++ )
         {
-            File sourceFile = new File( this.scanner.getBasedir(), files[i] );
+            String includedFile = includedFiles[i];
+            File sourceFile = new File( this.scanner.getBasedir(), includedFile );
             GrammarInfo grammarInfo = new GrammarInfo( sourceFile, this.packageDirectory );
             if ( this.outputDirectory != null )
             {
-                File[] targetFiles = getTargetFiles( this.outputDirectory, grammarInfo );
+                File[] targetFiles = getTargetFiles( this.outputDirectory, includedFile, grammarInfo );
                 for ( int j = 0; j < targetFiles.length; j++ )
                 {
                     File targetFile = targetFiles[j];
@@ -186,10 +187,12 @@ class GrammarDirectoryScanner
      * 
      * @param targetDirectory The absolute path to the output directory for the target files, must not be
      *            <code>null</code>.
+     * @param grammarFile The path to the grammar file, relative to the scanned source directory, must not be
+     *            <code>null</code>.
      * @param grammarInfo The grammar info describing the grammar file, must not be <code>null</code>
      * @return A file array with target files, never <code>null</code>.
      */
-    protected File[] getTargetFiles( File targetDirectory, GrammarInfo grammarInfo )
+    protected File[] getTargetFiles( File targetDirectory, String grammarFile, GrammarInfo grammarInfo )
     {
         File parserFile = new File( targetDirectory, grammarInfo.getParserFile().getPath() );
         return new File[] { parserFile };

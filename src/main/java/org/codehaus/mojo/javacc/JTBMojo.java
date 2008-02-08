@@ -19,22 +19,12 @@ package org.codehaus.mojo.javacc;
  * under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.compiler.util.scan.SourceInclusionScanner;
-import org.codehaus.plexus.compiler.util.scan.StaleSourceScanner;
-import org.codehaus.plexus.compiler.util.scan.mapping.SuffixMapping;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically builds
@@ -47,7 +37,7 @@ import java.util.Set;
  * @version $Id$
  */
 public class JTBMojo
-    extends AbstractMojo
+    extends AbstractPreprocessorMojo
 {
 
     /**
@@ -152,20 +142,6 @@ public class JTBMojo
     private File sourceDirectory;
 
     /**
-     * A set of Ant-like inclusion patterns for the compiler.
-     * 
-     * @parameter
-     */
-    private Set includes;
-
-    /**
-     * A set of Ant-like exclusion patterns for the compiler.
-     * 
-     * @parameter
-     */
-    private Set excludes;
-
-    /**
      * The directory where the output Java files will be located.
      * 
      * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/jtb"
@@ -188,124 +164,90 @@ public class JTBMojo
     private int staleMillis;
 
     /**
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
+     * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default,
+     * the patterns <code>**&#47;*.jtb</code> and <code>**&#47;*.JTB</code> are used to select grammar files.
+     * 
+     * @parameter
      */
-    private MavenProject project;
+    private String[] includes;
 
     /**
-     * Execute the JTB preprocessor.
+     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set if
+     * empty such that no files are excluded.
      * 
-     * @throws MojoExecutionException If the invocation of JTB failed.
-     * @throws MojoFailureException If JTB reported a non-zero exit code.
+     * @parameter
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    private String[] excludes;
+
+    /**
+     * {@inheritDoc}
+     */
+    protected File getSourceDirectory()
     {
-        if ( this.includes == null )
-        {
-            this.includes = Collections.singleton( "**/*" );
-        }
+        return this.sourceDirectory;
+    }
 
-        if ( this.excludes == null )
+    /**
+     * {@inheritDoc}
+     */
+    protected String[] getIncludes()
+    {
+        if ( this.includes != null )
         {
-            this.excludes = Collections.EMPTY_SET;
-        }
-
-        GrammarInfo[] grammarInfos = scanForGrammars();
-
-        if ( grammarInfos == null )
-        {
-            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
-            return;
-        }
-        else if ( grammarInfos.length <= 0 )
-        {
-            getLog().info( "Skipping - all grammars up to date" );
+            return this.includes;
         }
         else
         {
-            if ( !this.timestampDirectory.exists() )
-            {
-                this.timestampDirectory.mkdirs();
-            }
-
-            for ( int i = 0; i < grammarInfos.length; i++ )
-            {
-                processGrammar( grammarInfos[i] );
-            }
-            getLog().info( "Processed " + grammarInfos.length + " grammars" );
+            return new String[] { "**/*.jtb", "**/*.JTB" };
         }
-
-        if ( this.project != null )
-        {
-            getLog().debug( "Adding compile source root: " + this.outputDirectory );
-            this.project.addCompileSourceRoot( this.outputDirectory.getPath() );
-        }
-
     }
 
     /**
-     * Scans the configured source directory for grammar files which need processing.
-     * 
-     * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
-     *         directory does not exist.
-     * @throws MojoExecutionException If the source directory could not be scanned.
+     * {@inheritDoc}
      */
-    private GrammarInfo[] scanForGrammars()
-        throws MojoExecutionException
+    protected String[] getExcludes()
     {
-        if ( !this.sourceDirectory.isDirectory() )
-        {
-            return null;
-        }
-
-        Collection grammarInfos = new ArrayList();
-
-        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
-        try
-        {
-            SourceInclusionScanner scanner = new StaleSourceScanner( this.staleMillis, this.includes, this.excludes );
-
-            scanner.addSourceMapping( new SuffixMapping( ".jtb", ".jtb" ) );
-            scanner.addSourceMapping( new SuffixMapping( ".JTB", ".JTB" ) );
-
-            Collection staleSources = scanner.getIncludedSources( this.sourceDirectory, this.timestampDirectory );
-
-            for ( Iterator it = staleSources.iterator(); it.hasNext(); )
-            {
-                File grammarFile = (File) it.next();
-                grammarInfos.add( new GrammarInfo( grammarFile ) );
-            }
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to scan for grammars: " + this.sourceDirectory, e );
-        }
-        getLog().debug( "Found grammars: " + grammarInfos );
-
-        return (GrammarInfo[]) grammarInfos.toArray( new GrammarInfo[grammarInfos.size()] );
+        return this.excludes;
     }
 
     /**
-     * Passes the specified grammar file through JTB.
-     * 
-     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
-     * @throws MojoExecutionException If the invocation of JTB failed.
-     * @throws MojoFailureException If JTB reported a non-zero exit code.
+     * {@inheritDoc}
      */
-    private void processGrammar( GrammarInfo grammarInfo )
+    protected File getOutputDirectory()
+    {
+        return this.outputDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected File getTimestampDirectory()
+    {
+        return this.timestampDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected int getStaleMillis()
+    {
+        return this.staleMillis;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void processGrammar( GrammarInfo grammarInfo )
         throws MojoExecutionException, MojoFailureException
     {
         File jtbFile = grammarInfo.getGrammarFile();
-        File jjDirectory = new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() );
+        File jjDirectory = new File( getOutputDirectory(), grammarInfo.getPackageDirectory().getPath() );
 
         String nodePackage = grammarInfo.resolvePackageName( getNodePackageName() );
-        File nodeDirectory = new File( this.outputDirectory, nodePackage.replace( '.', File.separatorChar ) );
+        File nodeDirectory = new File( getOutputDirectory(), nodePackage.replace( '.', File.separatorChar ) );
 
         String visitorPackage = grammarInfo.resolvePackageName( getVisitorPackageName() );
-        File visitorDirectory = new File( this.outputDirectory, visitorPackage.replace( '.', File.separatorChar ) );
+        File visitorDirectory = new File( getOutputDirectory(), visitorPackage.replace( '.', File.separatorChar ) );
 
         // generate final grammar file and the node/visitor files
         JTB jtb = newJTB();
@@ -320,8 +262,8 @@ public class JTBMojo
         // create timestamp file
         try
         {
-            URI relativeURI = this.sourceDirectory.toURI().relativize( jtbFile.toURI() );
-            File timestampFile = new File( this.timestampDirectory.toURI().resolve( relativeURI ) );
+            URI relativeURI = getSourceDirectory().toURI().relativize( jtbFile.toURI() );
+            File timestampFile = new File( getTimestampDirectory().toURI().resolve( relativeURI ) );
             FileUtils.copyFile( jtbFile, timestampFile );
         }
         catch ( Exception e )
