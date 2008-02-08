@@ -190,6 +190,25 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>integration-tests-java14</id>
+      <activation>
+        <jdk>1.4</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <configuration>
+              <pomExcludes>
+                <pomExclude>jtb-*/**</pomExclude>
+              </pomExcludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
   
 </project>
