@@ -248,15 +248,6 @@ public class JJDocMojo
     }
 
     /**
-     * @see org.apache.maven.reporting.MavenReport#isExternalReport()
-     * @return Determines if the report is using a sink. This always returns false.
-     */
-    public boolean isExternalReport()
-    {
-        return false;
-    }
-
-    /**
      * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
      * @return <code>true</code> if the configured source directories are not empty, <code>false</code> otherwise.
      */
@@ -273,15 +264,6 @@ public class JJDocMojo
             }
         }
         return false;
-    }
-
-    /**
-     * @see org.apache.maven.reporting.MavenReport#getCategoryName()
-     * @return The category where this report is located.
-     */
-    public String getCategoryName()
-    {
-        return CATEGORY_PROJECT_REPORTS;
     }
 
     /**
