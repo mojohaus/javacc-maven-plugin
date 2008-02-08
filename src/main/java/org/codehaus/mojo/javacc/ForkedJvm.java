@@ -184,7 +184,47 @@ class ForkedJvm
         if ( type != null )
         {
             String classResource = type.getName().replace( '.', '/' ) + ".class";
-            URL url = type.getResource( '/' + classResource );
+            return getResourceSource( classResource, type.getClassLoader() );
+        }
+        return null;
+    }
+
+    /**
+     * Gets the JAR file or directory that contains the specified class.
+     * 
+     * @param className The qualified name of the class/interface to find, may be <code>null</code>.
+     * @return The absolute path to the class source location or <code>null</code> if unknown.
+     */
+    private static File getClassSource( String className )
+    {
+        if ( className != null )
+        {
+            String classResource = className.replace( '.', '/' ) + ".class";
+            return getResourceSource( classResource, Thread.currentThread().getContextClassLoader() );
+        }
+        return null;
+    }
+
+    /**
+     * Gets the JAR file or directory that contains the specified resource.
+     * 
+     * @param resource The absolute name of the resource to find, may be <code>null</code>.
+     * @param loader The class loader to use for searching the resource, may be <code>null</code>.
+     * @return The absolute path to the resource location or <code>null</code> if unknown.
+     */
+    private static File getResourceSource( String resource, ClassLoader loader )
+    {
+        if ( resource != null )
+        {
+            URL url;
+            if ( loader != null )
+            {
+                url = loader.getResource( resource );
+            }
+            else
+            {
+                url = ClassLoader.getSystemResource( resource );
+            }
             if ( url != null )
             {
                 String u = url.toString();
@@ -204,7 +244,7 @@ class ForkedJvm
                 {
                     try
                     {
-                        u = u.substring( 0, u.length() - classResource.length() );
+                        u = u.substring( 0, u.length() - resource.length() );
                         return new File( new URI( u ) );
                     }
                     catch ( Exception e )
@@ -218,13 +258,15 @@ class ForkedJvm
     }
 
     /**
-     * Sets the qualified name of the class on which to invoke the <code>main()</code> method.
+     * Sets the qualified name of the class on which to invoke the <code>main()</code> method. The source of the
+     * specified class will automatically be added to the class path of the forked JVM.
      * 
      * @param name The qualified name of the class on which to invoke the <code>main()</code> method.
      */
     public void setMainClass( String name )
     {
         this.mainClass = name;
+        addClassPathEntry( getClassSource( name ) );
     }
 
     /**
@@ -235,7 +277,7 @@ class ForkedJvm
      */
     public void setMainClass( Class type )
     {
-        setMainClass( ( type != null ) ? type.getName() : null );
+        this.mainClass = ( type != null ) ? type.getName() : null;
         addClassPathEntry( type );
     }
 

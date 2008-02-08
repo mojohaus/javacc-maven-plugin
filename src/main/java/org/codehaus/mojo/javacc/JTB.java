@@ -400,7 +400,7 @@ class JTB
 
         // fork JTB because of its lack to re-initialize its static parser
         ForkedJvm jvm = new ForkedJvm();
-        jvm.setMainClass( EDU.purdue.jtb.JTB.class );
+        jvm.setMainClass( "EDU.purdue.jtb.JTB" );
         jvm.addArguments( args );
         jvm.setSystemOut( new MojoLogStreamConsumer( false ) );
         jvm.setSystemErr( new MojoLogStreamConsumer( true ) );

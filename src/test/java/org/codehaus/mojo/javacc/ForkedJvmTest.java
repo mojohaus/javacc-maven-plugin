@@ -62,6 +62,22 @@ public class ForkedJvmTest
         jvm.setSystemErr( null );
     }
 
+    public void testSetMainClass()
+        throws Exception
+    {
+        ForkedJvm jvm1 = new ForkedJvm();
+        jvm1.setMainClass( MainStub.class );
+        String cmd1 = jvm1.toString();
+        assertTrue( cmd1.indexOf( MainStub.class.getName() ) >= 0 );
+
+        ForkedJvm jvm2 = new ForkedJvm();
+        jvm2.setMainClass( MainStub.class.getName() );
+        String cmd2 = jvm2.toString();
+        assertTrue( cmd2.indexOf( MainStub.class.getName() ) >= 0 );
+
+        assertEquals( cmd1, cmd2 );
+    }
+
     public void testFork()
         throws Exception
     {
