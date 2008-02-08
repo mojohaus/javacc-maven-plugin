@@ -12,12 +12,20 @@ try
     }
 
     File siteOutputDir = new File( basedir, "target/site" );
+
+    File indexFile = new File( siteOutputDir, "jjdoc/index.html" );
+    if ( indexFile.length() <= 0 )
+    {
+        System.out.println( "File is empty: " + indexFile );
+        return false;
+    }
+
     File jjdocFile = new File( siteOutputDir, "jjdoc/MyParser.html" );
-	if ( jjdocFile.length() <= 0 )
-	{
-	    System.out.println( "File is empty: " + jjdocFile );
-	    return false;
-	}
+    if ( jjdocFile.length() <= 0 )
+    {
+        System.out.println( "File is empty: " + jjdocFile );
+        return false;
+    }
     
 }
 catch( Throwable t )

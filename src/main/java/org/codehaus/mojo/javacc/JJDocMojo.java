@@ -170,7 +170,7 @@ public class JJDocMojo
      */
     protected String getOutputDirectory()
     {
-        return this.outputDirectory.toString();
+        return this.outputDirectory.getAbsolutePath();
     }
 
     /**

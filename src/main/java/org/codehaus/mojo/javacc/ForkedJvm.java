@@ -298,22 +298,30 @@ class ForkedJvm
      */
     private Commandline createCommandLine()
     {
+        /*
+         * NOTE: This method is designed to work with plexus-utils:1.1 which is used by all Maven versions before 2.0.6
+         * regardless of our plugin dependency. Therefore, we use setWorkingDirectory(String) rather than
+         * setWorkingDirectory(File) and addArguments() rather than createArg().
+         */
+
         Commandline cli = new Commandline();
 
         cli.setExecutable( this.executable );
 
-        cli.setWorkingDirectory( this.workingDirectory );
+        if ( this.workingDirectory != null )
+        {
+            cli.setWorkingDirectory( this.workingDirectory.getAbsolutePath() );
+        }
 
         String classPath = getClassPath();
         if ( classPath != null && classPath.length() > 0 )
         {
-            cli.createArg().setValue( "-cp" );
-            cli.createArg().setValue( classPath );
+            cli.addArguments( new String[] { "-cp", classPath } );
         }
 
         if ( this.mainClass != null && this.mainClass.length() > 0 )
         {
-            cli.createArg().setValue( this.mainClass );
+            cli.addArguments( new String[] { this.mainClass } );
         }
 
         cli.addArguments( getArguments() );

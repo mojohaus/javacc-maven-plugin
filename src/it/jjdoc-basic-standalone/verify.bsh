@@ -12,12 +12,22 @@ try
     }
 
     File mojoOutputDir = new File( basedir, "target/it-site" );
+
+    /* FIXME: maven-reporting-impl:2.0.4 fails to output the sink contents
+    File indexFile = new File( siteOutputDir, "jjdoc/index.html" );
+    if ( indexFile.length() <= 0 )
+    {
+        System.out.println( "File is empty: " + indexFile );
+        return false;
+    }
+    */
+
     File jjdocFile = new File( mojoOutputDir, "jjdoc/MyParser.html" );
-	if ( jjdocFile.length() <= 0 )
-	{
-	    System.out.println( "File is empty: " + jjdocFile );
-	    return false;
-	}
+    if ( jjdocFile.length() <= 0 )
+    {
+        System.out.println( "File is empty: " + jjdocFile );
+        return false;
+    }
     
 }
 catch( Throwable t )
