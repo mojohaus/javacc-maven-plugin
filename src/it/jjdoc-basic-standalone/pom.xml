@@ -13,6 +13,16 @@
     Check report output during a standalone generation.
   </description>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <version>@pom.version@</version>
+      </plugin>
+    </plugins>
+  </build>
+
   <reporting>
     <plugins>
       <plugin>
