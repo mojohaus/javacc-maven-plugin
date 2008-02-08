@@ -303,7 +303,11 @@ public class JJTreeMojo
         nodeDirectory = new File( this.outputDirectory, nodeDirectory.getPath() );
 
         // generate final grammar file and node files
-        runJJTree( jjtFile, nodeDirectory, nodePackageName );
+        JJTree jjtree = newJJTree();
+        jjtree.setInputFile( jjtFile );
+        jjtree.setOutputDirectory( nodeDirectory );
+        jjtree.setNodePackage( nodePackageName );
+        jjtree.run();
 
         // create timestamp file
         try
@@ -319,40 +323,28 @@ public class JJTreeMojo
     }
 
     /**
-     * Runs JJTree on the specified grammar file to generate a annotated grammar file. The options for JJTree are
-     * derived from the current values of the corresponding mojo parameters.
+     * Creates a new facade to invoke JJTree. Most options for the invocation are derived from the current values of the
+     * corresponding mojo parameters. The caller is responsible to set the input file, output directory and package on
+     * the returned facade.
      * 
-     * @param jjtFile The absolute path to the grammar file to pass into JJTree for preprocessing, must not be
-     *            <code>null</code>.
-     * @param grammarDirectory The absolute path to the output directory for the generated grammar file and its AST node
-     *            files, must not be <code>null</code>. If this directory does not exist yet, it is created. Note
-     *            that this path should already include the desired package hierarchy because JJTree will not append the
-     *            required sub directories automatically.
-     * @param nodePackageName The qualified name of the package for the AST nodes, may be <code>null</code> to use the
-     *            parser package.
-     * @throws MojoExecutionException If JJTree could not be invoked.
-     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     * @return The facade for the tool invocation, never <code>null</code>.
      */
-    protected void runJJTree( File jjtFile, File grammarDirectory, String nodePackageName )
-        throws MojoExecutionException, MojoFailureException
+    protected JJTree newJJTree()
     {
         JJTree jjtree = new JJTree();
-        jjtree.setInputFile( jjtFile );
-        jjtree.setOutputDirectory( grammarDirectory );
+        jjtree.setLog( getLog() );
         jjtree.setJdkVersion( this.jdkVersion );
         jjtree.setStatic( this.isStatic );
         jjtree.setBuildNodeFiles( this.buildNodeFiles );
         jjtree.setMulti( this.multi );
         jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
         jjtree.setNodeFactory( this.nodeFactory );
-        jjtree.setNodePackage( nodePackageName );
         jjtree.setNodePrefix( this.nodePrefix );
         jjtree.setNodeScopeHook( this.nodeScopeHook );
         jjtree.setNodeUsesParser( this.nodeUsesParser );
         jjtree.setVisitor( this.visitor );
         jjtree.setVisitorException( this.visitorException );
-        jjtree.setLog( getLog() );
-        jjtree.run();
+        return jjtree;
     }
 
 }

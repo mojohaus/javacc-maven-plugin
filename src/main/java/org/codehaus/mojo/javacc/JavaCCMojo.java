@@ -21,11 +21,9 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -75,132 +73,102 @@ public class JavaCCMojo
     private int staleMillis;
 
     /**
-     * A set of Ant-like inclusion patterns for the compiler.
+     * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default,
+     * the patterns <code>**&#47;*.jj</code> and <code>**&#47;*.JJ</code> are used to select grammar files.
      * 
      * @parameter
      */
     private String[] includes;
 
     /**
-     * A set of Ant-like exclusion patterns for the compiler.
+     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set if
+     * empty such that no files are excluded.
      * 
      * @parameter
      */
     private String[] excludes;
 
     /**
-     * @parameter expression="${project}"
-     * @readonly
-     * @required
+     * {@inheritDoc}
      */
-    private MavenProject project;
+    protected File getSourceDirectory()
+    {
+        return this.sourceDirectory;
+    }
 
     /**
-     * Execute the JavaCC compiler.
-     * 
-     * @throws MojoExecutionException If the invocation of JavaCC failed.
-     * @throws MojoFailureException If JavaCC reported a non-zero exit code.
+     * {@inheritDoc}
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    protected String[] getIncludes()
     {
-        GrammarInfo[] grammarInfos = scanForGrammars();
-
-        if ( grammarInfos == null )
+        if ( this.includes != null )
         {
-            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
-            return;
-        }
-        else if ( grammarInfos.length <= 0 )
-        {
-            getLog().info( "Skipping - all grammars up to date" );
+            return this.includes;
         }
         else
         {
-            for ( int i = 0; i < grammarInfos.length; i++ )
-            {
-                processGrammar( grammarInfos[i] );
-            }
-            getLog().info( "Processed " + grammarInfos.length + " grammars" );
-        }
-
-        if ( this.project != null )
-        {
-            getLog().debug( "Adding compile source root: " + this.outputDirectory );
-            this.project.addCompileSourceRoot( this.outputDirectory.getAbsolutePath() );
+            return new String[] { "**/*.jj", "**/*.JJ" };
         }
     }
 
     /**
-     * Scans the configured source directory for grammar files which need processing.
-     * 
-     * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
-     *         directory does not exist.
-     * @throws MojoExecutionException If the source directory could not be scanned.
+     * {@inheritDoc}
      */
-    private GrammarInfo[] scanForGrammars()
-        throws MojoExecutionException
+    protected String[] getExcludes()
     {
-        if ( !this.sourceDirectory.isDirectory() )
-        {
-            return null;
-        }
-
-        GrammarInfo[] grammarInfos;
-
-        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
-        try
-        {
-            String[] defaultIncludes = { "**/*.jj", "**/*.JJ" };
-            GrammarDirectoryScanner scanner = new GrammarDirectoryScanner();
-            scanner.setSourceDirectory( this.sourceDirectory );
-            scanner.setIncludes( ( this.includes != null ) ? this.includes : defaultIncludes );
-            scanner.setExcludes( this.excludes );
-            scanner.setOutputDirectory( this.outputDirectory );
-            if ( this.packageName != null )
-            {
-                scanner.setPackageDirectory( this.packageName.replace( '.', File.separatorChar ) );
-            }
-            scanner.setStaleMillis( this.staleMillis );
-            scanner.scan();
-            grammarInfos = scanner.getIncludedGrammars();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to scan for grammars: " + this.sourceDirectory, e );
-        }
-        getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
-
-        return grammarInfos;
+        return this.excludes;
     }
 
     /**
-     * Passes the specified grammar file through JavaCC.
-     * 
-     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
-     * @throws MojoExecutionException If the invocation of JavaCC failed.
-     * @throws MojoFailureException If JavaCC reported a non-zero exit code.
+     * {@inheritDoc}
      */
-    private void processGrammar( GrammarInfo grammarInfo )
+    protected File getOutputDirectory()
+    {
+        return this.outputDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected int getStaleMillis()
+    {
+        return this.staleMillis;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected String getParserPackage()
+    {
+        return this.packageName;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void processGrammar( GrammarInfo grammarInfo )
         throws MojoExecutionException, MojoFailureException
     {
         File jjFile = grammarInfo.getGrammarFile();
-        File outputDir = new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() );
+        File parserDirectory = new File( getOutputDirectory(), grammarInfo.getPackageDirectory().getPath() );
 
         // Copy all .java files from sourceDirectory to outputDirectory, in
         // order to prevent regeneration of customized Token.java or similar
         try
         {
-            FileUtils.copyDirectory( jjFile.getParentFile(), outputDir, "*.java", "*.jj,*.JJ" );
+            FileUtils.copyDirectory( jjFile.getParentFile(), parserDirectory, "*.java", "*.jj,*.JJ" );
         }
         catch ( IOException e )
         {
             throw new MojoExecutionException( "Failed to copy custom source files to output directory:"
-                + jjFile.getParent() + " -> " + outputDir, e );
+                + jjFile.getParent() + " -> " + parserDirectory, e );
         }
 
         // generate parser file
-        runJavaCC( jjFile, outputDir );
+        JavaCC javacc = newJavaCC();
+        javacc.setInputFile( jjFile );
+        javacc.setOutputDirectory( parserDirectory );
+        javacc.run();
     }
 
 }

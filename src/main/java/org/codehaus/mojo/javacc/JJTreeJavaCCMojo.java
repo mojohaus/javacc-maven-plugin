@@ -20,11 +20,9 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
@@ -161,7 +159,7 @@ public class JJTreeJavaCCMojo
     private String[] includes;
 
     /**
-     * A set of Ant-like exclusion patterns used to prevent certain files from being processing. By default, this set if
+     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set if
      * empty such that no files are excluded.
      * 
      * @parameter
@@ -177,110 +175,79 @@ public class JJTreeJavaCCMojo
     private int staleMillis;
 
     /**
-     * The current Maven project.
-     * 
-     * @parameter default-value="${project}"
-     * @readonly
-     * @required
+     * {@inheritDoc}
      */
-    private MavenProject project;
+    protected File getSourceDirectory()
+    {
+        return this.sourceDirectory;
+    }
 
     /**
-     * Executes JJTree and JavaCC.
-     * 
-     * @throws MojoExecutionException If the invocation of JJTree or JavaCC failed.
-     * @throws MojoFailureException If JJTree or JavaCC reported a non-zero exit code.
+     * {@inheritDoc}
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
+    protected String[] getIncludes()
     {
-        GrammarInfo[] grammarInfos = scanForGrammars();
-
-        if ( grammarInfos == null )
+        if ( this.includes != null )
         {
-            getLog().info( "Skipping non-existing source directory: " + this.sourceDirectory );
-            return;
-        }
-        else if ( grammarInfos.length <= 0 )
-        {
-            getLog().info( "Skipping - all grammars up to date" );
+            return this.includes;
         }
         else
         {
-            for ( int i = 0; i < grammarInfos.length; i++ )
-            {
-                processGrammar( grammarInfos[i] );
-            }
-            getLog().info( "Processed " + grammarInfos.length + " grammars" );
-        }
-
-        if ( this.project != null )
-        {
-            getLog().debug( "Adding compile source root: " + this.outputDirectory );
-            this.project.addCompileSourceRoot( this.outputDirectory.getAbsolutePath() );
+            return new String[] { "**/*.jj", "**/*.JJ", "**/*.jjt", "**/*.JJT" };
         }
     }
 
     /**
-     * Scans the configured source directory for grammar files which need processing.
-     * 
-     * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
-     *         directory does not exist.
-     * @throws MojoExecutionException If the source directory could not be scanned.
+     * {@inheritDoc}
      */
-    private GrammarInfo[] scanForGrammars()
-        throws MojoExecutionException
+    protected String[] getExcludes()
     {
-        if ( !this.sourceDirectory.isDirectory() )
-        {
-            return null;
-        }
-
-        GrammarInfo[] grammarInfos;
-
-        getLog().debug( "Scanning for grammars: " + this.sourceDirectory );
-        try
-        {
-            String[] defaultIncludes = { "**/*.jj", "**/*.JJ", "**/*.jjt", "**/*.JJT" };
-            GrammarDirectoryScanner scanner = new GrammarDirectoryScanner();
-            scanner.setSourceDirectory( this.sourceDirectory );
-            scanner.setIncludes( ( this.includes != null ) ? this.includes : defaultIncludes );
-            scanner.setExcludes( this.excludes );
-            scanner.setOutputDirectory( this.outputDirectory );
-            scanner.setStaleMillis( this.staleMillis );
-            scanner.scan();
-            grammarInfos = scanner.getIncludedGrammars();
-        }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to scan for grammars: " + this.sourceDirectory, e );
-        }
-        getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
-
-        return grammarInfos;
+        return this.excludes;
     }
 
     /**
-     * Passes the specified grammar file through JJTree and JavaCC.
-     * 
-     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
-     * @throws MojoExecutionException If the invocation of JJTree or JavaCC failed.
-     * @throws MojoFailureException If JJTree or JavaCC reported a non-zero exit code.
+     * {@inheritDoc}
      */
-    private void processGrammar( GrammarInfo grammarInfo )
+    protected File getOutputDirectory()
+    {
+        return this.outputDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected int getStaleMillis()
+    {
+        return this.staleMillis;
+    }
+
+    /**
+     * Gets the absolute path to the directory where the interim output from JJTree will be stored.
+     * 
+     * @return The absolute path to the directory where the interim output from JJTree will be stored.
+     */
+    private File getInterimDirectory()
+    {
+        return this.interimDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void processGrammar( GrammarInfo grammarInfo )
         throws MojoExecutionException, MojoFailureException
     {
         File jjtFile = grammarInfo.getGrammarFile();
         File jjtDirectory = jjtFile.getParentFile();
 
         // determine target directory of grammar file (*.jj) and node files (*.java) generated by JJTree
-        File jjDirectory = new File( this.interimDirectory, grammarInfo.getPackageDirectory().getPath() );
+        File jjDirectory = new File( getInterimDirectory(), grammarInfo.getPackageDirectory().getPath() );
 
         // determine target location of grammar file (*.jj) generated by JJTree
         File jjFile = new File( jjDirectory, FileUtils.removeExtension( jjtFile.getName() ) + ".jj" );
 
         // determine output directory of parser file (*.java) generated by JavaCC
-        File parserDirectory = new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() );
+        File parserDirectory = new File( getOutputDirectory(), grammarInfo.getPackageDirectory().getPath() );
 
         // determine output directory of tree node files (*.java) generated by JJTree
         String nodePackageName = grammarInfo.resolvePackageName( this.nodePackage );
@@ -293,10 +260,14 @@ public class JJTreeJavaCCMojo
         {
             nodeDirectory = grammarInfo.getPackageDirectory();
         }
-        nodeDirectory = new File( this.outputDirectory, nodeDirectory.getPath() );
+        nodeDirectory = new File( getOutputDirectory(), nodeDirectory.getPath() );
 
         // generate final grammar file
-        runJJTree( jjtFile, jjDirectory, nodePackageName );
+        JJTree jjtree = newJJTree();
+        jjtree.setInputFile( jjtFile );
+        jjtree.setOutputDirectory( jjDirectory );
+        jjtree.setNodePackage( nodePackageName );
+        jjtree.run();
 
         // copy generated tree node files to output directory
         try
@@ -323,44 +294,35 @@ public class JJTreeJavaCCMojo
         }
 
         // generate parser file
-        runJavaCC( jjFile, parserDirectory );
+        JavaCC javacc = newJavaCC();
+        javacc.setInputFile( jjFile );
+        javacc.setOutputDirectory( parserDirectory );
+        javacc.run();
     }
 
     /**
-     * Runs JJTree on the specified grammar file to generate a annotated grammar file. The options for JJTree are
-     * derived from the current values of the corresponding mojo parameters.
+     * Creates a new facade to invoke JJTree. Most options for the invocation are derived from the current values of the
+     * corresponding mojo parameters. The caller is responsible to set the input file, output directory and package on
+     * the returned facade.
      * 
-     * @param jjtFile The absolute path to the grammar file to pass into JJTree for preprocessing, must not be
-     *            <code>null</code>.
-     * @param grammarDirectory The absolute path to the output directory for the generated grammar file and its AST node
-     *            files, must not be <code>null</code>. If this directory does not exist yet, it is created. Note
-     *            that this path should already include the desired package hierarchy because JJTree will not append the
-     *            required sub directories automatically.
-     * @param nodePackageName The qualified name of the package for the AST nodes, may be <code>null</code> to use the
-     *            parser package.
-     * @throws MojoExecutionException If JJTree could not be invoked.
-     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     * @return The facade for the tool invocation, never <code>null</code>.
      */
-    protected void runJJTree( File jjtFile, File grammarDirectory, String nodePackageName )
-        throws MojoExecutionException, MojoFailureException
+    protected JJTree newJJTree()
     {
         JJTree jjtree = new JJTree();
-        jjtree.setInputFile( jjtFile );
-        jjtree.setOutputDirectory( grammarDirectory );
+        jjtree.setLog( getLog() );
         jjtree.setJdkVersion( getJdkVersion() );
         jjtree.setStatic( getIsStatic() );
         jjtree.setBuildNodeFiles( this.buildNodeFiles );
         jjtree.setMulti( this.multi );
         jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
         jjtree.setNodeFactory( this.nodeFactory );
-        jjtree.setNodePackage( nodePackageName );
         jjtree.setNodePrefix( this.nodePrefix );
         jjtree.setNodeScopeHook( this.nodeScopeHook );
         jjtree.setNodeUsesParser( this.nodeUsesParser );
         jjtree.setVisitor( this.visitor );
         jjtree.setVisitorException( this.visitorException );
-        jjtree.setLog( getLog() );
-        jjtree.run();
+        return jjtree;
     }
 
 }

@@ -20,10 +20,12 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Exposes all JavaCC options as mojo parameters such that subclasses can share this boilerplate code.
@@ -35,6 +37,15 @@ import org.apache.maven.plugin.MojoFailureException;
 public abstract class AbstractJavaCCMojo
     extends AbstractMojo
 {
+
+    /**
+     * The current Maven project.
+     * 
+     * @parameter default-value="${project}"
+     * @readonly
+     * @required
+     */
+    private MavenProject project;
 
     /**
      * The Java version for which to generate source code. Default value is <code>1.4</code>.
@@ -244,24 +255,166 @@ public abstract class AbstractJavaCCMojo
     }
 
     /**
-     * Runs JavaCC on the specified grammar file to generate a parser file. The options for JavaCC are derived from the
-     * current values of the corresponding mojo parameters.
+     * Gets the absolute path to the directory where the grammar files are located.
      * 
-     * @param jjFile The absolute path to the grammar file to pass into JavaCC for compilation, must not be
-     *            <code>null</code>.
-     * @param parserDirectory The absolute path to the output directory for the generated parser file, must not be
-     *            <code>null</code>. If this directory does not exist yet, it is created. Note that this path should
-     *            already include the desired package hierarchy because JavaCC will not append the required sub
-     *            directories automatically.
-     * @throws MojoExecutionException If JavaCC could not be invoked.
-     * @throws MojoFailureException If JavaCC reported a non-zero exit code.
+     * @return The absolute path to the directory where the grammar files are located, never <code>null</code>.
      */
-    protected void runJavaCC( File jjFile, File parserDirectory )
+    protected abstract File getSourceDirectory();
+
+    /**
+     * Gets a set of Ant-like inclusion patterns used to select files from the source directory for processing.
+     * 
+     * @return A set of Ant-like inclusion patterns used to select files from the source directory for processing, can
+     *         be <code>null</code> if all files should be included.
+     */
+    protected abstract String[] getIncludes();
+
+    /**
+     * Gets a set of Ant-like exclusion patterns used to unselect files from the source directory for processing.
+     * 
+     * @return A set of Ant-like inclusion patterns used to unselect files from the source directory for processing, can
+     *         be <code>null</code> if no files should be excluded.
+     */
+    protected abstract String[] getExcludes();
+
+    /**
+     * Gets the absolute path to the directory where the generated Java files for the parser will be stored.
+     * 
+     * @return The absolute path to the directory where the generated Java files for the parser will be stored, never
+     *         <code>null</code>.
+     */
+    protected abstract File getOutputDirectory();
+
+    /**
+     * Gets the granularity in milliseconds of the last modification date for testing whether a source needs
+     * recompilation.
+     * 
+     * @return The granularity in milliseconds of the last modification date for testing whether a source needs
+     *         recompilation.
+     */
+    protected abstract int getStaleMillis();
+
+    /**
+     * Gets the package into which the generated parser files should be stored.
+     * 
+     * @return The package into which the generated parser files should be stored, can be <code>null</code> to use the
+     *         package declaration from the grammar file.
+     */
+    // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove this method, too.
+    protected String getParserPackage()
+    {
+        return null;
+    }
+
+    /**
+     * Execute the tool.
+     * 
+     * @throws MojoExecutionException If the invocation of the tool failed.
+     * @throws MojoFailureException If the tool reported a non-zero exit code.
+     */
+    public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        GrammarInfo[] grammarInfos = scanForGrammars();
+
+        if ( grammarInfos == null )
+        {
+            getLog().info( "Skipping non-existing source directory: " + getSourceDirectory() );
+            return;
+        }
+        else if ( grammarInfos.length <= 0 )
+        {
+            getLog().info( "Skipping - all grammars up to date" );
+        }
+        else
+        {
+            for ( int i = 0; i < grammarInfos.length; i++ )
+            {
+                processGrammar( grammarInfos[i] );
+            }
+            getLog().info( "Processed " + grammarInfos.length + " grammar" + ( grammarInfos.length != 1 ? "s" : "" ) );
+        }
+
+        addCompileSourceRoot( getOutputDirectory() );
+    }
+
+    /**
+     * Passes the specified grammar file through the tool.
+     * 
+     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
+     * @throws MojoExecutionException If the invocation of the tool failed.
+     * @throws MojoFailureException If the tool reported a non-zero exit code.
+     */
+    protected abstract void processGrammar( GrammarInfo grammarInfo )
+        throws MojoExecutionException, MojoFailureException;
+
+    /**
+     * Scans the configured source directory for grammar files which need processing.
+     * 
+     * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
+     *         directory does not exist.
+     * @throws MojoExecutionException If the source directory could not be scanned.
+     */
+    private GrammarInfo[] scanForGrammars()
+        throws MojoExecutionException
+    {
+        if ( !getSourceDirectory().isDirectory() )
+        {
+            return null;
+        }
+
+        GrammarInfo[] grammarInfos;
+
+        getLog().debug( "Scanning for grammars: " + getSourceDirectory() );
+        try
+        {
+            GrammarDirectoryScanner scanner = new GrammarDirectoryScanner();
+            scanner.setSourceDirectory( getSourceDirectory() );
+            scanner.setIncludes( getIncludes() );
+            scanner.setExcludes( getExcludes() );
+            scanner.setOutputDirectory( getOutputDirectory() );
+            if ( getParserPackage() != null )
+            {
+                scanner.setPackageDirectory( getParserPackage().replace( '.', File.separatorChar ) );
+            }
+            scanner.setStaleMillis( getStaleMillis() );
+            scanner.scan();
+            grammarInfos = scanner.getIncludedGrammars();
+        }
+        catch ( Exception e )
+        {
+            throw new MojoExecutionException( "Failed to scan for grammars: " + getSourceDirectory(), e );
+        }
+        getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
+
+        return grammarInfos;
+    }
+
+    /**
+     * Registers the specified directory as a compile source root for the current project.
+     * 
+     * @param directory The absolute path to the compile source, must not be <code>null</code>.
+     */
+    private void addCompileSourceRoot( File directory )
+    {
+        if ( this.project != null )
+        {
+            getLog().debug( "Adding compile source root: " + directory );
+            this.project.addCompileSourceRoot( directory.getAbsolutePath() );
+        }
+    }
+
+    /**
+     * Creates a new facade to invoke JavaCC. Most options for the invocation are derived from the current values of the
+     * corresponding mojo parameters. The caller is responsible to set the input file and output directory on the
+     * returned facade.
+     * 
+     * @return The facade for the tool invocation, never <code>null</code>.
+     */
+    protected JavaCC newJavaCC()
+    {
         JavaCC javacc = new JavaCC();
-        javacc.setInputFile( jjFile );
-        javacc.setOutputDirectory( parserDirectory );
+        javacc.setLog( getLog() );
         javacc.setJdkVersion( this.jdkVersion );
         javacc.setStatic( this.isStatic );
         javacc.setBuildParser( this.buildParser );
@@ -284,8 +437,7 @@ public abstract class AbstractJavaCCMojo
         javacc.setUnicodeInput( this.unicodeInput );
         javacc.setUserCharStream( this.userCharStream );
         javacc.setUserTokenManager( this.userTokenManager );
-        javacc.setLog( getLog() );
-        javacc.run();
+        return javacc;
     }
 
 }

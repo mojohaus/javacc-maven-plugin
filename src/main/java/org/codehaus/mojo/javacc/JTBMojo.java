@@ -302,10 +302,20 @@ public class JTBMojo
         File jjDirectory = new File( this.outputDirectory, grammarInfo.getPackageDirectory().getPath() );
 
         String nodePackage = grammarInfo.resolvePackageName( getNodePackageName() );
+        File nodeDirectory = new File( this.outputDirectory, nodePackage.replace( '.', File.separatorChar ) );
+
         String visitorPackage = grammarInfo.resolvePackageName( getVisitorPackageName() );
+        File visitorDirectory = new File( this.outputDirectory, visitorPackage.replace( '.', File.separatorChar ) );
 
         // generate final grammar file and the node/visitor files
-        runJTB( jtbFile, jjDirectory, nodePackage, visitorPackage );
+        JTB jtb = newJTB();
+        jtb.setInputFile( jtbFile );
+        jtb.setOutputDirectory( jjDirectory );
+        jtb.setNodeDirectory( nodeDirectory );
+        jtb.setVisitorDirectory( visitorDirectory );
+        jtb.setNodePackageName( nodePackage );
+        jtb.setVisitorPackageName( visitorPackage );
+        jtb.run();
 
         // create timestamp file
         try
@@ -363,43 +373,25 @@ public class JTBMojo
     }
 
     /**
-     * Runs JTB on the specified grammar file to generate a annotated grammar file. The options for JTB are derived from
-     * the current values of the corresponding mojo parameters.
+     * Creates a new facade to invoke JTB. Most options for the invocation are derived from the current values of the
+     * corresponding mojo parameters. The caller is responsible to set the input file, output directories and packages
+     * on the returned facade.
      * 
-     * @param jtbFile The absolute path to the grammar file to pass into JTB for preprocessing, must not be
-     *            <code>null</code>.
-     * @param grammarDirectory The absolute path to the output directory for the generated grammar file and its AST node
-     *            files, must not be <code>null</code>. If this directory does not exist yet, it is created. Note
-     *            that this path should already include the desired package hierarchy because JTB will not append the
-     *            required sub directories automatically.
-     * @param nodePackage The qualified name of the package for the AST nodes, must not be <code>null</code>.
-     * @param visitorPackage The qualified name of the package for the visitor files, must not be <code>null</code>.
-     * @throws MojoExecutionException If JJTree could not be invoked.
-     * @throws MojoFailureException If JJTree reported a non-zero exit code.
+     * @return The facade for the tool invocation, never <code>null</code>.
      */
-    private void runJTB( File jtbFile, File grammarDirectory, String nodePackage, String visitorPackage )
-        throws MojoExecutionException, MojoFailureException
+    private JTB newJTB()
     {
-        File nodeDirectory = new File( this.outputDirectory, nodePackage.replace( '.', File.separatorChar ) );
-        File visitorDirectory = new File( this.outputDirectory, visitorPackage.replace( '.', File.separatorChar ) );
-
         JTB jtb = new JTB();
-        jtb.setInputFile( jtbFile );
-        jtb.setOutputDirectory( grammarDirectory );
-        jtb.setNodeDirectory( nodeDirectory );
-        jtb.setVisitorDirectory( visitorDirectory );
+        jtb.setLog( getLog() );
         jtb.setDescriptiveFieldNames( this.descriptiveFieldNames );
         jtb.setJavadocFriendlyComments( this.javadocFriendlyComments );
-        jtb.setNodePackageName( nodePackage );
         jtb.setNodeParentClass( this.nodeParentClass );
         jtb.setParentPointers( this.parentPointers );
         jtb.setPrinter( this.printer );
         jtb.setScheme( this.scheme );
         jtb.setSpecialTokens( this.specialTokens );
         jtb.setSupressErrorChecking( this.supressErrorChecking );
-        jtb.setVisitorPackageName( visitorPackage );
-        jtb.setLog( getLog() );
-        jtb.run();
+        return jtb;
     }
 
 }
