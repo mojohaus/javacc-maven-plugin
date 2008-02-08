@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>module-three</artifactId>
-  <name>Module Three</name>
+  <artifactId>module</artifactId>
+  <name>Module</name>
   <url>http://maven.apache.org</url>
 
   <parent>
@@ -19,32 +20,16 @@
         <executions>
           <execution>
             <goals>
-              <goal>jtb</goal>
+              <goal>jjtree</goal>
             </goals>
             <configuration>
-              <sourceDirectory>src/jtb</sourceDirectory>
-              <outputDirectory>target/jtb</outputDirectory>
-              <timestampDirectory>target/jtb-timestamps</timestampDirectory>
-              <packageName>org</packageName>
+              <sourceDirectory>src/jjtree</sourceDirectory>
+              <outputDirectory>target/jjtree</outputDirectory>
+              <timestampDirectory>target/jjtree-timestamps</timestampDirectory>
             </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javacc-maven-plugin</artifactId>
-        <configuration>
-          <sourceDirectories>
-            <sourceDirectory>target/jtb</sourceDirectory>
-          </sourceDirectories>
-          <outputDirectory>target/jjdoc</outputDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>
