@@ -104,6 +104,8 @@ public abstract class AbstractPreprocessorMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        getLog().warn( "This goal has been deprecated. Please update your plugin configuration." );
+
         GrammarInfo[] grammarInfos = scanForGrammars();
 
         if ( grammarInfos == null )

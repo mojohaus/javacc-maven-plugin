@@ -1,12 +1,12 @@
  ------
- Javacc Examples
+ JavaCC Examples
  ------
  Paul Gier <pgier at redhat.com>
  ------
  January 04 2008
  ------
 
-Javacc Examples
+JavaCC Examples
 
   This page provides examples of how to use the <<<javacc>>> goal.
 
@@ -17,7 +17,7 @@ Javacc Examples
   
 -------------------
 <project>
-   ...
+  ...
   <build>
     <plugins>
       <plugin>
@@ -38,7 +38,7 @@ Javacc Examples
         </executions>
       </plugin>
     </plugins>
-     ...
+    ...
   </build>
   ...
 </project>

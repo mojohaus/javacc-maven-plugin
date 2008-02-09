@@ -28,11 +28,13 @@ import java.net.URI;
 
 /**
  * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically builds
- * the AST. <b>Note: <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires Java 1.5 or higher. This mojo will
- * not work with earlier versions of the JRE</b>.
+ * the AST.<br/><br/><strong>Note:</strong> <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires Java 1.5
+ * or higher. This goal will not work with earlier versions of the JRE. <br/><br/><strong>Deprecated.</strong> As of
+ * version 2.4, use the <code>jtb-javacc</code> goal instead.
  * 
  * @goal jtb
  * @phase generate-sources
+ * @deprecated As of version 2.4, use the <code>jtb-javacc</code> goal instead.
  * @author Gregory Kick (gk5885@kickstyle.net)
  * @version $Id$
  */

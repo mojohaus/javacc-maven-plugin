@@ -14,7 +14,7 @@ JJDoc Examples
 
 -------------------
 <project>
-   ...
+  ...
   <reporting>
     <plugins>
       <plugin>

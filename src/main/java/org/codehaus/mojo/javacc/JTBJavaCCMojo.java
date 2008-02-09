@@ -26,8 +26,10 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
- * Preprocesses decorated grammar files (<code>*.jtb</code>) with JTB and passes the output to JavaCC in order to
- * finally generate a parser with parse tree actions.
+ * Preprocesses ordinary grammar files (<code>*.jtb</code>) with JTB and passes the output to JavaCC in order to
+ * finally generate a parser with parse tree actions.<br/><br/><strong>Note:</strong> <a
+ * href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires Java 1.5 or higher. This goal will not work with earlier
+ * versions of the JRE.
  * 
  * @goal jtb-javacc
  * @phase generate-sources
@@ -133,9 +135,9 @@ public class JTBJavaCCMojo
     private Boolean printer;
 
     /**
-     * The directory where the decorated JavaCC grammar files (<code>*.jtb</code>) are located. It will be
-     * recursively scanned for input files to pass to JTB. The parameters <code>includes</code> and
-     * <code>excludes</code> can be used to select a subset of files.
+     * The directory where the JavaCC grammar files (<code>*.jtb</code>) are located. It will be recursively scanned
+     * for input files to pass to JTB. The parameters <code>includes</code> and <code>excludes</code> can be used to
+     * select a subset of files.
      * 
      * @parameter expression="${sourceDirectory}" default-value="${basedir}/src/main/jtb"
      */
