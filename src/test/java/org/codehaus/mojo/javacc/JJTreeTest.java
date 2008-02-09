@@ -19,6 +19,8 @@ package org.codehaus.mojo.javacc;
  * under the License.
  */
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 /**
@@ -59,6 +61,20 @@ public class JJTreeTest
         tool.setVisitor( null );
         tool.setVisitorException( null );
         tool.setLog( null );
+    }
+
+    public void testGetOutputFile()
+        throws Exception
+    {
+        File input = new File( "Test.jjt" ).getAbsoluteFile();
+        File outdir = new File( "dir" ).getAbsoluteFile();
+
+        JJTree tool = new JJTree();
+        tool.setInputFile( input );
+        tool.setOutputDirectory( outdir );
+        File output = tool.getOutputFile();
+
+        assertEquals( new File( outdir, "Test.jj" ), output );
     }
 
 }

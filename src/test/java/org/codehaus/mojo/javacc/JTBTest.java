@@ -19,6 +19,8 @@ package org.codehaus.mojo.javacc;
  * under the License.
  */
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 /**
@@ -60,6 +62,20 @@ public class JTBTest
         tool.setSupressErrorChecking( null );
         tool.setVisitorPackageName( null );
         tool.setLog( null );
+    }
+
+    public void testGetOutputFile()
+        throws Exception
+    {
+        File input = new File( "Test.jtb" ).getAbsoluteFile();
+        File outdir = new File( "dir" ).getAbsoluteFile();
+
+        JTB tool = new JTB();
+        tool.setInputFile( input );
+        tool.setOutputDirectory( outdir );
+        File output = tool.getOutputFile();
+
+        assertEquals( new File( outdir, "Test.jj" ), output );
     }
 
 }
