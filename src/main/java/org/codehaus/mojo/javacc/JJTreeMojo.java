@@ -20,11 +20,9 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.net.URI;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Parses a JJTree grammar file (<code>*.jjt</code>) and transforms it to Java source files and a JavaCC grammar
@@ -257,7 +255,7 @@ public class JJTreeMojo
         }
         else
         {
-            nodeDirectory = grammarInfo.getPackageDirectory();
+            nodeDirectory = new File( grammarInfo.getParserDirectory() );
         }
         nodeDirectory = new File( getOutputDirectory(), nodeDirectory.getPath() );
 
@@ -269,16 +267,7 @@ public class JJTreeMojo
         jjtree.run();
 
         // create timestamp file
-        try
-        {
-            URI relativeURI = getSourceDirectory().toURI().relativize( jjtFile.toURI() );
-            File timestampFile = new File( getTimestampDirectory().toURI().resolve( relativeURI ) );
-            FileUtils.copyFile( jjtFile, timestampFile );
-        }
-        catch ( Exception e )
-        {
-            getLog().warn( "Failed to create copy for timestamp check: " + jjtFile, e );
-        }
+        createTimestamp( grammarInfo );
     }
 
     /**

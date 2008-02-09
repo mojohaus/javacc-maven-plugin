@@ -37,19 +37,24 @@ class GrammarInfo
 {
 
     /**
-     * The absolute path to the grammar file.
+     * The absolute path to the base directory in which the grammar file resides.
      */
-    private final File grammarFile;
+    private final File sourceDirectory;
+
+    /**
+     * The path to the grammar file (relative to its source directory, e.g. "grammars/MyParser.jj").
+     */
+    private final String grammarFile;
 
     /**
      * The declared package for the generated parser (e.g. "org.apache").
      */
-    private final String packageName;
+    private final String parserPackage;
 
     /**
-     * The path to the package directory (relative to the source root directory, e.g. "org/apache").
+     * The path to the directory of the parser package (relative to a source root directory, e.g. "org/apache").
      */
-    private final File packageDirectory;
+    private final String parserDirectory;
 
     /**
      * The simple name of the generated parser (e.g. "MyParser").
@@ -57,85 +62,89 @@ class GrammarInfo
     private final String parserName;
 
     /**
-     * The path to the parser file (relative to the source root directory, e.g. "org/apache/MyParser.java")
+     * The path to the generated parser file (relative to a source root directory, e.g. "org/apache/MyParser.java").
      */
-    private final File parserFile;
+    private final String parserFile;
 
     /**
      * Creates a new info from the specified grammar file.
      * 
-     * @param inputFile The absolute path to the grammar file, must not be <code>null</code>.
+     * @param sourceDir The absolute path to the base directory in which the grammar file resides, must not be
+     *            <code>null</code>.
+     * @param inputFile The path to the grammar file (relative to the source directory), must not be <code>null</code>.
      * @throws IOException If reading the grammar file failed.
      */
-    public GrammarInfo( File inputFile )
+    public GrammarInfo( File sourceDir, String inputFile )
         throws IOException
     {
-        this( inputFile, (File) null );
+        this( sourceDir, inputFile, null );
     }
 
     /**
      * Creates a new info from the specified grammar file.
      * 
-     * @param inputFile The absolute path to the grammar file, must not be <code>null</code>.
-     * @param packageDir The relative directory path for the generated parser, may be <code>null</code> to use the
-     *            package declaration from the grammar file.
+     * @param sourceDir The absolute path to the base directory in which the grammar file resides, must not be
+     *            <code>null</code>.
+     * @param inputFile The path to the grammar file (relative to the source directory), must not be <code>null</code>.
+     * @param packageName The package name for the generated parser, may be <code>null</code> to use the package
+     *            declaration from the grammar file.
      * @throws IOException If reading the grammar file failed.
      */
-    public GrammarInfo( File inputFile, String packageDir )
+    public GrammarInfo( File sourceDir, String inputFile, String packageName )
         throws IOException
     {
-        this( inputFile, ( packageDir != null ) ? new File( packageDir ) : null );
-    }
-
-    /**
-     * Creates a new info from the specified grammar file.
-     * 
-     * @param inputFile The absolute path to the grammar file, must not be <code>null</code>.
-     * @param packageDir The relative directory path for the generated parser, may be <code>null</code> to use the
-     *            package declaration from the grammar file.
-     * @throws IOException If reading the grammar file failed.
-     */
-    public GrammarInfo( File inputFile, File packageDir )
-        throws IOException
-    {
-        this.grammarFile = inputFile;
-
-        // NOTE: JavaCC uses the platform default encoding to read files, so must we
-        String grammar = FileUtils.fileRead( this.grammarFile );
-
-        // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove "packageDir", too.
-        if ( packageDir == null )
+        if ( !sourceDir.isAbsolute() )
         {
-            this.packageName = findPackageName( grammar );
-            this.packageDirectory = new File( this.packageName.replace( '.', File.separatorChar ) );
+            throw new IllegalArgumentException( "source directory is not absolute: " + sourceDir );
         }
-        else if ( packageDir.isAbsolute() )
+        this.sourceDirectory = sourceDir;
+
+        File inFile = new File( inputFile );
+        if ( !inFile.isAbsolute() )
         {
-            throw new IllegalArgumentException( "package directory must be relative to source root" );
+            this.grammarFile = inFile.getPath();
+        }
+        else if ( inFile.getPath().startsWith( sourceDir.getPath() ) )
+        {
+            this.grammarFile = inFile.getPath().substring( sourceDir.getPath().length() + 1 );
         }
         else
         {
-            this.packageName = packageDir.getPath().replace( File.separatorChar, '.' );
-            this.packageDirectory = packageDir;
+            throw new IllegalArgumentException( "input file is not relative to source directory:" + inputFile );
         }
+
+        // NOTE: JavaCC uses the platform default encoding to read files, so must we
+        String grammar = FileUtils.fileRead( getGrammarFile() );
+
+        // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove our parameter, too.
+        if ( packageName == null )
+        {
+            this.parserPackage = findPackageName( grammar );
+        }
+        else
+        {
+            this.parserPackage = packageName;
+        }
+
+        this.parserDirectory = this.parserPackage.replace( '.', File.separatorChar );
 
         String name = findParserName( grammar );
         if ( name.length() <= 0 )
         {
-            this.parserName = FileUtils.removeExtension( this.grammarFile.getName() );
+            this.parserName = FileUtils.removeExtension( inFile.getName() );
         }
         else
         {
             this.parserName = name;
         }
 
-        if ( this.packageDirectory.getPath().length() > 0 )
+        if ( this.parserDirectory.length() > 0 )
         {
-            this.parserFile = new File( this.packageDirectory, this.parserName + ".java" );
+            this.parserFile = new File( this.parserDirectory, this.parserName + ".java" ).getPath();
         }
         else
         {
-            this.parserFile = new File( this.parserName + ".java" );
+            this.parserFile = this.parserName + ".java";
         }
     }
 
@@ -180,6 +189,16 @@ class GrammarInfo
      */
     public File getGrammarFile()
     {
+        return new File( this.sourceDirectory, this.grammarFile );
+    }
+
+    /**
+     * Gets the path to the grammar file (relative to its source directory).
+     * 
+     * @return The path to the grammar file (relative to its source directory).
+     */
+    public String getRelativeGrammarFile()
+    {
         return this.grammarFile;
     }
 
@@ -189,15 +208,15 @@ class GrammarInfo
      * is "org.apache" and the input string is "*.node", the resolved package is "org.apache.node". The period after the
      * asterisk is significant, i.e. in the previous example the input string "*node" would resolve to "org.apachenode".
      * 
-     * @param pkgName The package name to resolve, may be <code>null</code>.
+     * @param packageName The package name to resolve, may be <code>null</code>.
      * @return The resolved package name of <code>null</code> if the input string was <code>null</code>.
      */
-    public String resolvePackageName( String pkgName )
+    public String resolvePackageName( String packageName )
     {
-        String resolvedPackageName = pkgName;
+        String resolvedPackageName = packageName;
         if ( resolvedPackageName != null && resolvedPackageName.startsWith( "*" ) )
         {
-            resolvedPackageName = getPackageName() + resolvedPackageName.substring( 1 );
+            resolvedPackageName = getParserPackage() + resolvedPackageName.substring( 1 );
             if ( resolvedPackageName.startsWith( "." ) )
             {
                 resolvedPackageName = resolvedPackageName.substring( 1 );
@@ -212,20 +231,20 @@ class GrammarInfo
      * 
      * @return The declared package for the generated parser (e.g. "org.apache").
      */
-    public String getPackageName()
+    public String getParserPackage()
     {
-        return this.packageName;
+        return this.parserPackage;
     }
 
     /**
-     * Gets the path to the package directory (relative to the source root directory, e.g. "org/apache"). This value
-     * will be an empty path if no package declaration was found, it is never <code>null</code>.
+     * Gets the path to the directory of the parser package (relative to a source root directory, e.g. "org/apache").
+     * This value will be an empty path if no package declaration was found, it is never <code>null</code>.
      * 
-     * @return The relative path for the directory corresponding to the declared package, e.g. "org/apache".
+     * @return The path to the directory of the parser package (relative to a source root directory, e.g. "org/apache").
      */
-    public File getPackageDirectory()
+    public String getParserDirectory()
     {
-        return this.packageDirectory;
+        return this.parserDirectory;
     }
 
     /**
@@ -239,12 +258,12 @@ class GrammarInfo
     }
 
     /**
-     * Gets the path to the parser file (relative to the source root directory, e.g. "org/apache/MyParser.java"). This
+     * Gets the path to the parser file (relative to a source root directory, e.g. "org/apache/MyParser.java"). This
      * value is never <code>null</code>.
      * 
-     * @return The path to the parser file (relative to the source root directory, e.g. "org/apache/MyParser.java")
+     * @return The path to the parser file (relative to a source root directory, e.g. "org/apache/MyParser.java").
      */
-    public File getParserFile()
+    public String getParserFile()
     {
         return this.parserFile;
     }

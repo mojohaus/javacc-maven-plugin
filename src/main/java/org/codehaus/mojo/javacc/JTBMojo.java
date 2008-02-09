@@ -19,12 +19,10 @@ package org.codehaus.mojo.javacc;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.net.URI;
 
 /**
  * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically builds
@@ -243,7 +241,7 @@ public class JTBMojo
         throws MojoExecutionException, MojoFailureException
     {
         File jtbFile = grammarInfo.getGrammarFile();
-        File jjDirectory = new File( getOutputDirectory(), grammarInfo.getPackageDirectory().getPath() );
+        File jjDirectory = new File( getOutputDirectory(), grammarInfo.getParserDirectory() );
 
         String nodePackage = grammarInfo.resolvePackageName( getNodePackageName() );
         File nodeDirectory = new File( getOutputDirectory(), nodePackage.replace( '.', File.separatorChar ) );
@@ -262,16 +260,7 @@ public class JTBMojo
         jtb.run();
 
         // create timestamp file
-        try
-        {
-            URI relativeURI = getSourceDirectory().toURI().relativize( jtbFile.toURI() );
-            File timestampFile = new File( getTimestampDirectory().toURI().resolve( relativeURI ) );
-            FileUtils.copyFile( jtbFile, timestampFile );
-        }
-        catch ( Exception e )
-        {
-            getLog().warn( "Failed to create copy for timestamp check: " + jtbFile, e );
-        }
+        createTimestamp( grammarInfo );
     }
 
     /**

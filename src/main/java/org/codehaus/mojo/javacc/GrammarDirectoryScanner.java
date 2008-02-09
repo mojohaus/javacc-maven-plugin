@@ -48,10 +48,10 @@ class GrammarDirectoryScanner
 
     // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove this field, too.
     /**
-     * The relative directory path for the generated parser, may be <code>null</code> to use the package declaration
-     * from the grammar file.
+     * The package name for the generated parser, may be <code>null</code> to use the package declaration from the
+     * grammar file.
      */
-    private String packageDirectory;
+    private String parserPackage;
 
     /**
      * The granularity in milliseconds of the last modification date for testing whether a grammar file needs
@@ -82,22 +82,22 @@ class GrammarDirectoryScanner
      */
     public void setSourceDirectory( File directory )
     {
-        if ( directory == null )
+        if ( !directory.isAbsolute() )
         {
-            throw new NullPointerException();
+            throw new IllegalArgumentException( "source directory is not absolute: " + directory );
         }
         this.scanner.setBasedir( directory );
     }
 
     /**
-     * Sets the relative directory path for the generated parser.
+     * Sets the package name for the generated parser.
      * 
-     * @param directory The relative directory path for the generated parser, may be <code>null</code> to use the
-     *            package declaration from the grammar file.
+     * @param packageName The package name for the generated parser, may be <code>null</code> to use the package
+     *            declaration from the grammar file.
      */
-    public void setPackageDirectory( String directory )
+    public void setParserPackage( String packageName )
     {
-        this.packageDirectory = directory;
+        this.parserPackage = packageName;
     }
 
     /**
@@ -129,6 +129,10 @@ class GrammarDirectoryScanner
      */
     public void setOutputDirectory( File directory )
     {
+        if ( directory != null && !directory.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "output directory is not absolute: " + directory );
+        }
         this.outputDirectory = directory;
     }
 
@@ -159,10 +163,10 @@ class GrammarDirectoryScanner
         for ( int i = 0; i < includedFiles.length; i++ )
         {
             String includedFile = includedFiles[i];
-            File sourceFile = new File( this.scanner.getBasedir(), includedFile );
-            GrammarInfo grammarInfo = new GrammarInfo( sourceFile, this.packageDirectory );
+            GrammarInfo grammarInfo = new GrammarInfo( this.scanner.getBasedir(), includedFile, this.parserPackage );
             if ( this.outputDirectory != null )
             {
+                File sourceFile = grammarInfo.getGrammarFile();
                 File[] targetFiles = getTargetFiles( this.outputDirectory, includedFile, grammarInfo );
                 for ( int j = 0; j < targetFiles.length; j++ )
                 {
@@ -194,7 +198,7 @@ class GrammarDirectoryScanner
      */
     protected File[] getTargetFiles( File targetDirectory, String grammarFile, GrammarInfo grammarInfo )
     {
-        File parserFile = new File( targetDirectory, grammarInfo.getParserFile().getPath() );
+        File parserFile = new File( targetDirectory, grammarInfo.getParserFile() );
         return new File[] { parserFile };
     }
 

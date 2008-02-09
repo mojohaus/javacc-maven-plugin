@@ -26,6 +26,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Provides common services for all mojos that preprocess JavaCC grammar files.
@@ -180,6 +181,25 @@ public abstract class AbstractPreprocessorMojo
         getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
 
         return grammarInfos;
+    }
+
+    /**
+     * Creates the timestamp file for the specified grammar file.
+     * 
+     * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
+     */
+    protected void createTimestamp( GrammarInfo grammarInfo )
+    {
+        File jjFile = grammarInfo.getGrammarFile();
+        File timestampFile = new File( getTimestampDirectory(), grammarInfo.getRelativeGrammarFile() );
+        try
+        {
+            FileUtils.copyFile( jjFile, timestampFile );
+        }
+        catch ( Exception e )
+        {
+            getLog().warn( "Failed to create copy for timestamp check: " + jjFile, e );
+        }
     }
 
     /**

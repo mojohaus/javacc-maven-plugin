@@ -38,10 +38,9 @@ public class GrammarInfoTest
     public void testInvalidFile()
         throws Exception
     {
-        File grammarFile = new File( "" );
         try
         {
-            new GrammarInfo( grammarFile );
+            new GrammarInfo( new File( "" ).getAbsoluteFile(), "bad" );
             fail( "Missing IO exception" );
         }
         catch ( IOException e )
@@ -54,79 +53,79 @@ public class GrammarInfoTest
         throws Exception
     {
         File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
+        GrammarInfo info = new GrammarInfo( grammarFile.getParentFile(), grammarFile.getName() );
         assertEquals( grammarFile, info.getGrammarFile() );
+    }
+
+    public void testGetRelativeGrammarFile()
+        throws Exception
+    {
+        File grammarFile = getGrammar( "Parser1.jj" );
+        GrammarInfo info = new GrammarInfo( grammarFile.getParentFile(), grammarFile.getName() );
+        assertEquals( grammarFile.getName(), info.getRelativeGrammarFile() );
     }
 
     public void testGetPackageNameDeclaredPackageOverwrite()
         throws Exception
     {
         File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile, new File( "org/test" ) );
-        assertEquals( "org.test", info.getPackageName() );
+        GrammarInfo info = new GrammarInfo( grammarFile.getParentFile(), grammarFile.getName(), "org.test" );
+        assertEquals( "org.test", info.getParserPackage() );
     }
 
     public void testGetPackageNameDeclaredPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
-        assertEquals( "org.codehaus.mojo.javacc.test", info.getPackageName() );
+        GrammarInfo info = newGrammarInfo( "Parser1.jj" );
+        assertEquals( "org.codehaus.mojo.javacc.test", info.getParserPackage() );
     }
 
     public void testGetPackageNameDefaultPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser2.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
-        assertEquals( "", info.getPackageName() );
+        GrammarInfo info = newGrammarInfo( "Parser2.jj" );
+        assertEquals( "", info.getParserPackage() );
     }
 
     public void testGetPackageDirectoryDeclaredPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
-        assertEquals( new File( "org/codehaus/mojo/javacc/test" ), info.getPackageDirectory() );
+        GrammarInfo info = newGrammarInfo( "Parser1.jj" );
+        assertEquals( new File( "org/codehaus/mojo/javacc/test" ).getPath(), info.getParserDirectory() );
     }
 
     public void testGetPackageDirectoryDefaultPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser2.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
-        assertEquals( new File( "" ), info.getPackageDirectory() );
+        GrammarInfo info = newGrammarInfo( "Parser2.jj" );
+        assertEquals( new File( "" ).getPath(), info.getParserDirectory() );
     }
 
     public void testGetParserName()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
+        GrammarInfo info = newGrammarInfo( "Parser1.jj" );
         assertEquals( "BasicParser", info.getParserName() );
     }
 
     public void testGetParserFileDeclaredPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
-        assertEquals( new File( "org/codehaus/mojo/javacc/test/BasicParser.java" ), info.getParserFile() );
+        GrammarInfo info = newGrammarInfo( "Parser1.jj" );
+        assertEquals( new File( "org/codehaus/mojo/javacc/test/BasicParser.java" ).getPath(), info.getParserFile() );
     }
 
     public void testGetParserFileDefaultPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser2.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
-        assertEquals( new File( "SimpleParser.java" ), info.getParserFile() );
+        GrammarInfo info = newGrammarInfo( "Parser2.jj" );
+        assertEquals( new File( "SimpleParser.java" ).getPath(), info.getParserFile() );
     }
 
     public void testResolvePackageNameDeclaredPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
+        GrammarInfo info = newGrammarInfo( "Parser1.jj" );
         assertEquals( "org.codehaus.mojo.javacc.test.node", info.resolvePackageName( "*.node" ) );
         assertEquals( "org.codehaus.mojo.javacc.testnode", info.resolvePackageName( "*node" ) );
         assertEquals( "node", info.resolvePackageName( "node" ) );
@@ -135,11 +134,18 @@ public class GrammarInfoTest
     public void testResolvePackageNameDefaultPackage()
         throws Exception
     {
-        File grammarFile = getGrammar( "Parser2.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile );
+        GrammarInfo info = newGrammarInfo( "Parser2.jj" );
         assertEquals( "node", info.resolvePackageName( "*.node" ) );
         assertEquals( "node", info.resolvePackageName( "*node" ) );
         assertEquals( "node", info.resolvePackageName( "node" ) );
+    }
+
+    private GrammarInfo newGrammarInfo( String resource )
+        throws Exception
+    {
+        File grammarFile = getGrammar( resource );
+        File sourceDir = grammarFile.getParentFile();
+        return new GrammarInfo( sourceDir, grammarFile.getName() );
     }
 
     private File getGrammar( String resource )

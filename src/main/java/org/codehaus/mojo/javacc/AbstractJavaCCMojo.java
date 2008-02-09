@@ -373,10 +373,7 @@ public abstract class AbstractJavaCCMojo
             scanner.setIncludes( getIncludes() );
             scanner.setExcludes( getExcludes() );
             scanner.setOutputDirectory( getOutputDirectory() );
-            if ( getParserPackage() != null )
-            {
-                scanner.setPackageDirectory( getParserPackage().replace( '.', File.separatorChar ) );
-            }
+            scanner.setParserPackage( getParserPackage() );
             scanner.setStaleMillis( getStaleMillis() );
             scanner.scan();
             grammarInfos = scanner.getIncludedGrammars();

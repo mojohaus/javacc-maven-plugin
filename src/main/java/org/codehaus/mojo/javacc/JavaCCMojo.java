@@ -150,7 +150,7 @@ public class JavaCCMojo
         throws MojoExecutionException, MojoFailureException
     {
         File jjFile = grammarInfo.getGrammarFile();
-        File parserDirectory = new File( getOutputDirectory(), grammarInfo.getPackageDirectory().getPath() );
+        File parserDirectory = new File( getOutputDirectory(), grammarInfo.getParserDirectory() );
 
         // Copy all .java files from sourceDirectory to outputDirectory, in
         // order to prevent regeneration of customized Token.java or similar

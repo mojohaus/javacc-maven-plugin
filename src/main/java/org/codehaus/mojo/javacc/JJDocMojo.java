@@ -20,7 +20,6 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -293,11 +292,12 @@ public class JJDocMojo
             {
                 for ( int i = 0; i < grammarInfos.length; i++ )
                 {
-                    File grammarFile = grammarInfos[i].getGrammarFile();
+                    GrammarInfo grammarInfo = grammarInfos[i];
+                    File grammarFile = grammarInfo.getGrammarFile();
 
-                    URI relativeOutputFileURI = sourceDir.toURI().relativize( grammarFile.toURI() );
-                    String relativeOutputFileName =
-                        relativeOutputFileURI.toString().replaceAll( "(?i)\\.jj$", getOutputFileExtension() );
+                    String relativeOutputFileName = grammarInfo.getRelativeGrammarFile();
+                    relativeOutputFileName =
+                        relativeOutputFileName.replaceAll( "(?i)\\.(jj|jjt|jtb)$", getOutputFileExtension() );
 
                     File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
 
