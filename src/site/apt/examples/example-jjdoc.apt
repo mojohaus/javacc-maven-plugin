@@ -28,4 +28,8 @@ JJDoc Examples
 </project>
 -------------------
 
- 
+  To generate the BNF documentation, simply execute the site lifecycle phase:
+
++-----+
+mvn site
++-----+
