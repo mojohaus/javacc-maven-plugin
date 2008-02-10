@@ -185,7 +185,7 @@ class GrammarInfo
     /**
      * Gets the absolute path to the grammar file.
      * 
-     * @return The absolute path to the grammar file.
+     * @return The absolute path to the grammar file, never <code>null</code>.
      */
     public File getGrammarFile()
     {
@@ -195,7 +195,7 @@ class GrammarInfo
     /**
      * Gets the path to the grammar file (relative to its source directory).
      * 
-     * @return The path to the grammar file (relative to its source directory).
+     * @return The path to the grammar file (relative to its source directory), never <code>null</code>.
      */
     public String getRelativeGrammarFile()
     {
@@ -226,10 +226,10 @@ class GrammarInfo
     }
 
     /**
-     * Gets the declared package for the generated parser (e.g. "org.apache"). This value will be an empty string if no
-     * package declaration was found, it is never <code>null</code>.
+     * Gets the declared package for the generated parser (e.g. "org.apache").
      * 
-     * @return The declared package for the generated parser (e.g. "org.apache").
+     * @return The declared package for the generated parser (e.g. "org.apache") or an empty string if no package
+     *         declaration was found, never <code>null</code>.
      */
     public String getParserPackage()
     {
@@ -238,9 +238,9 @@ class GrammarInfo
 
     /**
      * Gets the path to the directory of the parser package (relative to a source root directory, e.g. "org/apache").
-     * This value will be an empty path if no package declaration was found, it is never <code>null</code>.
      * 
-     * @return The path to the directory of the parser package (relative to a source root directory, e.g. "org/apache").
+     * @return The path to the directory of the parser package (relative to a source root directory, e.g. "org/apache")
+     *         or an empty string if no package declaration was found, never <code>null</code>.
      */
     public String getParserDirectory()
     {
@@ -248,9 +248,9 @@ class GrammarInfo
     }
 
     /**
-     * Gets the simple name of the generated parser (e.g. "MyParser"). This value is never <code>null</code>.
+     * Gets the simple name of the generated parser (e.g. "MyParser")
      * 
-     * @return The simple name of the generated parser (e.g. "MyParser").
+     * @return The simple name of the generated parser (e.g. "MyParser"), never <code>null</code>.
      */
     public String getParserName()
     {
@@ -258,10 +258,10 @@ class GrammarInfo
     }
 
     /**
-     * Gets the path to the parser file (relative to a source root directory, e.g. "org/apache/MyParser.java"). This
-     * value is never <code>null</code>.
+     * Gets the path to the parser file (relative to a source root directory, e.g. "org/apache/MyParser.java").
      * 
-     * @return The path to the parser file (relative to a source root directory, e.g. "org/apache/MyParser.java").
+     * @return The path to the parser file (relative to a source root directory, e.g. "org/apache/MyParser.java"), never
+     *         <code>null</code>.
      */
     public String getParserFile()
     {
