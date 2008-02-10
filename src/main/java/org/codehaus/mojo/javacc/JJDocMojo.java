@@ -20,11 +20,12 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -190,7 +191,7 @@ public class JJDocMojo
      */
     private File[] getSourceDirectories()
     {
-        List directories = new ArrayList();
+        Set directories = new LinkedHashSet();
         if ( this.sourceDirectories != null && this.sourceDirectories.length > 0 )
         {
             directories.addAll( Arrays.asList( this.sourceDirectories ) );
@@ -290,6 +291,7 @@ public class JJDocMojo
             }
             else
             {
+                Arrays.sort( grammarInfos, GrammarInfoComparator.getInstance() );
                 for ( int i = 0; i < grammarInfos.length; i++ )
                 {
                     GrammarInfo grammarInfo = grammarInfos[i];
@@ -449,9 +451,10 @@ public class JJDocMojo
         getLog().debug( "Scanning for grammars: " + sourceDirectory );
         try
         {
+            String[] includes = { "**/*.jj", "**/*.JJ", "**/*.jjt", "**/*.JJT", "**/*.jtb", "**/*.JTB" };
             GrammarDirectoryScanner scanner = new GrammarDirectoryScanner();
             scanner.setSourceDirectory( sourceDirectory );
-            scanner.setIncludes( new String[] { "**/*.jj", "**/*.JJ" } );
+            scanner.setIncludes( includes );
             scanner.scan();
             grammarInfos = scanner.getIncludedGrammars();
         }
@@ -473,6 +476,67 @@ public class JJDocMojo
     private ResourceBundle getBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "jjdoc-report", locale, getClass().getClassLoader() );
+    }
+
+    /**
+     * Compares grammar infos using their relative grammar file paths as the sort key.
+     */
+    private static class GrammarInfoComparator
+        implements Comparator
+    {
+
+        /**
+         * The singleton instance of this comparator.
+         */
+        private static final GrammarInfoComparator INSTANCE = new GrammarInfoComparator();
+
+        /**
+         * Gets the singleton instance of this class.
+         * 
+         * @return The singleton instance of this class.
+         */
+        public static GrammarInfoComparator getInstance()
+        {
+            return INSTANCE;
+        }
+
+        /**
+         * Compares the path of two grammar files lexicographically.
+         * 
+         * @param o1 The first grammar info.
+         * @param o2 The second grammar info.
+         * @return A negative integer if the first grammar is considered "smaller", a positive integer if it is
+         *         considered "greater" and zero otherwise.
+         */
+        public int compare( Object o1, Object o2 )
+        {
+            int rel;
+
+            GrammarInfo info1 = (GrammarInfo) o1;
+            String[] paths1 = info1.getRelativeGrammarFile().split( "\\" + File.separatorChar );
+
+            GrammarInfo info2 = (GrammarInfo) o2;
+            String[] paths2 = info2.getRelativeGrammarFile().split( "\\" + File.separatorChar );
+
+            int dirs = Math.min( paths1.length, paths2.length ) - 1;
+            for ( int i = 0; i < dirs; i++ )
+            {
+                rel = paths1[i].compareToIgnoreCase( paths2[i] );
+                if ( rel != 0 )
+                {
+                    return rel;
+                }
+            }
+
+            rel = paths1.length - paths2.length;
+            if ( rel != 0 )
+            {
+                return rel;
+            }
+
+            return paths1[paths1.length - 1].compareToIgnoreCase( paths2[paths1.length - 1] );
+        }
+
     }
 
 }
