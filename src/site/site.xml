@@ -26,6 +26,7 @@
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
+      <item name="Changes" href="${project.issueManagement.url}?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
     </menu>
     <menu name="Examples">
       <item name="JavaCC" href="examples/example-javacc.html"/>
