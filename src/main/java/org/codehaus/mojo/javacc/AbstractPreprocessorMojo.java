@@ -116,7 +116,7 @@ public abstract class AbstractPreprocessorMojo
         }
         else if ( grammarInfos.length <= 0 )
         {
-            getLog().info( "Skipping - all grammars up to date" );
+            getLog().info( "Skipping - all parsers are up to date" );
         }
         else
         {
