@@ -131,6 +131,10 @@ class JTB
      */
     public void setInputFile( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.inputFile = value;
     }
 
@@ -143,6 +147,10 @@ class JTB
      */
     public void setOutputDirectory( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.outputDirectory = value;
     }
 
@@ -173,6 +181,10 @@ class JTB
      */
     public void setNodeDirectory( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.nodeDirectory = value;
     }
 
@@ -205,6 +217,10 @@ class JTB
      */
     public void setVisitorDirectory( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.visitorDirectory = value;
     }
 

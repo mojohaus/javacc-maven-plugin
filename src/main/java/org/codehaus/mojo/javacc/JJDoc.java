@@ -64,6 +64,10 @@ class JJDoc
      */
     public void setInputFile( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.inputFile = value;
     }
 
@@ -74,6 +78,10 @@ class JJDoc
      */
     public void setOutputFile( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.outputFile = value;
     }
 

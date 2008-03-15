@@ -162,6 +162,10 @@ class JavaCC
      */
     public void setInputFile( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.inputFile = value;
     }
 
@@ -174,6 +178,10 @@ class JavaCC
      */
     public void setOutputDirectory( File value )
     {
+        if ( value != null && !value.isAbsolute() )
+        {
+            throw new IllegalArgumentException( "path is not absolute: " + value );
+        }
         this.outputDirectory = value;
     }
 
