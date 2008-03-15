@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>javacc-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Maven 2 JavaCC Plugin</name>
+  <name>JavaCC Maven Plugin</name>
   <version>2.5-SNAPSHOT</version>
   <description>Maven 2 Plugin for processing JavaCC grammar files.</description>
   <url>http://mojo.codehaus.org/javacc-maven-plugin/</url>

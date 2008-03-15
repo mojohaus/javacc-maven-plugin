@@ -9,7 +9,7 @@
  February 09 2008
  ------
 
-Maven 2 JavaCC Plugin
+JavaCC Maven Plugin
 
   This plugin uses the JavaCC parser generator to process JavaCC 
   grammar files and generate the appropriate Java source files.  For general information about JavaCC, 
@@ -64,35 +64,17 @@ Maven 2 JavaCC Plugin
 * Usage
   
   This plugin is normally used before Java compilation, during the <<<generate-sources>>> phase of a build.  
-  Detailed instructions on how to use the JavaCC Maven Plugin can be found on the {{{usage.html}usage}} page.
+  Detailed instructions on how to use the JavaCC Maven Plugin can be found on the {{{usage.html}usage page}}.
   
 * Examples
   
-  Below is a basic example of configuring your project build to use the <<<javacc>>> goal.  More examples can be found 
-  using the links in the menu.
-  
--------------------
-<project>
-   ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javacc-maven-plugin</artifactId>
-        <version>2.4</version>
-        <executions>
-          <execution>
-            <id>javacc</id>
-            <goals>
-              <goal>javacc</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-     ...
-  </build>
-  ...
-</project>
--------------------
-      
+  To provide you with better understanding of some usages of the JavaCC Plugin, you can take a look into the following
+  examples:
+
+  * {{{examples/example-javacc.html}Basic JavaCC Invocation}}
+
+  * {{{examples/example-jjtree.html}Preprocessing Grammars with JJTree}}
+
+  * {{{examples/example-jtb.html}Preprocessing Grammars with JTB}}
+
+  * {{{examples/example-jjdoc.html}Generating BNF Documentation using JJDoc}}

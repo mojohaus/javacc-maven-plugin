@@ -37,6 +37,7 @@ JavaCC Examples
           </execution>
         </executions>
       </plugin>
+      ...
     </plugins>
     ...
   </build>
@@ -52,7 +53,7 @@ JavaCC Examples
 
 -------------------
 <project>
-   ...
+  ...
   <build>
     <plugins>
       <plugin>
@@ -84,8 +85,9 @@ JavaCC Examples
           </execution>
         </executions>
       </plugin>
+      ...
     </plugins>
-     ...
+    ...
   </build>
   ...
 </project>

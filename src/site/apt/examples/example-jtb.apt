@@ -33,6 +33,7 @@ JTB Examples
           </execution>
         </executions>
       </plugin>
+      ...
     </plugins>
     ...
   </build>
