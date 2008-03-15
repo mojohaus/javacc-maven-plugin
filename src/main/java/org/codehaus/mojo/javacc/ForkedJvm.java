@@ -227,12 +227,15 @@ class ForkedJvm
             }
             if ( url != null )
             {
+                String protocolJar = "jar:";
+                String protocolFile = "file:";
+                String protocolJarFile = protocolJar + protocolFile;
                 String u = url.toString();
-                if ( u.startsWith( "jar:file:" ) )
+                if ( ( protocolJarFile ).regionMatches( true, 0, u, 0, protocolJarFile.length() ) )
                 {
                     try
                     {
-                        u = u.substring( "jar:".length(), u.lastIndexOf( "!/" ) );
+                        u = u.substring( protocolJar.length(), u.lastIndexOf( "!/" ) );
                         return new File( new URI( u ) );
                     }
                     catch ( Exception e )
@@ -240,7 +243,7 @@ class ForkedJvm
                         return null;
                     }
                 }
-                else if ( u.startsWith( "file:" ) )
+                else if ( protocolFile.regionMatches( true, 0, u, 0, protocolFile.length() ) )
                 {
                     try
                     {
