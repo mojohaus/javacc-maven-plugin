@@ -32,6 +32,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * @goal jjtree
  * @phase generate-sources
+ * @since 2.0
  * @deprecated As of version 2.4, use the <code>jjtree-javacc</code> goal instead.
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$

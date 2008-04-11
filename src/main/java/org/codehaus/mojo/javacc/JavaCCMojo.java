@@ -32,6 +32,7 @@ import org.codehaus.plexus.util.FileUtils;
  * 
  * @goal javacc
  * @phase generate-sources
+ * @since 2.0
  * @author jruiz@exist.com
  * @author jesse <jesse.mcconnell@gmail.com>
  * @version $Id$

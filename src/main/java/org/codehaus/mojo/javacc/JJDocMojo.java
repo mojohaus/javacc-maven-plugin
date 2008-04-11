@@ -42,6 +42,7 @@ import org.apache.maven.reporting.MavenReportException;
  * 
  * @goal jjdoc
  * @execute phase=generate-sources
+ * @since 2.3
  * @author <a href="mailto:pgier@redhat.com">Paul Gier</a>
  * @version $Id$
  * @see <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>

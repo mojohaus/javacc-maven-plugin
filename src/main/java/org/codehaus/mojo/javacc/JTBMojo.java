@@ -32,6 +32,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * 
  * @goal jtb
  * @phase generate-sources
+ * @since 2.2
  * @deprecated As of version 2.4, use the <code>jtb-javacc</code> goal instead.
  * @author Gregory Kick (gk5885@kickstyle.net)
  * @version $Id$
