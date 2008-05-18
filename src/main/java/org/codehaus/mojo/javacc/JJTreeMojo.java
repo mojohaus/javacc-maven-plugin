@@ -27,8 +27,7 @@ import org.apache.maven.plugin.MojoFailureException;
 /**
  * Parses a JJTree grammar file (<code>*.jjt</code>) and transforms it to Java source files and a JavaCC grammar
  * file. Please see the <a href="https://javacc.dev.java.net/doc/JJTree.html">JJTree Reference Documentation</a> for
- * more information. <br/><br/><strong>Deprecated.</strong> As of version 2.4, use the <code>jjtree-javacc</code>
- * goal instead.
+ * more information.
  * 
  * @goal jjtree
  * @phase generate-sources

@@ -43,9 +43,7 @@ public class JavaCCMojo
 
     /**
      * Package into which the generated classes will be put. Note that this will also be used to create the directory
-     * structure where sources will be generated. Defaults to the package name specified in a grammar file.<br/>
-     * <strong>Deprecated.</strong> As of version 2.4 because the plugin extracts the package name from each grammar
-     * file.
+     * structure where sources will be generated. Defaults to the package name specified in a grammar file.
      * 
      * @parameter expression="${packageName}"
      * @deprecated As of version 2.4 because the plugin extracts the package name from each grammar file.

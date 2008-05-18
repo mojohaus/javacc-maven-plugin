@@ -209,7 +209,7 @@ class GrammarInfo
      * asterisk is significant, i.e. in the previous example the input string "*node" would resolve to "org.apachenode".
      * 
      * @param packageName The package name to resolve, may be <code>null</code>.
-     * @return The resolved package name of <code>null</code> if the input string was <code>null</code>.
+     * @return The resolved package name or <code>null</code> if the input string was <code>null</code>.
      */
     public String resolvePackageName( String packageName )
     {
