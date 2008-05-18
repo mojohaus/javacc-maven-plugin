@@ -10,13 +10,13 @@ Usage
 
   The JavaCC Plugin can both generate parsers from grammars and output a textual documentation of the grammars. The
   sections below should help you to get started. If you have problems using the plugin, please feel free to post your
-  question to the {{{http://mojo.codehaus.org/mail-lists.html}user mailing list}}.
+  question to the {{{./mail-lists.html}user mailing list}}.
 
-* Compiling Grammars into Parsers
+* {Compiling Grammars into Parsers}
 
-  By default, the <<<{{{javacc-mojo.html}javacc}}>>> goal will search for grammar files in the directory
-  <<<$\{basedir\}/src/main/javacc>>>. The <<<{{{jjtree-javacc-mojo.html}jjtree-javacc}}>>> goal will expect to find
-  <<<*.jjt>>> files in <<<$\{basedir\}/src/main/jjtree>>> and the <<<{{{jtb-javacc-mojo.html}jtb-javacc}}>>> goal will
+  By default, the <<<{{{./javacc-mojo.html}javacc}}>>> goal will search for grammar files in the directory
+  <<<$\{basedir\}/src/main/javacc>>>. The <<<{{{./jjtree-javacc-mojo.html}jjtree-javacc}}>>> goal will expect to find
+  <<<*.jjt>>> files in <<<$\{basedir\}/src/main/jjtree>>> and the <<<{{{./jtb-javacc-mojo.html}jtb-javacc}}>>> goal will
   expect to find <<<*.jtb>>> files in <<<$\{basedir\}/src/main/jtb>>>.  Each of these can be configured to search other
   directories using the plugin configuration parameters as described in the respective goal documentation.
 
@@ -59,9 +59,9 @@ mvn generate-sources
   and this path will be added to your build as a source folder and automatically picked up by the next steps of the
   build (such as compilation).
   
-* Creating BNF Documentation from Grammars
+* {Creating BNF Documentation from Grammars}
 
-  The <<<{{{jjdoc-mojo.html}jjdoc}}>>> goal is a tool for generating a site report.  If the JavaCC Maven Plugin is added
+  The <<<{{{./jjdoc-mojo.html}jjdoc}}>>> goal is a tool for generating a site report.  If the JavaCC Maven Plugin is added
   to the reporting section of your POM, the <<<jjdoc>>> goal will automatically be run when generating the project site.
   It will run the JJDoc tool once for each grammar file (<<<*.jj>>>) in your source directory.  Each of these files,
   along with an index file containing a list of all the reports, will be created in the directory <<<target/site/jjdoc>>>.

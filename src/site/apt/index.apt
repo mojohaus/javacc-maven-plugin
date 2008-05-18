@@ -35,46 +35,46 @@ JavaCC Maven Plugin
   grammar files.  This can be used to generate a report for your project site using the Maven
   reporting tools.
    
-* Goals Overview
+* {Goals} Overview
   
   The following goals are meant to participate in the default build lifecycle:
   
-  * <<<{{{javacc-mojo.html}javacc:javacc}}>>>\
+  * <<<{{{./javacc-mojo.html}javacc:javacc}}>>>\
     Runs JavaCC on grammar files (<<<*.jj>>>) to generate a Java parser.
   
-  * <<<{{{jjtree-javacc-mojo.html}javacc:jjtree-javacc}}>>>\
+  * <<<{{{./jjtree-javacc-mojo.html}javacc:jjtree-javacc}}>>>\
     Runs JJTree and JavaCC in a pipeline to process annotated grammar files (<<<*.jjt>>>).
   
-  * <<<{{{jjtree-mojo.html}javacc:jjtree}}>>>\
+  * <<<{{{./jjtree-mojo.html}javacc:jjtree}}>>>\
     <<Deprecated.>> Preprocesses annotated grammar files (<<<*.jjt>>>) with JJTree.
   
-  * <<<{{{jtb-javacc-mojo.html}javacc:jtb-javacc}}>>>\
+  * <<<{{{./jtb-javacc-mojo.html}javacc:jtb-javacc}}>>>\
     Runs JTB and JavaCC in a pipeline to process ordinary grammar files (<<<*.jtb>>>).
   
-  * <<<{{{jtb-mojo.html}javacc:jtb}}>>>\
+  * <<<{{{./jtb-mojo.html}javacc:jtb}}>>>\
     <<Deprecated.>> Preprocesses ordinary grammar files (<<<*.jtb>>>) with JTB.
   
   []
   
   This last goal is intended for usage with the site lifecycle:
   
-  * <<<{{{jjdoc-mojo.html}javacc:jjdoc}}>>>\
+  * <<<{{{./jjdoc-mojo.html}javacc:jjdoc}}>>>\
     Generates BNF documentation from the grammar files for usage as a site report.
    
-* Usage
+* {Usage}
   
   This plugin is normally used before Java compilation, during the <<<generate-sources>>> phase of a build.  
-  Detailed instructions on how to use the JavaCC Maven Plugin can be found on the {{{usage.html}usage page}}.
+  Detailed instructions on how to use the JavaCC Maven Plugin can be found on the {{{./usage.html}usage page}}.
   
-* Examples
+* {Examples}
   
   To provide you with better understanding of some usages of the JavaCC Plugin, you can take a look into the following
   examples:
 
-  * {{{examples/example-javacc.html}Basic JavaCC Invocation}}
+  * {{{./examples/example-javacc.html}Basic JavaCC Invocation}}
 
-  * {{{examples/example-jjtree.html}Preprocessing Grammars with JJTree}}
+  * {{{./examples/example-jjtree.html}Preprocessing Grammars with JJTree}}
 
-  * {{{examples/example-jtb.html}Preprocessing Grammars with JTB}}
+  * {{{./examples/example-jtb.html}Preprocessing Grammars with JTB}}
 
-  * {{{examples/example-jjdoc.html}Generating BNF Documentation using JJDoc}}
+  * {{{./examples/example-jjdoc.html}Generating BNF Documentation using JJDoc}}
