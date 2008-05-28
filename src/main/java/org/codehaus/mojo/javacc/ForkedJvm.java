@@ -20,7 +20,6 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -227,33 +226,10 @@ class ForkedJvm
             }
             if ( url != null )
             {
-                String protocolJar = "jar:";
-                String protocolFile = "file:";
-                String protocolJarFile = protocolJar + protocolFile;
-                String u = url.toString();
-                if ( ( protocolJarFile ).regionMatches( true, 0, u, 0, protocolJarFile.length() ) )
+                String root = UrlUtils.getResourceRoot( url.toExternalForm(), resource );
+                if ( root != null )
                 {
-                    try
-                    {
-                        u = u.substring( protocolJar.length(), u.lastIndexOf( "!/" ) );
-                        return new File( new URI( u ) );
-                    }
-                    catch ( Exception e )
-                    {
-                        return null;
-                    }
-                }
-                else if ( protocolFile.regionMatches( true, 0, u, 0, protocolFile.length() ) )
-                {
-                    try
-                    {
-                        u = u.substring( 0, u.length() - resource.length() );
-                        return new File( new URI( u ) );
-                    }
-                    catch ( Exception e )
-                    {
-                        return null;
-                    }
+                    return new File( root );
                 }
             }
         }
