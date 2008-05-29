@@ -224,14 +224,7 @@ class ForkedJvm
             {
                 url = ClassLoader.getSystemResource( resource );
             }
-            if ( url != null )
-            {
-                String root = UrlUtils.getResourceRoot( url.toExternalForm(), resource );
-                if ( root != null )
-                {
-                    return new File( root );
-                }
-            }
+            return UrlUtils.getResourceRoot( url, resource );
         }
         return null;
     }

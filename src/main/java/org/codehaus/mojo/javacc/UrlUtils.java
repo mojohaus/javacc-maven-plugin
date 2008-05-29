@@ -20,6 +20,8 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
@@ -38,6 +40,11 @@ class UrlUtils
     private static final Charset UTF8 = Charset.forName( "UTF-8" );
 
     /**
+     * The protocol prefix for "jar:" URLs.
+     */
+    private static final String JAR = "jar:";
+
+    /**
      * The protocol prefix for "file:" URLs.
      */
     private static final String FILE = "file:";
@@ -45,36 +52,48 @@ class UrlUtils
     /**
      * The protocol prefix for "jar:file:" URLs.
      */
-    private static final String JAR_FILE = "jar:file:";
+    private static final String JAR_FILE = JAR + FILE;
 
     /**
      * Gets the absolute filesystem path to the class path root for the specified resource. The root is either a JAR
-     * file or a directory with loose class files.
+     * file or a directory with loose class files. If the URL does not use a supported protocol, an exception will be
+     * thrown.
      * 
      * @param url The URL to the resource, may be <code>null</code>.
      * @param resource The name of the resource, must not be <code>null</code>.
-     * @return The absolute filesystem path (using the platform-dependent file separator) to the class path root of the
-     *         resource or <code>null</code> if either the input URL was <code>null</code> or its protocol is not
-     *         supported.
+     * @return The absolute filesystem path to the class path root of the resource or <code>null</code> if the input
+     *         URL was <code>null</code>.
      */
-    public static String getResourceRoot( String url, String resource )
+    public static File getResourceRoot( URL url, String resource )
     {
         String path = null;
         if ( url != null )
         {
-            if ( ( JAR_FILE ).regionMatches( true, 0, url, 0, JAR_FILE.length() ) )
+            String spec = url.toExternalForm();
+            if ( ( JAR_FILE ).regionMatches( true, 0, spec, 0, JAR_FILE.length() ) )
             {
-                path = decodeUrl( url.substring( JAR_FILE.length(), url.lastIndexOf( "!/" ) ) );
-                path = new File( path ).getAbsolutePath();
+                URL jar;
+                try
+                {
+                    jar = new URL( spec.substring( JAR.length(), spec.lastIndexOf( "!/" ) ) );
+                }
+                catch ( MalformedURLException e )
+                {
+                    throw new IllegalArgumentException( "Invalid JAR URL: " + url + ", " + e.getMessage() );
+                }
+                path = decodeUrl( jar.getPath() );
             }
-            else if ( FILE.regionMatches( true, 0, url, 0, FILE.length() ) )
+            else if ( FILE.regionMatches( true, 0, spec, 0, FILE.length() ) )
             {
-                path = decodeUrl( url.substring( FILE.length() ) );
+                path = decodeUrl( url.getPath() );
                 path = path.substring( 0, path.length() - resource.length() );
-                path = new File( path ).getAbsolutePath();
+            }
+            else
+            {
+                throw new IllegalArgumentException( "Invalid class path URL: " + url );
             }
         }
-        return path;
+        return ( path != null ) ? new File( path ) : null;
     }
 
     /**
