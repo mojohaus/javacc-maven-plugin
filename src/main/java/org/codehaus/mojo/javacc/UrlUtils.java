@@ -98,7 +98,10 @@ class UrlUtils
 
     /**
      * Decodes the specified URL as per RFC 3986, i.e. transforms percent-encoded octets to characters by decoding with
-     * the UTF-8 character set.
+     * the UTF-8 character set. This function is primarily intended for usage with {@link java.net.URL} which
+     * unfortunately does not enforce proper URLs. As such, this method will leniently accept invalid characters or
+     * malformed percent-encoded octets and simply pass them literally through to the result string. Except for rare
+     * edge cases, this will make unencoded URLs pass through unaltered.
      * 
      * @param url The URL to decode, may be <code>null</code>.
      * @return The decoded URL or <code>null</code> if the input was <code>null</code>.
@@ -128,7 +131,7 @@ class UrlUtils
                     }
                     catch ( RuntimeException e )
                     {
-                        // fall through and simply append undecodable characters
+                        // malformed percent-encoded octet, fall through and append characters literally
                     }
                     finally
                     {
