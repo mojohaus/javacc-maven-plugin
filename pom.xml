@@ -168,10 +168,6 @@
               <settingsFile>src/it/settings.xml</settingsFile>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <showErrors>true</showErrors>
-              <goals>
-                <goal>clean</goal>
-                <goal>compile</goal>
-              </goals>
             </configuration>
             <executions>
               <execution>
