@@ -30,7 +30,7 @@
   <artifactId>javacc-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>JavaCC Maven Plugin</name>
-  <version>2.4.1-SNAPSHOT</version>
+  <version>2.4.1</version>
   <description>Maven 2 Plugin for processing JavaCC grammar files.</description>
   <url>http://mojo.codehaus.org/javacc-maven-plugin/</url>
   <inceptionYear>2005</inceptionYear>
@@ -59,9 +59,9 @@
   </issueManagement>
   
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/javacc-maven-plugin</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/javacc-maven-plugin</developerConnection>
-    <url>http://fisheye.codehaus.org/browse/mojo/trunk/mojo/javacc-maven-plugin</url>
+    <connection>scm:svn:http://svn.codehaus.org/mojo/tags/javacc-maven-plugin-2.4.1</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/tags/javacc-maven-plugin-2.4.1</developerConnection>
+    <url>http://fisheye.codehaus.org/browse/mojo/tags/javacc-maven-plugin-2.4.1</url>
   </scm>
   
   <dependencies>
