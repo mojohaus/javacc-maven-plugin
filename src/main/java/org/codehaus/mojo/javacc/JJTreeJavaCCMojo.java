@@ -159,7 +159,7 @@ public class JJTreeJavaCCMojo
     private String[] includes;
 
     /**
-     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set if
+     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set is
      * empty such that no files are excluded.
      * 
      * @parameter

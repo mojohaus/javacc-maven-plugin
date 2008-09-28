@@ -58,7 +58,9 @@ public class JavaCCMojo
     private File sourceDirectory;
 
     /**
-     * The directory where the output Java files will be located.
+     * The directory where the output Java files will be located. The directory will be registered as a compile source
+     * root of the project such that the generated files will participate in later build phases like compiling and
+     * packaging.
      * 
      * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/javacc"
      */
@@ -80,7 +82,7 @@ public class JavaCCMojo
     private String[] includes;
 
     /**
-     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set if
+     * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set is
      * empty such that no files are excluded.
      * 
      * @parameter
