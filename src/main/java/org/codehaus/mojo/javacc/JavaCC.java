@@ -188,7 +188,7 @@ class JavaCC
     /**
      * Sets the option JDK_VERSION.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setJdkVersion( String value )
     {
@@ -198,7 +198,7 @@ class JavaCC
     /**
      * Sets the option STATIC.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setStatic( Boolean value )
     {
@@ -208,7 +208,7 @@ class JavaCC
     /**
      * Sets the option LOOK_AHEAD.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setLookAhead( Integer value )
     {
@@ -218,7 +218,7 @@ class JavaCC
     /**
      * Sets the option CHOICE_AMBIGUITY_CHECK.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setChoiceAmbiguityCheck( Integer value )
     {
@@ -228,7 +228,7 @@ class JavaCC
     /**
      * Sets the option OTHER_AMBIGUITY_CHECK.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setOtherAmbiguityCheck( Integer value )
     {
@@ -238,7 +238,7 @@ class JavaCC
     /**
      * Sets the option DEBUG_PARSER.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setDebugParser( Boolean value )
     {
@@ -248,7 +248,7 @@ class JavaCC
     /**
      * Sets the option DEBUG_LOOK_AHEAD.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setDebugLookAhead( Boolean value )
     {
@@ -258,7 +258,7 @@ class JavaCC
     /**
      * Sets the option DEBUG_TOKEN_MANAGER.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setDebugTokenManager( Boolean value )
     {
@@ -268,7 +268,7 @@ class JavaCC
     /**
      * Sets the option ERROR_REPORTING.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setErrorReporting( Boolean value )
     {
@@ -278,7 +278,7 @@ class JavaCC
     /**
      * Sets the option JAVA_UNICODE_ESCAPE.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setJavaUnicodeEscape( Boolean value )
     {
@@ -288,7 +288,7 @@ class JavaCC
     /**
      * Sets the option UNICODE_INPUT.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setUnicodeInput( Boolean value )
     {
@@ -298,7 +298,7 @@ class JavaCC
     /**
      * Sets the option IGNORE_CASE.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setIgnoreCase( Boolean value )
     {
@@ -308,7 +308,7 @@ class JavaCC
     /**
      * Sets the option COMMON_TOKEN_ACTION.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setCommonTokenAction( Boolean value )
     {
@@ -318,7 +318,7 @@ class JavaCC
     /**
      * Sets the option USER_TOKEN_MANAGER.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setUserTokenManager( Boolean value )
     {
@@ -328,7 +328,7 @@ class JavaCC
     /**
      * Sets the option USER_CHAR_STREAM.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setUserCharStream( Boolean value )
     {
@@ -338,7 +338,7 @@ class JavaCC
     /**
      * Sets the option BUILD_PARSER.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setBuildParser( Boolean value )
     {
@@ -348,7 +348,7 @@ class JavaCC
     /**
      * Sets the option BUILD_TOKEN_MANAGER.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setBuildTokenManager( Boolean value )
     {
@@ -358,7 +358,7 @@ class JavaCC
     /**
      * Sets the option TOKEN_MANAGER_USES_PARSER.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setTokenManagerUsesParser( Boolean value )
     {
@@ -368,7 +368,7 @@ class JavaCC
     /**
      * Sets the option SANITY_CHECK.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setSanityCheck( Boolean value )
     {
@@ -378,7 +378,7 @@ class JavaCC
     /**
      * Sets the option FORCE_LA_CHECK.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setForceLaCheck( Boolean value )
     {
@@ -388,7 +388,7 @@ class JavaCC
     /**
      * Sets the option CACHE_TOKENS.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setCacheTokens( Boolean value )
     {
@@ -398,7 +398,7 @@ class JavaCC
     /**
      * Sets the option KEEP_LINE_COLUMN.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setKeepLineColumn( Boolean value )
     {

@@ -157,7 +157,7 @@ class JJTree
     /**
      * Sets the option JDK_VERSION.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setJdkVersion( String value )
     {
@@ -167,7 +167,7 @@ class JJTree
     /**
      * Sets the option STATIC.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setStatic( Boolean value )
     {
@@ -177,7 +177,7 @@ class JJTree
     /**
      * Sets the option value BUILD_NODE_FILES.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setBuildNodeFiles( Boolean value )
     {
@@ -187,7 +187,7 @@ class JJTree
     /**
      * Sets the option value MULTI.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setMulti( Boolean value )
     {
@@ -197,7 +197,7 @@ class JJTree
     /**
      * Sets the option value NODE_DEFAULT_VOID.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setNodeDefaultVoid( Boolean value )
     {
@@ -207,7 +207,7 @@ class JJTree
     /**
      * Sets the option value NODE_FACTORY.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setNodeFactory( Boolean value )
     {
@@ -217,7 +217,7 @@ class JJTree
     /**
      * Sets the option value NODE_PACKAGE.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setNodePackage( String value )
     {
@@ -227,7 +227,7 @@ class JJTree
     /**
      * Sets the option value NODE_PREFIX.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setNodePrefix( String value )
     {
@@ -237,7 +237,7 @@ class JJTree
     /**
      * Sets the option value NODE_SCOPE_HOOK.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setNodeScopeHook( Boolean value )
     {
@@ -247,7 +247,7 @@ class JJTree
     /**
      * Sets the option value NODE_USES_PARSER.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setNodeUsesParser( Boolean value )
     {
@@ -257,7 +257,7 @@ class JJTree
     /**
      * Sets the option value VISITOR.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setVisitor( Boolean value )
     {
@@ -267,7 +267,7 @@ class JJTree
     /**
      * Sets the option value VISITOR_EXCEPTION.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
     public void setVisitorException( String value )
     {

@@ -109,7 +109,7 @@ class ForkedJvm
     /**
      * Sets the stream consumer used to handle messages from <code>System.out</code>.
      * 
-     * @param consumer The stream consumer, may be <code>null</code>.
+     * @param consumer The stream consumer, may be <code>null</code> to discard the output.
      */
     public void setSystemOut( StreamConsumer consumer )
     {
@@ -119,7 +119,7 @@ class ForkedJvm
     /**
      * Sets the stream consumer used to handle messages from <code>System.err</code>.
      * 
-     * @param consumer The stream consumer, may be <code>null</code>.
+     * @param consumer The stream consumer, may be <code>null</code> to discard the output.
      */
     public void setSystemErr( StreamConsumer consumer )
     {
@@ -245,7 +245,7 @@ class ForkedJvm
      * Sets the class on which to invoke the <code>main()</code> method. The source of the specified class will
      * automatically be added to the class path of the forked JVM.
      * 
-     * @param type The class on which to invoke the <code>main()</code> method, may <code>null</code>.
+     * @param type The class on which to invoke the <code>main()</code> method, may be <code>null</code>.
      */
     public void setMainClass( Class type )
     {
@@ -308,7 +308,7 @@ class ForkedJvm
     /**
      * Creates the command line for the new JVM based on the current configuration.
      * 
-     * @return The command line used to fork the JVM.
+     * @return The command line used to fork the JVM, never <code>null</code>.
      */
     private Commandline createCommandLine()
     {

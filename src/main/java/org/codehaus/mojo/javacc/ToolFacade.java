@@ -65,7 +65,7 @@ abstract class ToolFacade
     /**
      * Gets the name of the tool.
      * 
-     * @return The name of the tool.
+     * @return The name of the tool, never <code>null</code>.
      */
     protected String getToolName()
     {
