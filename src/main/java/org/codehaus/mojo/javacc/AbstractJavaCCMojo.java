@@ -20,12 +20,16 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Provides common services for all mojos that compile JavaCC grammar files.
@@ -328,10 +332,26 @@ public abstract class AbstractJavaCCMojo
         }
         else
         {
+            File tempDirectory =
+                new File( this.project.getBuild().getDirectory(), "javacc-" + System.currentTimeMillis() );
+            tempDirectory.mkdirs();
+
             for ( int i = 0; i < grammarInfos.length; i++ )
             {
-                processGrammar( grammarInfos[i] );
+                processGrammar( grammarInfos[i], tempDirectory );
             }
+            
+            try
+            {
+                copyNonCustomizedSourceFiles( tempDirectory );
+                FileUtils.deleteDirectory( tempDirectory );
+            }
+            catch ( IOException e )
+            {
+                throw new MojoExecutionException( "Failed to copy generated source files to output directory:"
+                    + tempDirectory + " -> " + getOutputDirectory(), e );
+            }
+
             getLog().info( "Processed " + grammarInfos.length + " grammar" + ( grammarInfos.length != 1 ? "s" : "" ) );
         }
 
@@ -342,10 +362,12 @@ public abstract class AbstractJavaCCMojo
      * Passes the specified grammar file through the tool.
      * 
      * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
+     * @param targetDirectory The absolute path to the output directory for the generated source files, must not be
+     *            <code>null</code>.
      * @throws MojoExecutionException If the invocation of the tool failed.
      * @throws MojoFailureException If the tool reported a non-zero exit code.
      */
-    protected abstract void processGrammar( GrammarInfo grammarInfo )
+    protected abstract void processGrammar( GrammarInfo grammarInfo, File targetDirectory )
         throws MojoExecutionException, MojoFailureException;
 
     /**
@@ -385,6 +407,67 @@ public abstract class AbstractJavaCCMojo
         getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
 
         return grammarInfos;
+    }
+
+    /**
+     * Copies the Java files from the specified temporary source root to the configured output directory, excluding all
+     * those source files that are already present in one of the compile source roots of the current project. This
+     * prevents duplicate source errors in case the user created customized source files for some generator outputs in
+     * <code>src/main/java</code>.
+     * 
+     * @param tempDirectory The absolute path to the temporary source root, must not be <code>null</code>.
+     * @throws IOException If any file could not be copied.
+     */
+    private void copyNonCustomizedSourceFiles( File tempDirectory )
+        throws IOException
+    {
+        if ( !tempDirectory.exists() )
+        {
+            return;
+        }
+
+        getLog().debug( "Copying generated source files: " + tempDirectory + " -> " + getOutputDirectory() );
+
+        Collection filenames = FileUtils.getFileNames( tempDirectory, "**/*.java", null, false );
+        for ( Iterator it = filenames.iterator(); it.hasNext(); )
+        {
+            String filename = (String) it.next();
+            if ( !isSourceFile( filename ) )
+            {
+                FileUtils.copyFile( new File( tempDirectory, filename ), new File( getOutputDirectory(), filename ) );
+            }
+            else
+            {
+                getLog().debug( "Detected customized generator output: " + filename );
+            }
+        }
+    }
+
+    /**
+     * Determines whether the specified source file is already present in any of the compile source roots registered
+     * with the current Maven project.
+     * 
+     * @param filename The source filename to check, relative to a source root, must not be <code>null</code>.
+     * @return <code>true</code> if any compile source root of the current project already contains a source file with
+     *         the specified name, <code>false</code> otherwise.
+     */
+    private boolean isSourceFile( String filename )
+    {
+        Collection sourceRoots = this.project.getCompileSourceRoots();
+        for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
+        {
+            File sourceRoot = new File( (String) it.next() );
+            if ( !sourceRoot.isAbsolute() )
+            {
+                sourceRoot = new File( this.project.getBasedir(), sourceRoot.getPath() );
+            }
+            File sourceFile = new File( sourceRoot, filename );
+            if ( sourceFile.exists() )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

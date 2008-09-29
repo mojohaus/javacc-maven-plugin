@@ -147,17 +147,16 @@ public class JavaCCMojo
     /**
      * {@inheritDoc}
      */
-    protected void processGrammar( GrammarInfo grammarInfo )
+    protected void processGrammar( GrammarInfo grammarInfo, File targetDirectory )
         throws MojoExecutionException, MojoFailureException
     {
         File jjFile = grammarInfo.getGrammarFile();
-        File parserDirectory = new File( getOutputDirectory(), grammarInfo.getParserDirectory() );
+        File parserDirectory = new File( targetDirectory, grammarInfo.getParserDirectory() );
 
-        // Copy all .java files from sourceDirectory to outputDirectory, in
-        // order to prevent regeneration of customized Token.java or similar
+        // copy all Java files next to the grammar to the target directory (old style support for custom sources)
         try
         {
-            FileUtils.copyDirectory( jjFile.getParentFile(), parserDirectory, "*.java", "*.jj,*.JJ" );
+            FileUtils.copyDirectory( jjFile.getParentFile(), parserDirectory, "*.java", null );
         }
         catch ( IOException e )
         {
@@ -165,7 +164,7 @@ public class JavaCCMojo
                 + jjFile.getParent() + " -> " + parserDirectory, e );
         }
 
-        // generate parser file
+        // generate parser files
         JavaCC javacc = newJavaCC();
         javacc.setInputFile( jjFile );
         javacc.setOutputDirectory( parserDirectory );
