@@ -215,9 +215,9 @@ public abstract class AbstractJavaCCMojo
     private String tokenExtends;
 
     /**
-     * The name of a user-defined token factory class that provides a
-     * <code>public static Token newToken(int ofKind, String image)</code> method. By default, tokens are created by
-     * calling <code>Token.newToken()</code>.
+     * The name of a custom factory class used to create <code>Token</code> objects. This class must have a method with
+     * the signature <code>public static Token newToken(int ofKind, String image)</code>. By default, tokens are created
+     * by calling <code>Token.newToken()</code>.
      * 
      * @parameter expression="${tokenFactory}"
      * @since 2.5

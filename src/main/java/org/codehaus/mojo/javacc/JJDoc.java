@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
@@ -171,7 +172,7 @@ class JJDoc
             argsList.add( "-OUTPUT_FILE=" + this.outputFile.getAbsolutePath() );
         }
 
-        if ( this.cssHref != null && this.cssHref.length() > 0 )
+        if ( StringUtils.isNotEmpty( this.cssHref ) )
         {
             argsList.add( "-CSS=" + this.cssHref );
         }

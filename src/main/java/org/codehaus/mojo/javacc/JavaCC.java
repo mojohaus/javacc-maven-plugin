@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.codehaus.plexus.util.StringUtils;
+
 /**
  * Provides a facade for the mojos to invoke JavaCC.
  * 
@@ -462,7 +464,7 @@ class JavaCC
     {
         List argsList = new ArrayList();
 
-        if ( this.jdkVersion != null && this.jdkVersion.length() > 0 )
+        if ( StringUtils.isNotEmpty( this.jdkVersion ) )
         {
             argsList.add( "-JDK_VERSION=" + this.jdkVersion );
         }
@@ -552,12 +554,12 @@ class JavaCC
             argsList.add( "-TOKEN_MANAGER_USES_PARSER=" + this.tokenManagerUsesParser );
         }
 
-        if ( this.tokenExtends != null && this.tokenExtends.length() > 0 )
+        if ( StringUtils.isNotEmpty( this.tokenExtends ) )
         {
             argsList.add( "-TOKEN_EXTENDS=" + this.tokenExtends );
         }
 
-        if ( this.tokenFactory != null && this.tokenFactory.length() > 0 )
+        if ( StringUtils.isNotEmpty( this.tokenFactory ) )
         {
             argsList.add( "-TOKEN_FACTORY=" + this.tokenFactory );
         }
