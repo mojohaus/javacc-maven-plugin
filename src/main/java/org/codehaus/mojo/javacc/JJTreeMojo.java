@@ -73,11 +73,13 @@ public class JJTreeMojo
     private Boolean nodeDefaultVoid;
 
     /**
-     * The name of a custom factory class to create <code>Node</code> objects.
+     * The name of a custom factory class used to create <code>Node</code> objects. This class must have a method with
+     * the signature <code>public static Node jjtCreate(int id)</code>. By default, the class <code>SimpleNode</code>
+     * will be used as the factory class.
      * 
      * @parameter expression="${nodeFactory}"
      */
-    private Boolean nodeFactory;
+    private String nodeFactory;
 
     /**
      * The package to generate the AST node classes into. This value may use a leading asterisk to reference the package
@@ -122,6 +124,16 @@ public class JJTreeMojo
     private Boolean isStatic;
 
     /**
+     * A flag whether to insert the methods <code>jjtGetFirstToken()</code>, <code>jjtSetFirstToken()</code>,
+     * <code>getLastToken()</code> and <code>jjtSetLastToken()</code> into the class <code>SimpleNode</code>. Default
+     * value is <code>false</code>.
+     * 
+     * @parameter expression="${trackTokens}"
+     * @since 2.5
+     */
+    private Boolean trackTokens;
+
+    /**
      * A flag whether to insert a <code>jjtAccept()</code> method in the node classes and to generate a visitor
      * implementation with an entry for every node type used in the grammar. Default value is <code>false</code>.
      * 
@@ -130,7 +142,25 @@ public class JJTreeMojo
     private Boolean visitor;
 
     /**
-     * The qualified name of an exception class to include in the signature of the generated <code>jjtAccept()</code>
+     * The name of a class to use for the data argument of the <code>jjtAccept()</code> and <code>visit()</code>
+     * methods. Default value is <code>java.lang.Object</code>.
+     * 
+     * @parameter expression="${visitorDataType}"
+     * @since 2.5
+     */
+    private String visitorDataType;
+
+    /**
+     * The name of a class to use as the return type of the <code>jjtAccept()</code> and <code>visit()</code> methods.
+     * Default value is <code>java.lang.Object</code>.
+     * 
+     * @parameter expression="${visitorReturnType}"
+     * @since 2.5
+     */
+    private String visitorReturnType;
+
+    /**
+     * The name of an exception class to include in the signature of the generated <code>jjtAccept()</code>
      * and <code>visit()</code> methods. By default, the <code>throws</code> clause of the generated methods is
      * empty such that only unchecked exceptions can be thrown.
      * 
@@ -290,7 +320,10 @@ public class JJTreeMojo
         jjtree.setNodePrefix( this.nodePrefix );
         jjtree.setNodeScopeHook( this.nodeScopeHook );
         jjtree.setNodeUsesParser( this.nodeUsesParser );
+        jjtree.setTrackTokens( this.trackTokens );
         jjtree.setVisitor( this.visitor );
+        jjtree.setVisitorDataType( this.visitorDataType );
+        jjtree.setVisitorReturnType( this.visitorReturnType );
         jjtree.setVisitorException( this.visitorException );
         return jjtree;
     }

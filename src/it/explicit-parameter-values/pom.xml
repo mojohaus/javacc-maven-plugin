@@ -66,7 +66,7 @@
               <buildNodeFiles>true</buildNodeFiles>
               <multi>true</multi>
               <nodeDefaultVoid>false</nodeDefaultVoid>
-              <nodeFactory>SimpleNode</nodeFactory>
+              <nodeFactory>false</nodeFactory>
               <nodePackage>org</nodePackage>
               <nodePrefix>Ast</nodePrefix>
               <nodeScopeHook>true</nodeScopeHook>

@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Provides a facade for the mojos to invoke JJTree.
@@ -75,7 +76,7 @@ class JJTree
     /**
      * The option NODE_FACTORY.
      */
-    private Boolean nodeFactory;
+    private String nodeFactory;
 
     /**
      * The option NODE_PACKAGE.
@@ -98,9 +99,24 @@ class JJTree
     private Boolean nodeUsesParser;
 
     /**
+     * The option TRACK_TOKENS.
+     */
+    private Boolean trackTokens;
+
+    /**
      * The option VISITOR.
      */
     private Boolean visitor;
+
+    /**
+     * The option VISITOR_DATA_TYPE.
+     */
+    private String visitorDataType;
+
+    /**
+     * The option VISITOR_RETURN_TYPE.
+     */
+    private String visitorReturnType;
 
     /**
      * The option VISITOR_EXCEPTION.
@@ -209,7 +225,7 @@ class JJTree
      * 
      * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
      */
-    public void setNodeFactory( Boolean value )
+    public void setNodeFactory( String value )
     {
         this.nodeFactory = value;
     }
@@ -255,6 +271,16 @@ class JJTree
     }
 
     /**
+     * Sets the option value TRACK_TOKENS.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setTrackTokens( Boolean value )
+    {
+        this.trackTokens = value;
+    }
+
+    /**
      * Sets the option value VISITOR.
      * 
      * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
@@ -262,6 +288,26 @@ class JJTree
     public void setVisitor( Boolean value )
     {
         this.visitor = value;
+    }
+
+    /**
+     * Sets the option value VISITOR_DATA_TYPE.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setVisitorDataType( String value )
+    {
+        this.visitorDataType = value;
+    }
+
+    /**
+     * Sets the option value VISITOR_RETURN_TYPE.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setVisitorReturnType( String value )
+    {
+        this.visitorReturnType = value;
     }
 
     /**
@@ -302,7 +348,7 @@ class JJTree
     {
         List argsList = new ArrayList();
 
-        if ( this.jdkVersion != null )
+        if ( StringUtils.isNotEmpty( jdkVersion ) )
         {
             argsList.add( "-JDK_VERSION=" + this.jdkVersion );
         }
@@ -322,17 +368,17 @@ class JJTree
             argsList.add( "-NODE_DEFAULT_VOID=" + this.nodeDefaultVoid );
         }
 
-        if ( this.nodeFactory != null )
+        if ( StringUtils.isNotEmpty( this.nodeFactory ) )
         {
             argsList.add( "-NODE_FACTORY=" + this.nodeFactory );
         }
 
-        if ( this.nodePackage != null )
+        if ( StringUtils.isNotEmpty( this.nodePackage ) )
         {
             argsList.add( "-NODE_PACKAGE=" + this.nodePackage );
         }
 
-        if ( this.nodePrefix != null )
+        if ( StringUtils.isNotEmpty( this.nodePrefix ) )
         {
             argsList.add( "-NODE_PREFIX=" + this.nodePrefix );
         }
@@ -352,12 +398,27 @@ class JJTree
             argsList.add( "-STATIC=" + this.isStatic );
         }
 
+        if ( this.trackTokens != null )
+        {
+            argsList.add( "-TRACK_TOKENS=" + this.trackTokens );
+        }
+
         if ( this.visitor != null )
         {
             argsList.add( "-VISITOR=" + this.visitor );
         }
 
-        if ( this.visitorException != null )
+        if ( StringUtils.isNotEmpty( this.visitorDataType ) )
+        {
+            argsList.add( "-VISITOR_DATA_TYPE=" + this.visitorDataType );
+        }
+
+        if ( StringUtils.isNotEmpty( this.visitorReturnType ) )
+        {
+            argsList.add( "-VISITOR_RETURN_TYPE=" + this.visitorReturnType );
+        }
+
+        if ( StringUtils.isNotEmpty( this.visitorException ) )
         {
             argsList.add( "-VISITOR_EXCEPTION=" + this.visitorException );
         }
