@@ -206,6 +206,25 @@ public abstract class AbstractJavaCCMojo
     private Boolean tokenManagerUsesParser;
 
     /**
+     * The name of the base class for the generated <code>Token</code> class. Default value is
+     * <code>java.lang.Object</code>.
+     * 
+     * @parameter expression="${tokenExtends}"
+     * @since 2.5
+     */
+    private String tokenExtends;
+
+    /**
+     * The name of a user-defined token factory class that provides a
+     * <code>public static Token newToken(int ofKind, String image)</code> method. By default, tokens are created by
+     * calling <code>Token.newToken()</code>.
+     * 
+     * @parameter expression="${tokenFactory}"
+     * @since 2.5
+     */
+    private String tokenFactory;
+
+    /**
      * Enables/disables many syntactic and semantic checks on the grammar file during parser generation. Default value
      * is <code>true</code>.
      * 
@@ -514,6 +533,8 @@ public abstract class AbstractJavaCCMojo
         javacc.setOtherAmbiguityCheck( this.otherAmbiguityCheck );
         javacc.setSanityCheck( this.sanityCheck );
         javacc.setTokenManagerUsesParser( this.tokenManagerUsesParser );
+        javacc.setTokenExtends( this.tokenExtends );
+        javacc.setTokenFactory( this.tokenFactory );
         javacc.setUnicodeInput( this.unicodeInput );
         javacc.setUserCharStream( this.userCharStream );
         javacc.setUserTokenManager( this.userTokenManager );

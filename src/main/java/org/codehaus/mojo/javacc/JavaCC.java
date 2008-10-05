@@ -136,6 +136,16 @@ class JavaCC
     private Boolean tokenManagerUsesParser;
 
     /**
+     * The option TOKEN_EXTENDS.
+     */
+    private String tokenExtends;
+
+    /**
+     * The option TOKEN_FACTORY.
+     */
+    private String tokenFactory;
+
+    /**
      * The option SANITY_CHECK.
      */
     private Boolean sanityCheck;
@@ -366,6 +376,26 @@ class JavaCC
     }
 
     /**
+     * Sets the option TOKEN_EXTENDS.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setTokenExtends( String value )
+    {
+        this.tokenExtends = value;
+    }
+
+    /**
+     * Sets the option TOKEN_FACTORY.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setTokenFactory( String value )
+    {
+        this.tokenFactory = value;
+    }
+
+    /**
      * Sets the option SANITY_CHECK.
      * 
      * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
@@ -432,7 +462,7 @@ class JavaCC
     {
         List argsList = new ArrayList();
 
-        if ( this.jdkVersion != null )
+        if ( this.jdkVersion != null && this.jdkVersion.length() > 0 )
         {
             argsList.add( "-JDK_VERSION=" + this.jdkVersion );
         }
@@ -520,6 +550,16 @@ class JavaCC
         if ( this.tokenManagerUsesParser != null )
         {
             argsList.add( "-TOKEN_MANAGER_USES_PARSER=" + this.tokenManagerUsesParser );
+        }
+
+        if ( this.tokenExtends != null && this.tokenExtends.length() > 0 )
+        {
+            argsList.add( "-TOKEN_EXTENDS=" + this.tokenExtends );
+        }
+
+        if ( this.tokenFactory != null && this.tokenFactory.length() > 0 )
+        {
+            argsList.add( "-TOKEN_FACTORY=" + this.tokenFactory );
         }
 
         if ( this.sanityCheck != null )
