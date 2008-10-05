@@ -73,6 +73,16 @@ public class JJTreeMojo
     private Boolean nodeDefaultVoid;
 
     /**
+     * The name of a custom class that extends <code>SimpleNode</code> and will be used as the super class for the
+     * generated tree node classes. By default, the tree node classes will directly extend the class
+     * <code>SimpleNode</code>.
+     * 
+     * @parameter expression="${nodeClass}"
+     * @since 2.5
+     */
+    private String nodeClass;
+
+    /**
      * The name of a custom factory class used to create <code>Node</code> objects. This class must have a method with
      * the signature <code>public static Node jjtCreate(int id)</code>. By default, the class <code>SimpleNode</code>
      * will be used as the factory class.
@@ -316,6 +326,7 @@ public class JJTreeMojo
         jjtree.setBuildNodeFiles( this.buildNodeFiles );
         jjtree.setMulti( this.multi );
         jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
+        jjtree.setNodeClass( this.nodeClass );
         jjtree.setNodeFactory( this.nodeFactory );
         jjtree.setNodePrefix( this.nodePrefix );
         jjtree.setNodeScopeHook( this.nodeScopeHook );

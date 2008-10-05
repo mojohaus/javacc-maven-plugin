@@ -74,6 +74,11 @@ class JJTree
     private Boolean nodeDefaultVoid;
 
     /**
+     * The option NODE_CLASS.
+     */
+    private String nodeClass;
+
+    /**
      * The option NODE_FACTORY.
      */
     private String nodeFactory;
@@ -218,6 +223,16 @@ class JJTree
     public void setNodeDefaultVoid( Boolean value )
     {
         this.nodeDefaultVoid = value;
+    }
+
+    /**
+     * Sets the option value NODE_CLASS.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setNodeClass( String value )
+    {
+        this.nodeClass = value;
     }
 
     /**
@@ -366,6 +381,11 @@ class JJTree
         if ( this.nodeDefaultVoid != null )
         {
             argsList.add( "-NODE_DEFAULT_VOID=" + this.nodeDefaultVoid );
+        }
+
+        if ( StringUtils.isNotEmpty( this.nodeClass ) )
+        {
+            argsList.add( "-NODE_CLASS=" + this.nodeClass );
         }
 
         if ( StringUtils.isNotEmpty( this.nodeFactory ) )
