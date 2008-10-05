@@ -48,6 +48,11 @@ class JJDoc
     private File outputFile;
 
     /**
+     * The option CSS.
+     */
+    private String cssHref;
+
+    /**
      * The option TEXT.
      */
     private Boolean text;
@@ -86,9 +91,19 @@ class JJDoc
     }
 
     /**
+     * Sets the option CSS, i.e the hypertext reference to a CSS file for the generated HTML output.
+     * 
+     * @param value The option value, may be <code>null</code> to use the default style.
+     */
+    public void setCssHref( String value )
+    {
+        this.cssHref = value;
+    }
+
+    /**
      * Sets the option TEXT.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the default value.
      */
     public void setText( Boolean value )
     {
@@ -98,7 +113,7 @@ class JJDoc
     /**
      * Sets the option value ONE_TABLE.
      * 
-     * @param value The option value, may be <code>null</code>.
+     * @param value The option value, may be <code>null</code> to use the default value.
      */
     public void setOneTable( Boolean value )
     {
@@ -154,6 +169,11 @@ class JJDoc
         if ( this.outputFile != null )
         {
             argsList.add( "-OUTPUT_FILE=" + this.outputFile.getAbsolutePath() );
+        }
+
+        if ( this.cssHref != null && this.cssHref.length() > 0 )
+        {
+            argsList.add( "-CSS=" + this.cssHref );
         }
 
         if ( this.inputFile != null )

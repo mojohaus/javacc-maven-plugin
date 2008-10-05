@@ -123,6 +123,16 @@ public class JJDocMojo
     private File outputDirectory;
 
     /**
+     * The hypertext reference to an optional CSS file for the generated HTML documents. If specified, this CSS file
+     * will be included via a <code>&lt;link&gt;</code> element in the HTML documents. Otherwise, the default style will
+     * be used.
+     * 
+     * @parameter expression="${cssHref}"
+     * @since 2.5
+     */
+    private String cssHref;
+
+    /**
      * A flag to specify the output format for the generated documentation. If set to <code>true</code>, JJDoc will
      * generate a plain text description of the BNF. Some formatting is done via tab characters, but the intention is to
      * leave it as plain as possible. Specifying <code>false</code> causes JJDoc to generate a hyperlinked HTML
@@ -426,6 +436,7 @@ public class JJDocMojo
     {
         JJDoc jjdoc = new JJDoc();
         jjdoc.setLog( getLog() );
+        jjdoc.setCssHref( this.cssHref );
         jjdoc.setText( Boolean.valueOf( this.text ) );
         jjdoc.setOneTable( Boolean.valueOf( this.oneTable ) );
         return jjdoc;
