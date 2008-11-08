@@ -66,7 +66,7 @@
               <buildNodeFiles>true</buildNodeFiles>
               <multi>true</multi>
               <nodeDefaultVoid>false</nodeDefaultVoid>
-              <nodeFactory>false</nodeFactory>
+              <nodeFactory>SimpleNode</nodeFactory>
               <nodePackage>org</nodePackage>
               <nodePrefix>Ast</nodePrefix>
               <nodeScopeHook>true</nodeScopeHook>
@@ -90,6 +90,10 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-7</version>
+      </plugin>
     </plugins>
   </build>
 
@@ -111,6 +115,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>2.0.1</version>
         <reportSets>
           <reportSet/>
         </reportSets>
