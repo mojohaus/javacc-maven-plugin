@@ -148,7 +148,7 @@ under the License.
               <postBuildHookScript>verify.bsh</postBuildHookScript>
               <settingsFile>src/it/settings.xml</settingsFile>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <showErrors>true</showErrors>
+              <debug>true</debug>
             </configuration>
             <executions>
               <execution>

@@ -24,12 +24,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.SelectorUtils;
 
 /**
  * Provides common services for all mojos that compile JavaCC grammar files.
@@ -50,6 +52,13 @@ public abstract class AbstractJavaCCMojo
      * @required
      */
     private MavenProject project;
+
+    /**
+     * The set of compile source roots whose contents are not generated as part of the build, i.e. those that usually
+     * reside somewhere below "${basedir}/src" in the project structure. Files in these source roots are owned by the
+     * user and must not be overwritten with generated files.
+     */
+    private Collection nonGeneratedSourceRoots;
 
     /**
      * The Java version for which to generate source code. Default value is <code>1.4</code>.
@@ -318,6 +327,13 @@ public abstract class AbstractJavaCCMojo
     protected abstract int getStaleMillis();
 
     /**
+     * Gets all the output directories to register with the project for compilation.
+     * 
+     * @return The compile source roots to register with the project, never <code>null</code>.
+     */
+    protected abstract File[] getCompileSourceRoots();
+
+    /**
      * Gets the package into which the generated parser files should be stored.
      * 
      * @return The package into which the generated parser files should be stored, can be <code>null</code> to use the
@@ -351,42 +367,31 @@ public abstract class AbstractJavaCCMojo
         }
         else
         {
-            File tempDirectory =
-                new File( this.project.getBuild().getDirectory(), "javacc-" + System.currentTimeMillis() );
-            tempDirectory.mkdirs();
+            determineNonGeneratedSourceRoots();
 
             for ( int i = 0; i < grammarInfos.length; i++ )
             {
-                processGrammar( grammarInfos[i], tempDirectory );
-            }
-            
-            try
-            {
-                copyNonCustomizedSourceFiles( tempDirectory );
-                FileUtils.deleteDirectory( tempDirectory );
-            }
-            catch ( IOException e )
-            {
-                throw new MojoExecutionException( "Failed to copy generated source files to output directory:"
-                    + tempDirectory + " -> " + getOutputDirectory(), e );
+                processGrammar( grammarInfos[i] );
             }
 
             getLog().info( "Processed " + grammarInfos.length + " grammar" + ( grammarInfos.length != 1 ? "s" : "" ) );
         }
 
-        addCompileSourceRoot( getOutputDirectory() );
+        Collection compileSourceRoots = new LinkedHashSet( Arrays.asList( getCompileSourceRoots() ) );
+        for ( Iterator it = compileSourceRoots.iterator(); it.hasNext(); )
+        {
+            addCompileSourceRoot( (File) it.next() );
+        }
     }
 
     /**
      * Passes the specified grammar file through the tool.
      * 
      * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
-     * @param targetDirectory The absolute path to the output directory for the generated source files, must not be
-     *            <code>null</code>.
      * @throws MojoExecutionException If the invocation of the tool failed.
      * @throws MojoFailureException If the tool reported a non-zero exit code.
      */
-    protected abstract void processGrammar( GrammarInfo grammarInfo, File targetDirectory )
+    protected abstract void processGrammar( GrammarInfo grammarInfo )
         throws MojoExecutionException, MojoFailureException;
 
     /**
@@ -429,36 +434,144 @@ public abstract class AbstractJavaCCMojo
     }
 
     /**
-     * Copies the Java files from the specified temporary source root to the configured output directory, excluding all
-     * those source files that are already present in one of the compile source roots of the current project. This
-     * prevents duplicate source errors in case the user created customized source files for some generator outputs in
-     * <code>src/main/java</code>.
+     * Gets a temporary directory within the project's build directory.
      * 
-     * @param tempDirectory The absolute path to the temporary source root, must not be <code>null</code>.
-     * @throws IOException If any file could not be copied.
+     * @return The path to the temporary directory, never <code>null</code>.
      */
-    private void copyNonCustomizedSourceFiles( File tempDirectory )
-        throws IOException
+    protected File getTempDirectory()
     {
-        if ( !tempDirectory.exists() )
+        return new File( this.project.getBuild().getDirectory(), "javacc-" + System.currentTimeMillis() );
+    }
+
+    /**
+     * Deletes the specified temporary directory.
+     * 
+     * @param tempDirectory The directory to delete, must not be <code>null</code>.
+     */
+    protected void deleteTempDirectory( File tempDirectory )
+    {
+        try
         {
-            return;
+            FileUtils.deleteDirectory( tempDirectory );
         }
-
-        getLog().debug( "Copying generated source files: " + tempDirectory + " -> " + getOutputDirectory() );
-
-        Collection filenames = FileUtils.getFileNames( tempDirectory, "**/*.java", null, false );
-        for ( Iterator it = filenames.iterator(); it.hasNext(); )
+        catch ( IOException e )
         {
-            String filename = (String) it.next();
-            if ( !isSourceFile( filename ) )
+            getLog().warn( "Failed to delete temporary directory: " + tempDirectory, e );
+        }
+    }
+
+    /**
+     * Scans the filesystem for output files and copies them to the specified compile source root. An output file is
+     * only copied to the compile source root if it doesn't already exist in another compile source root. This prevents
+     * duplicate class errors during compilation in case the user provided customized files in
+     * <code>src/main/java</code> or similar.
+     * 
+     * @param packageName The name of the destination package for the output files, must not be <code>null</code>.
+     * @param sourceRoot The (absolute) path to the compile source root into which the output files should eventually be
+     *            copied, must not be <code>null</code>.
+     * @param tempDirectory The (absolute) path to the directory to scan for generated output files, must not be
+     *            <code>null</code>.
+     * @param updatePattern A glob pattern that matches the (simple) names of those files which should always be updated
+     *            in case we are outputting directly into <code>src/main/java</code>, may be <code>null</code>. A
+     *            leading "!" may be used to negate the pattern.
+     * @throws MojoExecutionException If the output files could not be copied.
+     */
+    protected void copyGrammarOutput( File sourceRoot, String packageName, File tempDirectory, String updatePattern )
+        throws MojoExecutionException
+    {
+        try
+        {
+            Collection tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
+            for ( Iterator it = tempFiles.iterator(); it.hasNext(); )
             {
-                FileUtils.copyFile( new File( tempDirectory, filename ), new File( getOutputDirectory(), filename ) );
+                File tempFile = (File) it.next();
+
+                String outputPath = "";
+                if ( packageName.length() > 0 )
+                {
+                    outputPath = packageName.replace( '.', '/' ) + '/';
+                }
+                outputPath += tempFile.getName();
+                File outputFile = new File( sourceRoot, outputPath );
+
+                File sourceFile = findSourceFile( outputPath );
+
+                boolean alwaysUpdate = false;
+                if ( updatePattern != null && sourceFile != null )
+                {
+                    if ( updatePattern.startsWith( "!" ) )
+                    {
+                        alwaysUpdate = !SelectorUtils.match( updatePattern.substring( 1 ), tempFile.getName() );
+                    }
+                    else
+                    {
+                        alwaysUpdate = SelectorUtils.match( updatePattern, tempFile.getName() );
+                    }
+                }
+
+                if ( sourceFile == null || ( alwaysUpdate && sourceFile.equals( outputFile ) ) )
+                {
+                    getLog().debug( "Copying generated file: " + outputPath );
+                    try
+                    {
+                        FileUtils.copyFile( tempFile, outputFile );
+                    }
+                    catch ( IOException e )
+                    {
+                        throw new MojoExecutionException( "Failed to copy generated source file to output directory:"
+                            + tempFile + " -> " + outputFile, e );
+                    }
+                }
+                else
+                {
+                    getLog().debug( "Skipping customized file: " + outputPath );
+                }
             }
-            else
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to copy generated source files", e );
+        }
+    }
+
+    /**
+     * Determines those compile source roots of the project that do not reside below the project's build directories.
+     * These compile source roots are assumed to contain hand-crafted sources that must not be overwritten with
+     * generated files. In most cases, this is simply "${project.build.sourceDirectory}".
+     * 
+     * @throws MojoExecutionException If the compile source rotos could not be determined.
+     */
+    private void determineNonGeneratedSourceRoots()
+        throws MojoExecutionException
+    {
+        this.nonGeneratedSourceRoots = new LinkedHashSet();
+        try
+        {
+            String targetPrefix =
+                new File( this.project.getBuild().getDirectory() ).getCanonicalPath() + File.separator;
+            Collection sourceRoots = this.project.getCompileSourceRoots();
+            for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
             {
-                getLog().debug( "Detected customized generator output: " + filename );
+                File sourceRoot = new File( it.next().toString() );
+                if ( !sourceRoot.isAbsolute() )
+                {
+                    sourceRoot = new File( this.project.getBasedir(), sourceRoot.getPath() );
+                }
+                String sourcePath = sourceRoot.getCanonicalPath();
+                if ( !sourcePath.startsWith( targetPrefix ) )
+                {
+                    this.nonGeneratedSourceRoots.add( sourceRoot );
+                    getLog().debug( "Non-generated compile source root: " + sourceRoot );
+                }
+                else
+                {
+                    getLog().debug( "Generated compile source root: " + sourceRoot );
+                }
             }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to determine non-generated source roots", e );
         }
     }
 
@@ -467,26 +580,21 @@ public abstract class AbstractJavaCCMojo
      * with the current Maven project.
      * 
      * @param filename The source filename to check, relative to a source root, must not be <code>null</code>.
-     * @return <code>true</code> if any compile source root of the current project already contains a source file with
-     *         the specified name, <code>false</code> otherwise.
+     * @return The (absolute) path to the existing source file if any, <code>null</code> otherwise.
      */
-    private boolean isSourceFile( String filename )
+    private File findSourceFile( String filename )
     {
-        Collection sourceRoots = this.project.getCompileSourceRoots();
+        Collection sourceRoots = this.nonGeneratedSourceRoots;
         for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
         {
-            File sourceRoot = new File( (String) it.next() );
-            if ( !sourceRoot.isAbsolute() )
-            {
-                sourceRoot = new File( this.project.getBasedir(), sourceRoot.getPath() );
-            }
+            File sourceRoot = (File) it.next();
             File sourceFile = new File( sourceRoot, filename );
             if ( sourceFile.exists() )
             {
-                return true;
+                return sourceFile;
             }
         }
-        return false;
+        return null;
     }
 
     /**

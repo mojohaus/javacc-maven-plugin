@@ -4,30 +4,31 @@ import org.codehaus.plexus.util.*;
 
 try
 {
-    File outputDir = new File( basedir, "target/generated-sources/javacc" );
+    File javaccDir = new File( basedir, "target/generated-sources/javacc" );
+    File jtbDir = new File( basedir, "target/generated-sources/jtb" );
     
-    File nodeFile = new File( outputDir, "org/syntaxtree/Node.java");
+    File nodeFile = new File( jtbDir, "org/syntaxtree/Node.java");
     if ( nodeFile.length() <= 0 )
     {
         System.err.println( "Could not find generated java file: " + nodeFile );
         return false;
     }
     
-    File visitorFile = new File( outputDir, "org/visitor/Visitor.java");
+    File visitorFile = new File( jtbDir, "org/visitor/Visitor.java");
     if ( visitorFile.length() <= 0 )
     {
         System.err.println( "Could not find generated java file: " + visitorFile );
         return false;
     }
     
-    File parserFile = new File( outputDir, "org/SubScheme.java");
+    File parserFile = new File( javaccDir, "org/SubScheme.java");
     if ( parserFile.length() <= 0 )
     {
         System.err.println( "Could not find generated java file: " + parserFile );
         return false;
     }
 
-    File customFile = new File( outputDir, "org/Token.java" );
+    File customFile = new File( javaccDir, "org/Token.java" );
     if ( customFile.length() <= 0 )
     {
         System.err.println( "Could not find generated java file: " + file );
