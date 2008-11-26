@@ -380,7 +380,7 @@ public abstract class AbstractJavaCCMojo
         Collection compileSourceRoots = new LinkedHashSet( Arrays.asList( getCompileSourceRoots() ) );
         for ( Iterator it = compileSourceRoots.iterator(); it.hasNext(); )
         {
-            addCompileSourceRoot( (File) it.next() );
+            addSourceRoot( (File) it.next() );
         }
     }
 
@@ -598,11 +598,23 @@ public abstract class AbstractJavaCCMojo
     }
 
     /**
+     * Determines whether the specified directory denotes a compile source root of the current project.
+     * 
+     * @param directory The directory to check, must not be <code>null</code>.
+     * @return <code>true</code> if the specified directory is a compile source root of the project, <code>false</code>
+     *         otherwise.
+     */
+    protected boolean isSourceRoot( File directory )
+    {
+        return this.nonGeneratedSourceRoots.contains( directory );
+    }
+
+    /**
      * Registers the specified directory as a compile source root for the current project.
      * 
-     * @param directory The absolute path to the compile source, must not be <code>null</code>.
+     * @param directory The absolute path to the source root, must not be <code>null</code>.
      */
-    private void addCompileSourceRoot( File directory )
+    private void addSourceRoot( File directory )
     {
         if ( this.project != null )
         {

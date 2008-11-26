@@ -318,8 +318,12 @@ public class JJTreeJavaCCMojo
         copyGrammarOutput( getOutputDirectory(), grammarInfo.getParserPackage(), parserDirectory,
                            grammarInfo.getParserName() + "*" );
 
-        // copy source files next to grammar (legacy support for custom sources)
-        copyGrammarOutput( getOutputDirectory(), grammarInfo.getParserPackage(), jjtDirectory, "*" );
+        // copy source files which are next to grammar unless the grammar resides in an ordinary source root
+        // (legacy support for custom sources)
+        if ( !isSourceRoot( grammarInfo.getSourceDirectory() ) )
+        {
+            copyGrammarOutput( getOutputDirectory(), grammarInfo.getParserPackage(), jjtDirectory, "*" );
+        }
 
         deleteTempDirectory( tempDirectory );
     }

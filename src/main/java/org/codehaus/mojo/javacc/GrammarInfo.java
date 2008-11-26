@@ -183,6 +183,17 @@ class GrammarInfo
     }
 
     /**
+     * Gets the absolute path to the base directory in which the grammar file resides. Note that this is not necessarily
+     * the parent directory of the grammar file.
+     * 
+     * @return The absolute path to the base directory in which the grammar file resides, never <code>null</code>.
+     */
+    public File getSourceDirectory()
+    {
+        return this.sourceDirectory;
+    }
+
+    /**
      * Gets the absolute path to the grammar file.
      * 
      * @return The absolute path to the grammar file, never <code>null</code>.
