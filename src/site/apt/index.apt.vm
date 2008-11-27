@@ -9,7 +9,7 @@
  February 09 2008
  ------
 
-JavaCC Maven Plugin
+${project.name}
 
   This plugin uses the JavaCC parser generator to process JavaCC 
   grammar files and generate the appropriate Java source files.  For general information about JavaCC, 

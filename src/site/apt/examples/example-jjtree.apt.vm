@@ -20,7 +20,7 @@ JJTree Examples
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>jjtree-javacc</id>
