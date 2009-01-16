@@ -96,6 +96,7 @@ public class ForkedJvmTest
         jvm.addArgument( nonce );
         jvm.addArguments( new String[] { "arg1", "arg2" } );
         jvm.addArgument( file );
+        System.out.println( "Forking: " + jvm );
         int exitcode = jvm.run();
         String out = stdout.getOutput();
         String err = stderr.getOutput();
