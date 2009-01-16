@@ -81,7 +81,7 @@ public class ForkedJvmTest
     public void testFork()
         throws Exception
     {
-        File workDir = new File( System.getProperty( "user.home" ) ).getAbsoluteFile();
+        File workDir = new File( System.getProperty( "user.home" ) ).getCanonicalFile();
         File file = new File( "test" ).getAbsoluteFile();
         String nonce = Integer.toString( hashCode() );
 
@@ -104,13 +104,13 @@ public class ForkedJvmTest
 
         assertEquals( 27, exitcode );
 
-        assertEquals( workDir.getPath(), err.trim() );
+        assertEquals( workDir, new File( err.trim() ) );
 
         assertEquals( 4, args.length );
         assertEquals( nonce, args[0] );
         assertEquals( "arg1", args[1] );
         assertEquals( "arg2", args[2] );
-        assertEquals( file.getPath(), args[3] );
+        assertEquals( file, new File( args[3] ) );
     }
 
 }
