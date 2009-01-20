@@ -135,7 +135,7 @@ under the License.
 
   <profiles>
     <profile>
-      <id>integration-tests</id>
+      <id>run-its</id>
       <activation>
         <property>
           <name>maven.test.skip</name>
@@ -173,7 +173,7 @@ under the License.
       </build>
     </profile>
     <profile>
-      <id>integration-tests-java14</id>
+      <id>run-its-java14</id>
       <activation>
         <jdk>1.4</jdk>
       </activation>
