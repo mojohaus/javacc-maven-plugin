@@ -28,6 +28,7 @@
             <configuration>
               <outputDirectory>target/generated-sources/jjtree</outputDirectory>
               <nodePackage>*.node</nodePackage>
+              <jdkVersion>1.4</jdkVersion>
             </configuration>
           </execution>
         </executions>

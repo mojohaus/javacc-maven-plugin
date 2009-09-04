@@ -52,6 +52,7 @@
         <configuration>
           <sourceDirectory>${project.build.directory}/generated-sources/javacc</sourceDirectory>
           <outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
+          <jdkVersion>1.4</jdkVersion>
         </configuration>
       </plugin>
     </plugins>

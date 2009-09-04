@@ -86,6 +86,7 @@
               <outputDirectory>target/javacc</outputDirectory>
               <timestampDirectory>target/javacc-ts</timestampDirectory>
               <isStatic>false</isStatic>
+              <jdkVersion>1.4</jdkVersion>
             </configuration>
           </execution>
         </executions>

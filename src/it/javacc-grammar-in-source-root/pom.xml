@@ -21,6 +21,7 @@
         <version>@pom.version@</version>
         <configuration>
           <sourceDirectory>src/main/java</sourceDirectory>
+          <jdkVersion>1.4</jdkVersion>
         </configuration>
         <executions>
           <execution>

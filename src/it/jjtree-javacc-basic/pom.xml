@@ -19,6 +19,9 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
         <version>@pom.version@</version>
+        <configuration>
+          <jdkVersion>1.4</jdkVersion>
+        </configuration>
         <executions>
           <execution>
             <id>jjtree-javacc</id>
