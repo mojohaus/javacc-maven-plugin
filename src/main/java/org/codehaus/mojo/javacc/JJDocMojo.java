@@ -123,6 +123,14 @@ public class JJDocMojo
     private File outputDirectory;
 
     /**
+     * The file encoding to use for reading the grammar files.
+     * 
+     * @parameter expression="${grammarEncoding}" default-value="${project.build.sourceEncoding}"
+     * @since 2.6
+     */
+    private String grammarEncoding;
+
+    /**
      * The hypertext reference to an optional CSS file for the generated HTML documents. If specified, this CSS file
      * will be included via a <code>&lt;link&gt;</code> element in the HTML documents. Otherwise, the default style will
      * be used.
@@ -135,12 +143,22 @@ public class JJDocMojo
     /**
      * A flag to specify the output format for the generated documentation. If set to <code>true</code>, JJDoc will
      * generate a plain text description of the BNF. Some formatting is done via tab characters, but the intention is to
-     * leave it as plain as possible. Specifying <code>false</code> causes JJDoc to generate a hyperlinked HTML
-     * document.
+     * leave it as plain as possible. Specifying <code>false</code> causes JJDoc to generate a hyperlinked HTML document
+     * unless the parameter {@link #bnf} has been set to <code>true</code>. Default value is <code>false</code>.
      * 
-     * @parameter expression="${text}" default-value=false
+     * @parameter expression="${text}"
      */
-    private boolean text;
+    private Boolean text;
+
+    /**
+     * A flag whether to generate a plain text document with the unformatted BNF. Note that setting this option to
+     * <code>true</code> is only effective if the parameter {@link #text} is <code>false</code>. Default value is
+     * <code>false</code>.
+     * 
+     * @parameter expression="${bnf}"
+     * @since 2.6
+     */
+    private Boolean bnf;
 
     /**
      * This option controls the structure of the generated HTML output. If set to <code>true</code>, a single HTML
@@ -338,13 +356,13 @@ public class JJDocMojo
 
     /**
      * The JJDoc output file will have a <code>.html</code> or <code>.txt</code> extension depending on the value of
-     * the parameter {@link #text}.
+     * the parameters {@link #text} and {@link #bnf}.
      * 
      * @return The file extension (including the leading period) to be used for the JJDoc output files.
      */
     private String getOutputFileExtension()
     {
-        if ( this.text )
+        if ( Boolean.TRUE.equals( this.text ) || Boolean.TRUE.equals( this.bnf ) )
         {
             return ".txt";
         }
@@ -436,8 +454,10 @@ public class JJDocMojo
     {
         JJDoc jjdoc = new JJDoc();
         jjdoc.setLog( getLog() );
+        jjdoc.setGrammarEncoding( this.grammarEncoding );
         jjdoc.setCssHref( this.cssHref );
-        jjdoc.setText( Boolean.valueOf( this.text ) );
+        jjdoc.setText( this.text );
+        jjdoc.setBnf( this.bnf );
         jjdoc.setOneTable( Boolean.valueOf( this.oneTable ) );
         return jjdoc;
     }

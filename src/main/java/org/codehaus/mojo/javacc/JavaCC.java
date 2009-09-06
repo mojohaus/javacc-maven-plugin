@@ -48,6 +48,11 @@ class JavaCC
     private File outputDirectory;
 
     /**
+     * The option GRAMMAR_ENCODING.
+     */
+    private String grammarEncoding;
+
+    /**
      * The option JDK_VERSION.
      */
     private String jdkVersion;
@@ -168,6 +173,11 @@ class JavaCC
     private Boolean keepLineColumn;
 
     /**
+     * The option SUPPORT_CLASS_VISIBILITY_PUBLIC.
+     */
+    private Boolean supportClassVisibilityPublic;
+
+    /**
      * Sets the absolute path to the grammar file to pass into JavaCC for compilation.
      * 
      * @param value The absolute path to the grammar file to pass into JavaCC for compilation.
@@ -195,6 +205,16 @@ class JavaCC
             throw new IllegalArgumentException( "path is not absolute: " + value );
         }
         this.outputDirectory = value;
+    }
+
+    /**
+     * Sets the option GRAMMAR_ENCODING.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setGrammarEncoding( String value )
+    {
+        this.grammarEncoding = value;
     }
 
     /**
@@ -438,6 +458,16 @@ class JavaCC
     }
 
     /**
+     * Sets the option SUPPORT_CLASS_VISIBILITY_PUBLIC.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setSupportClassVisibilityPublic( Boolean value )
+    {
+        this.supportClassVisibilityPublic = value;
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected int execute()
@@ -463,6 +493,11 @@ class JavaCC
     private String[] generateArguments()
     {
         List argsList = new ArrayList();
+
+        if ( StringUtils.isNotEmpty( this.grammarEncoding ) )
+        {
+            argsList.add( "-GRAMMAR_ENCODING=" + this.grammarEncoding );
+        }
 
         if ( StringUtils.isNotEmpty( this.jdkVersion ) )
         {
@@ -582,6 +617,11 @@ class JavaCC
         if ( this.keepLineColumn != null )
         {
             argsList.add( "-KEEP_LINE_COLUMN=" + this.keepLineColumn );
+        }
+
+        if ( this.supportClassVisibilityPublic != null )
+        {
+            argsList.add( "-SUPPORT_CLASS_VISIBILITY_PUBLIC=" + this.supportClassVisibilityPublic );
         }
 
         if ( this.outputDirectory != null )

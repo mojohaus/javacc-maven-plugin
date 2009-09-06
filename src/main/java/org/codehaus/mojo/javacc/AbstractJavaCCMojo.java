@@ -61,7 +61,8 @@ public abstract class AbstractJavaCCMojo
     private Collection nonGeneratedSourceRoots;
 
     /**
-     * The Java version for which to generate source code. Default value is <code>1.4</code>.
+     * The Java version for which to generate source code. Default value is <code>1.5</code> for plugin version 2.6+ and
+     * <code>1.4</code> in older versions.
      * 
      * @parameter expression="${jdkVersion}"
      * @since 2.4
@@ -265,10 +266,38 @@ public abstract class AbstractJavaCCMojo
     private Boolean keepLineColumn;
 
     /**
+     * A flag whether the generated support classes of the parser should have public or package-private visibility.
+     * Default value is <code>true</code>.
+     * 
+     * @parameter expression="${supportClassVisibilityPublic}"
+     * @since 2.6
+     */
+    private Boolean supportClassVisibilityPublic;
+
+    /**
+     * The file encoding to use for reading the grammar files.
+     * 
+     * @parameter expression="${grammarEncoding}" default-value="${project.build.sourceEncoding}"
+     * @since 2.6
+     */
+    private String grammarEncoding;
+
+    /**
+     * Gets the file encoding of the grammar files.
+     * 
+     * @return The file encoding of the grammar files or <code>null</code> if the user did not specify this mojo
+     *         parameter.
+     */
+    protected String getGrammarEncoding()
+    {
+        return this.grammarEncoding;
+    }
+
+    /**
      * Gets the Java version for which to generate source code.
      * 
-     * @return The Java version for which to generate source code, will be <code>null</code> if the user did not
-     *         specify this mojo parameter.
+     * @return The Java version for which to generate source code, will be <code>null</code> if the user did not specify
+     *         this mojo parameter.
      */
     protected String getJdkVersion()
     {
@@ -634,6 +663,7 @@ public abstract class AbstractJavaCCMojo
     {
         JavaCC javacc = new JavaCC();
         javacc.setLog( getLog() );
+        javacc.setGrammarEncoding( this.grammarEncoding );
         javacc.setJdkVersion( this.jdkVersion );
         javacc.setStatic( this.isStatic );
         javacc.setBuildParser( this.buildParser );
@@ -658,6 +688,7 @@ public abstract class AbstractJavaCCMojo
         javacc.setUnicodeInput( this.unicodeInput );
         javacc.setUserCharStream( this.userCharStream );
         javacc.setUserTokenManager( this.userTokenManager );
+        javacc.setSupportClassVisibilityPublic( this.supportClassVisibilityPublic );
         return javacc;
     }
 

@@ -49,6 +49,11 @@ class JJDoc
     private File outputFile;
 
     /**
+     * The option GRAMMAR_ENCODING.
+     */
+    private String grammarEncoding;
+
+    /**
      * The option CSS.
      */
     private String cssHref;
@@ -57,6 +62,11 @@ class JJDoc
      * The option TEXT.
      */
     private Boolean text;
+
+    /**
+     * The option BNF.
+     */
+    private Boolean bnf;
 
     /**
      * The option ONE_TABLE.
@@ -92,6 +102,16 @@ class JJDoc
     }
 
     /**
+     * Sets the option GRAMMAR_ENCODING.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setGrammarEncoding( String value )
+    {
+        this.grammarEncoding = value;
+    }
+
+    /**
      * Sets the option CSS, i.e the hypertext reference to a CSS file for the generated HTML output.
      * 
      * @param value The option value, may be <code>null</code> to use the default style.
@@ -109,6 +129,16 @@ class JJDoc
     public void setText( Boolean value )
     {
         this.text = value;
+    }
+
+    /**
+     * Sets the option BNF.
+     * 
+     * @param value The option value, may be <code>null</code> to use the default value.
+     */
+    public void setBnf( Boolean value )
+    {
+        this.bnf = value;
     }
 
     /**
@@ -157,9 +187,19 @@ class JJDoc
     {
         List argsList = new ArrayList();
 
+        if ( StringUtils.isNotEmpty( this.grammarEncoding ) )
+        {
+            argsList.add( "-GRAMMAR_ENCODING=" + this.grammarEncoding );
+        }
+
         if ( this.text != null )
         {
             argsList.add( "-TEXT=" + this.text );
+        }
+
+        if ( this.bnf != null )
+        {
+            argsList.add( "-BNF=" + this.bnf );
         }
 
         if ( this.oneTable != null )

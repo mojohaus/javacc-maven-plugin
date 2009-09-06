@@ -49,6 +49,11 @@ class JJTree
     private File outputDirectory;
 
     /**
+     * The option GRAMMAR_ENCODING.
+     */
+    private String grammarEncoding;
+
+    /**
      * The option JDK_VERSION.
      */
     private String jdkVersion;
@@ -173,6 +178,16 @@ class JJTree
             outputFile = new File( this.outputDirectory, fileName );
         }
         return outputFile;
+    }
+
+    /**
+     * Sets the option GRAMMAR_ENCODING.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setGrammarEncoding( String value )
+    {
+        this.grammarEncoding = value;
     }
 
     /**
@@ -362,6 +377,11 @@ class JJTree
     private String[] generateArguments()
     {
         List argsList = new ArrayList();
+
+        if ( StringUtils.isNotEmpty( this.grammarEncoding ) )
+        {
+            argsList.add( "-GRAMMAR_ENCODING=" + this.grammarEncoding );
+        }
 
         if ( StringUtils.isNotEmpty( jdkVersion ) )
         {

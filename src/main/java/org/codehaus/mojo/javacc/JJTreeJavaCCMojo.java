@@ -339,6 +339,7 @@ public class JJTreeJavaCCMojo
     {
         JJTree jjtree = new JJTree();
         jjtree.setLog( getLog() );
+        jjtree.setGrammarEncoding( getGrammarEncoding() );
         jjtree.setJdkVersion( getJdkVersion() );
         jjtree.setStatic( getIsStatic() );
         jjtree.setBuildNodeFiles( this.buildNodeFiles );
