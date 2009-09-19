@@ -83,7 +83,7 @@ under the License.
     <dependency>
       <groupId>net.java.dev.javacc</groupId>
       <artifactId>javacc</artifactId>
-      <version>4.1</version>
+      <version>5.0</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>

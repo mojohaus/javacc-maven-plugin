@@ -26,6 +26,7 @@
               <goal>javacc</goal>
             </goals>
             <configuration>
+              <grammarEncoding>UTF-8</grammarEncoding>
               <sourceDirectory>src/javacc</sourceDirectory>
               <outputDirectory>target/javacc</outputDirectory>
               <timestampDirectory>target/javacc-ts</timestampDirectory>
@@ -51,6 +52,7 @@
               <forceLaCheck>true</forceLaCheck>
               <cacheTokens>true</cacheTokens>
               <keepLineColumn>true</keepLineColumn>
+              <supportClassVisibilityPublic>false</supportClassVisibilityPublic>
             </configuration>
           </execution>
           <execution>
