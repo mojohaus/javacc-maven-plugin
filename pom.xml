@@ -45,13 +45,7 @@ under the License.
   </licenses>
 
   <prerequisites>
-    <!--
-    NOTE: To satisfy our dependency on plexus-utils we actually need Maven 2.0.6 because all previous versions always
-    use plexus-utils 1.1 regardless of the plugin dependency. In practice however, the only benefit of using the newer
-    plexus-utils is the fix for PLXUTILS-10 required to solve MJAVACC-35 which is a rather exceptional use-case. All
-    other use-cases work fine with the older plexus-utils and hence we can keep the prerequisite on Maven low.
-    -->
-    <maven>2.0</maven>
+    <maven>2.0.6</maven>
   </prerequisites>
 
   <scm>
