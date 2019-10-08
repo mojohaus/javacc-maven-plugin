@@ -26,7 +26,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Parses a JavaCC grammar file (<code>*.jj</code>) and transforms it to Java source files. Detailed information
- * about the JavaCC options can be found on the <a href="https://javacc.dev.java.net/">JavaCC website</a>.
+ * about the JavaCC options can be found on the <a href="https://github.com/javacc/javacc/">JavaCC website</a>.
  * 
  * @goal javacc
  * @phase generate-sources
