@@ -78,6 +78,7 @@ under the License.
       <groupId>net.java.dev.javacc</groupId>
       <artifactId>javacc</artifactId>
       <version>7.0.4</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -127,6 +128,18 @@ under the License.
     </dependency>
   </dependencies>
 
+  <build>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-javadoc-plugin</artifactId>
+    		<version>3.0.0</version>
+  			<configuration>
+  				<doclint>none</doclint>
+  			</configuration>
+  		</plugin>
+  	</plugins>
+  </build>
   <profiles>
     <profile>
       <id>run-its</id>
