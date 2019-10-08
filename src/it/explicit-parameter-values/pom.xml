@@ -53,6 +53,7 @@
               <cacheTokens>true</cacheTokens>
               <keepLineColumn>true</keepLineColumn>
               <supportClassVisibilityPublic>false</supportClassVisibilityPublic>
+              <CodeGenerator>Java</CodeGenerator>
             </configuration>
           </execution>
           <execution>
