@@ -65,7 +65,7 @@ public abstract class AbstractJavaCCMojo
      * The Java version for which to generate source code. Default value is <code>1.5</code> for plugin version 2.6+ and
      * <code>1.4</code> in older versions.
      * 
-     * @parameter expression="${jdkVersion}"
+     * @parameter property="${jdkVersion}"
      * @since 2.4
      */
     private String jdkVersion;
@@ -74,7 +74,7 @@ public abstract class AbstractJavaCCMojo
      * The number of tokens to look ahead before making a decision at a choice point during parsing. The default value
      * is <code>1</code>.
      * 
-     * @parameter expression="${lookAhead}"
+     * @parameter property="${lookAhead}"
      */
     private Integer lookAhead;
 
@@ -82,7 +82,7 @@ public abstract class AbstractJavaCCMojo
      * This is the number of tokens considered in checking choices of the form "A | B | ..." for ambiguity. Default
      * value is <code>2</code>.
      * 
-     * @parameter expression="${choiceAmbiguityCheck}"
+     * @parameter property="${choiceAmbiguityCheck}"
      */
     private Integer choiceAmbiguityCheck;
 
@@ -90,7 +90,7 @@ public abstract class AbstractJavaCCMojo
      * This is the number of tokens considered in checking all other kinds of choices (i.e., of the forms "(A)*",
      * "(A)+", and "(A)?") for ambiguity. Default value is <code>1</code>.
      * 
-     * @parameter expression="${otherAmbiguityCheck}"
+     * @parameter property="${otherAmbiguityCheck}"
      */
     private Integer otherAmbiguityCheck;
 
@@ -99,7 +99,7 @@ public abstract class AbstractJavaCCMojo
      * token manager. This allows only one parser object to be present, but it improves the performance of the parser.
      * Default value is <code>true</code>.
      * 
-     * @parameter expression="${isStatic}"
+     * @parameter property="${isStatic}"
      */
     private Boolean isStatic;
 
@@ -107,7 +107,7 @@ public abstract class AbstractJavaCCMojo
      * This option is used to obtain debugging information from the generated parser. Setting this option to
      * <code>true</code> causes the parser to generate a trace of its actions. Default value is <code>false</code>.
      * 
-     * @parameter expression="${debugParser}"
+     * @parameter property="${debugParser}"
      */
     private Boolean debugParser;
 
@@ -117,7 +117,7 @@ public abstract class AbstractJavaCCMojo
      * <code>true</code>, and in addition, also causes it to generated a trace of actions performed during lookahead
      * operation.
      * 
-     * @parameter expression="${debugLookAhead}"
+     * @parameter property="${debugLookAhead}"
      */
     private Boolean debugLookAhead;
 
@@ -125,7 +125,7 @@ public abstract class AbstractJavaCCMojo
      * This option is used to obtain debugging information from the generated token manager. Default value is
      * <code>false</code>.
      * 
-     * @parameter expression="${debugTokenManager}"
+     * @parameter property="${debugTokenManager}"
      */
     private Boolean debugTokenManager;
 
@@ -133,7 +133,7 @@ public abstract class AbstractJavaCCMojo
      * Setting it to <code>false</code> causes errors due to parse errors to be reported in somewhat less detail.
      * Default value is <code>true</code>.
      * 
-     * @parameter expression="${errorReporting}"
+     * @parameter property="${errorReporting}"
      */
     private Boolean errorReporting;
 
@@ -142,7 +142,7 @@ public abstract class AbstractJavaCCMojo
      * escapes (<code>\</code><code>u</code><i>xxxx</i>) before sending characters to the token manager. Default
      * value is <code>false</code>.
      * 
-     * @parameter expression="${javaUnicodeEscape}"
+     * @parameter property="${javaUnicodeEscape}"
      */
     private Boolean javaUnicodeEscape;
 
@@ -150,7 +150,7 @@ public abstract class AbstractJavaCCMojo
      * When set to <code>true</code>, the generated parser uses uses an input stream object that reads Unicode files.
      * By default, ASCII files are assumed. Default value is <code>false</code>.
      * 
-     * @parameter expression="${unicodeInput}"
+     * @parameter property="${unicodeInput}"
      */
     private Boolean unicodeInput;
 
@@ -158,7 +158,7 @@ public abstract class AbstractJavaCCMojo
      * Setting this option to <code>true</code> causes the generated token manager to ignore case in the token
      * specifications and the input files. Default value is <code>false</code>.
      * 
-     * @parameter expression="${ignoreCase}"
+     * @parameter property="${ignoreCase}"
      */
     private Boolean ignoreCase;
 
@@ -168,7 +168,7 @@ public abstract class AbstractJavaCCMojo
      * will cause a call to a user-defined method <code>CommonTokenAction()</code> after the token has been scanned in
      * by the token manager. Default value is <code>false</code>.
      * 
-     * @parameter expression="${commonTokenAction}"
+     * @parameter property="${commonTokenAction}"
      */
     private Boolean commonTokenAction;
 
@@ -178,7 +178,7 @@ public abstract class AbstractJavaCCMojo
      * <code>TokenManager</code> - this interface is generated into the generated parser directory. Default value is
      * <code>false</code>.
      * 
-     * @parameter expression="${userTokenManager}"
+     * @parameter property="${userTokenManager}"
      */
     private Boolean userTokenManager;
 
@@ -187,7 +187,7 @@ public abstract class AbstractJavaCCMojo
      * the options <code>javaUnicodeEscape</code> and <code>unicodeInput</code> or whether the token manager reads
      * from a user-supplied implementation of <code>CharStream</code>. Default value is <code>false</code>.
      * 
-     * @parameter expression="${userCharStream}"
+     * @parameter property="${userCharStream}"
      */
     private Boolean userCharStream;
 
@@ -195,7 +195,7 @@ public abstract class AbstractJavaCCMojo
      * A flag that controls whether the parser file (<code>*Parser.java</code>) should be generated or not. If set
      * to <code>false</code>, only the token manager is generated. Default value is <code>true</code>.
      * 
-     * @parameter expression="${buildParser}"
+     * @parameter property="${buildParser}"
      */
     private Boolean buildParser;
 
@@ -204,7 +204,7 @@ public abstract class AbstractJavaCCMojo
      * not. Setting this to <code>false</code> can speed up the generation process if only the parser part of the
      * grammar changed. Default value is <code>true</code>.
      * 
-     * @parameter expression="${buildTokenManager}"
+     * @parameter property="${buildTokenManager}"
      */
     private Boolean buildTokenManager;
 
@@ -212,7 +212,7 @@ public abstract class AbstractJavaCCMojo
      * When set to <code>true</code>, the generated token manager will include a field called <code>parser</code>
      * that references the instantiating parser instance. Default value is <code>false</code>.
      * 
-     * @parameter expression="${tokenManagerUsesParser}"
+     * @parameter property="${tokenManagerUsesParser}"
      */
     private Boolean tokenManagerUsesParser;
 
@@ -220,7 +220,7 @@ public abstract class AbstractJavaCCMojo
      * The name of the base class for the generated <code>Token</code> class. Default value is
      * <code>java.lang.Object</code>.
      * 
-     * @parameter expression="${tokenExtends}"
+     * @parameter property="${tokenExtends}"
      * @since 2.5
      */
     private String tokenExtends;
@@ -230,7 +230,7 @@ public abstract class AbstractJavaCCMojo
      * the signature <code>public static Token newToken(int ofKind, String image)</code>. By default, tokens are created
      * by calling <code>Token.newToken()</code>.
      * 
-     * @parameter expression="${tokenFactory}"
+     * @parameter property="${tokenFactory}"
      * @since 2.5
      */
     private String tokenFactory;
@@ -239,7 +239,7 @@ public abstract class AbstractJavaCCMojo
      * Enables/disables many syntactic and semantic checks on the grammar file during parser generation. Default value
      * is <code>true</code>.
      * 
-     * @parameter expression="${sanityCheck}"
+     * @parameter property="${sanityCheck}"
      */
     private Boolean sanityCheck;
 
@@ -247,7 +247,7 @@ public abstract class AbstractJavaCCMojo
      * This option setting controls lookahead ambiguity checking performed by JavaCC. Default value is
      * <code>false</code>.
      * 
-     * @parameter expression="${forceLaCheck}"
+     * @parameter property="${forceLaCheck}"
      */
     private Boolean forceLaCheck;
 
@@ -255,14 +255,14 @@ public abstract class AbstractJavaCCMojo
      * Setting this option to <code>true</code> causes the generated parser to lookahead for extra tokens ahead of
      * time. Default value is <code>false</code>.
      * 
-     * @parameter expression="${cacheTokens}"
+     * @parameter property="${cacheTokens}"
      */
     private Boolean cacheTokens;
 
     /**
      * A flag whether to keep line and column information along with a token. Default value is <code>true</code>.
      * 
-     * @parameter expression="${keepLineColumn}"
+     * @parameter property="${keepLineColumn}"
      */
     private Boolean keepLineColumn;
 
@@ -270,7 +270,7 @@ public abstract class AbstractJavaCCMojo
      * A flag whether the generated support classes of the parser should have public or package-private visibility.
      * Default value is <code>true</code>.
      * 
-     * @parameter expression="${supportClassVisibilityPublic}"
+     * @parameter property="${supportClassVisibilityPublic}"
      * @since 2.6
      */
     private Boolean supportClassVisibilityPublic;
@@ -278,7 +278,7 @@ public abstract class AbstractJavaCCMojo
     /**
      * The file encoding to use for reading the grammar files.
      * 
-     * @parameter expression="${grammarEncoding}" default-value="${project.build.sourceEncoding}"
+     * @parameter property="${grammarEncoding}" default-value="${project.build.sourceEncoding}"
      * @since 2.6
      */
     private String grammarEncoding;
@@ -307,7 +307,7 @@ public abstract class AbstractJavaCCMojo
     /**
      * Gets the backend code generator.
      * 
-     * @parameter expression="${codeGenerator}"
+     * @parameter property="${codeGenerator}"
      * @return The name of the code generator (Java, C++, C#) or <code>Java</code> if the user did not specify this mojo
      *         parameter.
      * @since 2.7

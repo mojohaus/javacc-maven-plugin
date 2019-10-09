@@ -43,7 +43,7 @@ public class JavaCCMojo
      * Package into which the generated classes will be put. Note that this will also be used to create the directory
      * structure where sources will be generated. Defaults to the package name specified in a grammar file.
      * 
-     * @parameter expression="${packageName}"
+     * @parameter property="${packageName}"
      * @deprecated As of version 2.4 because the plugin extracts the package name from each grammar file.
      */
     private String packageName;
@@ -51,7 +51,7 @@ public class JavaCCMojo
     /**
      * The directory where the JavaCC grammar files (<code>*.jj</code>) are located.
      * 
-     * @parameter expression="${sourceDirectory}" default-value="${basedir}/src/main/javacc"
+     * @parameter property="${sourceDirectory}" default-value="${basedir}/src/main/javacc"
      */
     private File sourceDirectory;
 
@@ -60,14 +60,14 @@ public class JavaCCMojo
      * compile source root of the project such that the generated files will participate in later build phases like
      * compiling and packaging.
      * 
-     * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/javacc"
+     * @parameter property="${outputDirectory}" default-value="${project.build.directory}/generated-sources/javacc"
      */
     private File outputDirectory;
 
     /**
      * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
      * 
-     * @parameter expression="${lastModGranularityMs}" default-value="0"
+     * @parameter property="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 

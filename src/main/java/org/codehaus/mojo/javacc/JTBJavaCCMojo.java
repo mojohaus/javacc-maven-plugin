@@ -45,7 +45,7 @@ public class JTBJavaCCMojo
      * <code>visitorPackageName</code> = <code>&lt;packageName&gt;.visitor</code>. Note that this option takes
      * precedence over <code>nodePackageName</code> and <code>visitorPackageName</code> if specified.
      * 
-     * @parameter expression="${package}"
+     * @parameter property="${package}"
      */
     private String packageName;
 
@@ -55,7 +55,7 @@ public class JTBJavaCCMojo
      * parameter is set to <code>*.demo</code>, the tree node classes will be located in the package
      * <code>org.apache.demo</code>. Default value is <code>*.syntaxtree</code>.
      * 
-     * @parameter expression="${nodePackageName}"
+     * @parameter property="${nodePackageName}"
      */
     private String nodePackageName;
 
@@ -65,14 +65,14 @@ public class JTBJavaCCMojo
      * parameter is set to <code>*.demo</code>, the visitor classes will be located in the package
      * <code>org.apache.demo</code>. Default value is <code>*.visitor</code>.
      * 
-     * @parameter expression="${visitorPackageName}"
+     * @parameter property="${visitorPackageName}"
      */
     private String visitorPackageName;
 
     /**
      * If <code>true</code>, JTB will suppress its semantic error checking. Default value is <code>false</code>.
      * 
-     * @parameter expression="${supressErrorChecking}"
+     * @parameter property="${supressErrorChecking}"
      */
     private Boolean supressErrorChecking;
 
@@ -80,7 +80,7 @@ public class JTBJavaCCMojo
      * If <code>true</code>, all generated comments will be wrapped in <code>&lt;pre&gt;</code> tags so that they
      * are formatted correctly in API docs. Default value is <code>false</code>.
      * 
-     * @parameter expression="${javadocFriendlyComments}"
+     * @parameter property="${javadocFriendlyComments}"
      */
     private Boolean javadocFriendlyComments;
 
@@ -88,7 +88,7 @@ public class JTBJavaCCMojo
      * Setting this option to <code>true</code> causes JTB to generate field names that reflect the structure of the
      * tree instead of generic names like <code>f0</code>, <code>f1</code> etc. Default value is <code>false</code>.
      * 
-     * @parameter expression="${descriptiveFieldNames}"
+     * @parameter property="${descriptiveFieldNames}"
      */
     private Boolean descriptiveFieldNames;
 
@@ -96,21 +96,21 @@ public class JTBJavaCCMojo
      * The qualified name of a user-defined class from which all AST nodes will inherit. By default, AST nodes will
      * inherit from the generated class <code>Node</code>.
      * 
-     * @parameter expression="${nodeParentClass}"
+     * @parameter property="${nodeParentClass}"
      */
     private String nodeParentClass;
 
     /**
      * If <code>true</code>, all nodes will contain fields for its parent node. Default value is <code>false</code>.
      * 
-     * @parameter expression="${parentPointers}"
+     * @parameter property="${parentPointers}"
      */
     private Boolean parentPointers;
 
     /**
      * If <code>true</code>, JTB will include JavaCC "special tokens" in the AST. Default value is <code>false</code>.
      * 
-     * @parameter expression="${specialTokens}"
+     * @parameter property="${specialTokens}"
      */
     private Boolean specialTokens;
 
@@ -122,14 +122,14 @@ public class JTBJavaCCMojo
      * </ul>
      * Default value is <code>false</code>.
      * 
-     * @parameter expression="${scheme}"
+     * @parameter property="${scheme}"
      */
     private Boolean scheme;
 
     /**
      * If <code>true</code>, JTB will generate a syntax tree dumping visitor. Default value is <code>false</code>.
      * 
-     * @parameter expression="${printer}"
+     * @parameter property="${printer}"
      */
     private Boolean printer;
 
@@ -138,7 +138,7 @@ public class JTBJavaCCMojo
      * for input files to pass to JTB. The parameters <code>includes</code> and <code>excludes</code> can be used to
      * select a subset of files.
      * 
-     * @parameter expression="${sourceDirectory}" default-value="${basedir}/src/main/jtb"
+     * @parameter property="${sourceDirectory}" default-value="${basedir}/src/main/jtb"
      */
     private File sourceDirectory;
 
@@ -147,7 +147,7 @@ public class JTBJavaCCMojo
      * registered as a compile source root of the project such that the generated files will participate in later build
      * phases like compiling and packaging.
      * 
-     * @parameter expression="${interimDirectory}" default-value="${project.build.directory}/generated-sources/jtb"
+     * @parameter property="${interimDirectory}" default-value="${project.build.directory}/generated-sources/jtb"
      */
     private File interimDirectory;
 
@@ -156,7 +156,7 @@ public class JTBJavaCCMojo
      * compile source root of the project such that the generated files will participate in later build phases like
      * compiling and packaging.
      * 
-     * @parameter expression="${outputDirectory}" default-value="${project.build.directory}/generated-sources/javacc"
+     * @parameter property="${outputDirectory}" default-value="${project.build.directory}/generated-sources/javacc"
      */
     private File outputDirectory;
 
@@ -181,7 +181,7 @@ public class JTBJavaCCMojo
      * The granularity in milliseconds of the last modification date for testing whether a grammar file needs
      * recompilation.
      * 
-     * @parameter expression="${lastModGranularityMs}" default-value="0"
+     * @parameter property="${lastModGranularityMs}" default-value="0"
      */
     private int staleMillis;
 
