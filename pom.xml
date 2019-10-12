@@ -137,7 +137,7 @@ under the License.
         </property>
       </activation>
       <properties>
-        <sitePluginVersion>3.0</sitePluginVersion>
+        <sitePluginVersion>3.3</sitePluginVersion>
       </properties>
       <build>
         <plugins>

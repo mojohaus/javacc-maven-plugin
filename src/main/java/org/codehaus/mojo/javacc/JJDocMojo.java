@@ -58,9 +58,7 @@ public class JJDocMojo
     /**
      * The current Maven project.
      * 
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
+     * @component
      */
     private MavenProject project;
 
@@ -118,14 +116,14 @@ public class JJDocMojo
      * indirectly as part of a site generation, the output directory configured in the Maven Site Plugin is used
      * instead.
      * 
-     * @parameter expression="${outputDirectory}" default-value="${project.reporting.outputDirectory}"
+     * @parameter property="outputDirectory" default-value="${project.reporting.outputDirectory}"
      */
     private File outputDirectory;
 
     /**
      * The file encoding to use for reading the grammar files.
      * 
-     * @parameter expression="${grammarEncoding}" default-value="${project.build.sourceEncoding}"
+     * @parameter property="grammarEncoding" default-value="${project.build.sourceEncoding}"
      * @since 2.6
      */
     private String grammarEncoding;
@@ -135,7 +133,7 @@ public class JJDocMojo
      * will be included via a <code>&lt;link&gt;</code> element in the HTML documents. Otherwise, the default style will
      * be used.
      * 
-     * @parameter expression="${cssHref}"
+     * @parameter property="cssHref"
      * @since 2.5
      */
     private String cssHref;
@@ -146,7 +144,7 @@ public class JJDocMojo
      * leave it as plain as possible. Specifying <code>false</code> causes JJDoc to generate a hyperlinked HTML document
      * unless the parameter {@link #bnf} has been set to <code>true</code>. Default value is <code>false</code>.
      * 
-     * @parameter expression="${text}"
+     * @parameter property="text"
      */
     private Boolean text;
 
@@ -155,7 +153,7 @@ public class JJDocMojo
      * <code>true</code> is only effective if the parameter {@link #text} is <code>false</code>. Default value is
      * <code>false</code>.
      * 
-     * @parameter expression="${bnf}"
+     * @parameter property="bnf"
      * @since 2.6
      */
     private Boolean bnf;
@@ -165,7 +163,7 @@ public class JJDocMojo
      * table for the entire BNF is generated. Setting it to <code>false</code> will produce one table for every
      * production in the grammar.
      * 
-     * @parameter expression="${oneTable}" default-value=true
+     * @parameter property="oneTable" default-value=true
      */
     private boolean oneTable;
 

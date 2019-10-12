@@ -41,9 +41,7 @@ public abstract class AbstractPreprocessorMojo
     /**
      * The current Maven project.
      * 
-     * @parameter default-value="${project}"
-     * @readonly
-     * @required
+     * @component
      */
     private MavenProject project;
 
