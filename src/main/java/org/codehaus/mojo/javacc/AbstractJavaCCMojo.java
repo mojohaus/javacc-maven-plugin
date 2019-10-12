@@ -545,12 +545,12 @@ public abstract class AbstractJavaCCMojo
             if (codeGenerator.equalsIgnoreCase("Java"))
             {
             	tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
-            }
+            } else
             if (codeGenerator.equalsIgnoreCase("C++"))
             {
             	tempFiles = FileUtils.getFiles( tempDirectory, "*.cc", null );
             	tempFiles.addAll(FileUtils.getFiles( tempDirectory, "*.h", null ));
-            }
+            } else
             if (codeGenerator.equalsIgnoreCase("C#"))
             {
             	tempFiles = FileUtils.getFiles( tempDirectory, "*.cs", null );
