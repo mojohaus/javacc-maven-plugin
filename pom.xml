@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>mojo-parent</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>29</version>
+    <version>50</version>
   </parent>
 
   <artifactId>javacc-maven-plugin</artifactId>
@@ -49,9 +49,9 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/mojo/trunk/mojo/javacc-maven-plugin</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/javacc-maven-plugin</developerConnection>
-    <url>http://fisheye.codehaus.org/browse/mojo/trunk/mojo/javacc-maven-plugin</url>
+    <connection>scm:git:https://github.com/mojohaus/javacc-maven-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/mojohaus/javacc-maven-plugin.git</developerConnection>
+    <url>https://github.com/mojohaus/javacc-maven-plugin</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
