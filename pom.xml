@@ -78,6 +78,7 @@ under the License.
       <groupId>net.java.dev.javacc</groupId>
       <artifactId>javacc</artifactId>
       <version>5.0</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -91,7 +92,7 @@ under the License.
       <!--
       NOTE: Only reflectively accessed to avoid dependency on Java 1.5 for compilation.
       -->
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
