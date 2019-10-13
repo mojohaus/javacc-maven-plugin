@@ -282,6 +282,27 @@ public abstract class AbstractJavaCCMojo
     private String grammarEncoding;
 
     /**
+     * The target code generator for compiling this grammar.
+     * 
+     * @parameter property="codeGenerator" default-value="Java"
+     * @since 2.7
+     */
+
+    private String codeGenerator;
+
+    /**
+     * Gets the backend code generator.
+     * 
+     * @return The name of the code generator (Java, C++, C#) or <code>Java</code> if the user did not specify this mojo
+     *         parameter.
+     * @since 2.7
+     */
+    protected String getCodeGenerator()
+    {
+        return this.codeGenerator;
+    }
+
+    /**
      * Gets the file encoding of the grammar files.
      * 
      * @return The file encoding of the grammar files or <code>null</code> if the user did not specify this mojo
@@ -516,7 +537,21 @@ public abstract class AbstractJavaCCMojo
     {
         try
         {
-            Collection tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
+            Collection tempFiles = null;
+            if (codeGenerator.equalsIgnoreCase("Java"))
+            {
+            	tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
+            } else
+            if (codeGenerator.equalsIgnoreCase("C++"))
+            {
+            	tempFiles = FileUtils.getFiles( tempDirectory, "*.cc", null );
+            	tempFiles.addAll(FileUtils.getFiles( tempDirectory, "*.h", null ));
+            } else
+            if (codeGenerator.equalsIgnoreCase("C#"))
+            {
+            	tempFiles = FileUtils.getFiles( tempDirectory, "*.cs", null );
+            }
+
             for ( Iterator it = tempFiles.iterator(); it.hasNext(); )
             {
                 File tempFile = (File) it.next();
