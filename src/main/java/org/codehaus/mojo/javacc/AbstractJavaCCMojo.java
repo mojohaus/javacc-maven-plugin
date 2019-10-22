@@ -284,7 +284,7 @@ public abstract class AbstractJavaCCMojo
     /**
      * The target code generator for compiling this grammar.
      * 
-     * @parameter property="codeGenerator" default-value="Java"
+     * @parameter property="codeGenerator"
      * @since 2.7
      */
 
@@ -293,8 +293,7 @@ public abstract class AbstractJavaCCMojo
     /**
      * Gets the backend code generator.
      * 
-     * @return The name of the code generator (Java, C++, C#) or <code>Java</code> if the user did not specify this mojo
-     *         parameter.
+     * @return The name of the code generator (Java, C++, C#) 
      * @since 2.7
      */
     protected String getCodeGenerator()
@@ -521,10 +520,9 @@ public abstract class AbstractJavaCCMojo
      * only copied to the compile source root if it doesn't already exist in another compile source root. This prevents
      * duplicate class errors during compilation in case the user provided customized files in
      * <code>src/main/java</code> or similar.
-     * 
-     * @param packageName The name of the destination package for the output files, must not be <code>null</code>.
      * @param sourceRoot The (absolute) path to the compile source root into which the output files should eventually be
      *            copied, must not be <code>null</code>.
+     * @param packageName The name of the destination package for the output files, must not be <code>null</code>.
      * @param tempDirectory The (absolute) path to the directory to scan for generated output files, must not be
      *            <code>null</code>.
      * @param updatePattern A glob pattern that matches the (simple) names of those files which should always be updated
@@ -538,18 +536,18 @@ public abstract class AbstractJavaCCMojo
         try
         {
             Collection tempFiles = null;
-            if (codeGenerator.equalsIgnoreCase("Java"))
+            if (codeGenerator == null || codeGenerator.equalsIgnoreCase("Java"))
             {
-            	tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
+            	tempFiles = FileUtils.getFiles( tempDirectory, "*." + Suffix.Java.string(), null );
             } else
             if (codeGenerator.equalsIgnoreCase("C++"))
             {
-            	tempFiles = FileUtils.getFiles( tempDirectory, "*.cc", null );
+            	tempFiles = FileUtils.getFiles( tempDirectory, "*." + Suffix.Cpp.string(), null );
             	tempFiles.addAll(FileUtils.getFiles( tempDirectory, "*.h", null ));
             } else
             if (codeGenerator.equalsIgnoreCase("C#"))
             {
-            	tempFiles = FileUtils.getFiles( tempDirectory, "*.cs", null );
+            	tempFiles = FileUtils.getFiles( tempDirectory, "*." + Suffix.CSharp.string(), null );
             }
 
             for ( Iterator it = tempFiles.iterator(); it.hasNext(); )
@@ -730,6 +728,7 @@ public abstract class AbstractJavaCCMojo
         javacc.setUserCharStream( this.userCharStream );
         javacc.setUserTokenManager( this.userTokenManager );
         javacc.setSupportClassVisibilityPublic( this.supportClassVisibilityPublic );
+        javacc.setCodeGenerator(this.codeGenerator);
         return javacc;
     }
 
