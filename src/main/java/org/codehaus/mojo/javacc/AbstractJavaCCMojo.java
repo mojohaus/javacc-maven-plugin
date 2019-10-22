@@ -536,7 +536,7 @@ public abstract class AbstractJavaCCMojo
         try
         {
             Collection tempFiles = null;
-            if (codeGenerator == null || codeGenerator.equalsIgnoreCase("Java"))
+            if (StringUtils.isBlank(codeGenerator) || codeGenerator.equalsIgnoreCase("Java"))
             {
             	tempFiles = FileUtils.getFiles( tempDirectory, "*." + Suffix.Java.string(), null );
             } else
