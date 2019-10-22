@@ -495,6 +495,10 @@ class JavaCC
         {
             this.outputDirectory.mkdirs();
         }
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( toString()  );
+        }
 
         return org.javacc.parser.Main.mainProgram( args );
     }
