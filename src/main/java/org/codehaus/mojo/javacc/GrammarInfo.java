@@ -77,20 +77,21 @@ class GrammarInfo
     public GrammarInfo( File sourceDir, String inputFile )
         throws IOException
     {
-        this( sourceDir, inputFile, null );
+        this( Suffix.Java, sourceDir, inputFile, null );
     }
 
     /**
      * Creates a new info from the specified grammar file.
-     * 
+     * @param suffix TODO
      * @param sourceDir The absolute path to the base directory in which the grammar file resides, must not be
      *            <code>null</code>.
      * @param inputFile The path to the grammar file (relative to the source directory), must not be <code>null</code>.
      * @param packageName The package name for the generated parser, may be <code>null</code> to use the package
      *            declaration from the grammar file.
+     * 
      * @throws IOException If reading the grammar file failed.
      */
-    public GrammarInfo( File sourceDir, String inputFile, String packageName )
+    public GrammarInfo( Suffix suffix, File sourceDir, String inputFile, String packageName )
         throws IOException
     {
         if ( !sourceDir.isAbsolute() )
@@ -140,11 +141,11 @@ class GrammarInfo
 
         if ( this.parserDirectory.length() > 0 )
         {
-            this.parserFile = new File( this.parserDirectory, this.parserName + ".java" ).getPath();
+            this.parserFile = new File( this.parserDirectory, this.parserName + "." + suffix.string()).getPath();
         }
         else
         {
-            this.parserFile = this.parserName + ".java";
+            this.parserFile = this.parserName + "." + suffix.string();
         }
     }
 
