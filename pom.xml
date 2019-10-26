@@ -150,6 +150,7 @@ under the License.
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
 						<configuration>
+							<skipInvocation>false</skipInvocation>
 							<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
 							<postBuildHookScript>verify.bsh</postBuildHookScript>
 							<settingsFile>src/it/settings.xml</settingsFile>
@@ -160,7 +161,6 @@ under the License.
 							<execution>
 								<id>integration-test</id>
 								<goals>
-									<goal>install</goal>
 									<goal>run</goal>
 								</goals>
 							</execution>
@@ -171,4 +171,16 @@ under the License.
 		</profile>
 	</profiles>
 
+	<reporting>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-javadoc-plugin</artifactId>
+	        <version>3.1.1</version>
+	        <configuration>
+	        	<doclint>none</doclint>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+	</reporting>
 </project>
