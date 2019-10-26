@@ -355,6 +355,7 @@ public class JJTreeJavaCCMojo
         jjtree.setVisitorDataType( this.visitorDataType );
         jjtree.setVisitorReturnType( this.visitorReturnType );
         jjtree.setVisitorException( this.visitorException );
+        jjtree.setCodeGenerator(this.getCodeGenerator());
         return jjtree;
     }
 
