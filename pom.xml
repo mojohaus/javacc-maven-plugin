@@ -67,12 +67,12 @@ under the License.
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
-			<version>2.0.4</version>
+			<version>2.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-model</artifactId>
-			<version>2.0.4</version>
+			<version>3.3.9</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.javacc</groupId>
@@ -97,12 +97,12 @@ under the License.
 		<dependency>
 			<groupId>org.apache.maven.reporting</groupId>
 			<artifactId>maven-reporting-api</artifactId>
-			<version>2.0.4</version>
+			<version>3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.reporting</groupId>
 			<artifactId>maven-reporting-impl</artifactId>
-			<version>2.0.4</version>
+			<version>3.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.doxia</groupId>
@@ -129,6 +129,7 @@ under the License.
 		    <groupId>net.sourceforge.cobertura</groupId>
 		    <artifactId>cobertura</artifactId>
 		    <version>2.1.1</version>
+		    <scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -150,7 +151,7 @@ under the License.
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
 						<configuration>
-							<skipInvocation>false</skipInvocation>
+							<skipInvocation>true</skipInvocation>
 							<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
 							<postBuildHookScript>verify.bsh</postBuildHookScript>
 							<settingsFile>src/it/settings.xml</settingsFile>
