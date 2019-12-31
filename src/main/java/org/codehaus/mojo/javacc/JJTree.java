@@ -74,6 +74,11 @@ class JJTree
     private Boolean multi;
 
     /**
+     * The option NODE_DIRECTOY.
+     */
+    private File nodeDirectory;
+
+    /**
      * The option NODE_DEFAULT_VOID.
      */
     private Boolean nodeDefaultVoid;
@@ -223,6 +228,16 @@ class JJTree
     public void setBuildNodeFiles( Boolean value )
     {
         this.buildNodeFiles = value;
+    }
+
+    /**
+     * Sets the option value NODE_DIRECTORY.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setNodeDirectory( File value )
+    {
+        this.nodeDirectory = value;
     }
 
     /**
@@ -408,6 +423,11 @@ class JJTree
             argsList.add( "-BUILD_NODE_FILES=" + this.buildNodeFiles );
         }
 
+        if ( this.nodeDirectory != null )
+        {
+            argsList.add( "-NODE_DIRECTORY=" + this.nodeDirectory.getPath());
+        }
+
         if ( this.multi != null )
         {
             argsList.add( "-MULTI=" + this.multi );
@@ -505,5 +525,6 @@ class JJTree
     {
         return Arrays.asList( generateArguments() ).toString();
     }
+
 
 }

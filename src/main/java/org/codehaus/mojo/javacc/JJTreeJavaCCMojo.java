@@ -188,6 +188,13 @@ public class JJTreeJavaCCMojo
     private File outputDirectory;
 
     /**
+     * The directory where the user's defined AST Nodes are located.
+     * 
+     * @parameter property="nodeDirectory"
+     */
+    private File nodeDirectory;
+
+    /**
      * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default,
      * the patterns <code>**&#47;*.jj</code>, <code>**&#47;*.JJ</code>, <code>**&#47;*.jjt</code> and
      * <code>**&#47;*.JJT</code> are used to select grammar files.
@@ -249,6 +256,14 @@ public class JJTreeJavaCCMojo
     protected File getOutputDirectory()
     {
         return this.outputDirectory;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected File getNodeDirectory()
+    {
+        return this.nodeDirectory;
     }
 
     /**
@@ -356,6 +371,7 @@ public class JJTreeJavaCCMojo
         jjtree.setVisitorReturnType( this.visitorReturnType );
         jjtree.setVisitorException( this.visitorException );
         jjtree.setCodeGenerator(this.getCodeGenerator());
+        jjtree.setNodeDirectory(this.getNodeDirectory());
         return jjtree;
     }
 
