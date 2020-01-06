@@ -63,7 +63,7 @@ under the License.
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			</dependency>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
@@ -103,6 +103,12 @@ under the License.
 			<groupId>org.apache.maven.reporting</groupId>
 			<artifactId>maven-reporting-impl</artifactId>
 			<version>3.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.maven.doxia</groupId>
+					<artifactId>doxia-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.doxia</groupId>
@@ -118,6 +124,10 @@ under the License.
 					<groupId>plexus</groupId>
 					<artifactId>plexus-utils</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.apache.maven.doxia</groupId>
+					<artifactId>doxia-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -126,10 +136,15 @@ under the License.
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>net.sourceforge.cobertura</groupId>
-		    <artifactId>cobertura</artifactId>
-		    <version>2.1.1</version>
-		    <scope>test</scope>
+			<groupId>net.sourceforge.cobertura</groupId>
+			<artifactId>cobertura</artifactId>
+			<version>2.1.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.doxia</groupId>
+			<artifactId>doxia-core</artifactId>
+			<version>1.9</version>
 		</dependency>
 	</dependencies>
 
@@ -151,7 +166,8 @@ under the License.
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
 						<configuration>
-							<skipInvocation>true</skipInvocation>
+							<ignoreFailures>true</ignoreFailures>
+							<skipInvocation>false</skipInvocation>
 							<cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
 							<postBuildHookScript>verify.bsh</postBuildHookScript>
 							<settingsFile>src/it/settings.xml</settingsFile>
@@ -173,15 +189,15 @@ under the License.
 	</profiles>
 
 	<reporting>
-	    <plugins>
-	      <plugin>
-	        <groupId>org.apache.maven.plugins</groupId>
-	        <artifactId>maven-javadoc-plugin</artifactId>
-	        <version>3.1.1</version>
-	        <configuration>
-	        	<doclint>none</doclint>
-	        </configuration>
-	      </plugin>
-	    </plugins>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<doclint>none</doclint>
+				</configuration>
+			</plugin>
+		</plugins>
 	</reporting>
 </project>
