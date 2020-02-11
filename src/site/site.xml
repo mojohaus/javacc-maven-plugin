@@ -26,7 +26,6 @@
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
-      <item name="Changes" href="${project.issueManagement.url}?report=com.atlassian.jira.plugin.system.project:changelog-panel"/>
     </menu>
     <menu name="Examples">
       <item name="JavaCC" href="examples/example-javacc.html"/>
@@ -35,10 +34,10 @@
       <item name="JJDoc" href="examples/example-jjdoc.html"/>
     </menu>
     <menu name="References">
-      <item name="JavaCC" href="https://javacc.dev.java.net/"/>
-      <item name="JJTree" href="https://javacc.dev.java.net/doc/JJTree.html"/>
+      <item name="JavaCC" href="https://javacc.github.io/javacc/"/>
+      <item name="JJTree" href="https://javacc.github.io/javacc/"/>
       <item name="JTB" href="http://compilers.cs.ucla.edu/jtb/"/>
-      <item name="JJDoc" href="https://javacc.dev.java.net/doc/JJDoc.html"/>
+      <item name="JJDoc" href="https://javacc.github.io/javacc/doc/JJDoc.html"/>
     </menu>
   </body>
 </project>
