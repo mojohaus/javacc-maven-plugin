@@ -70,15 +70,11 @@ under the License.
 	<distributionManagement>
 		<repository>
 			<id>ossrh</id>
-			<name>Sonatype snapshot repository</name>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-		<repository>
-			<id>ossrh-staging</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
 		<snapshotRepository>
 			<id>ossrh-snapshots</id>
+			<name>Sonatype snapshot repository</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
