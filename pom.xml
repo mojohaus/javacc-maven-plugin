@@ -55,7 +55,7 @@ under the License.
 		<developerConnection>scm:git:ssh://git@github.com/javacc/javacc-maven-plugin.git</developerConnection>
 		<url>https://github.com/javacc/javacc-maven-plugin</url>
 	</scm>
-	
+
 	<issueManagement>
 		<system>GitHub</system>
 		<url>https://github.com/javacc/javacc-maven-plugin/issues</url>
@@ -176,6 +176,15 @@ under the License.
 
 	<profiles>
 		<profile>
+			<id>java8-doclint-disabled</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<javadoc.opts>-Xdoclint:none</javadoc.opts>
+			</properties>
+		</profile>
+		<profile>
 			<id>run-its</id>
 			<activation>
 				<property>
@@ -229,9 +238,17 @@ under the License.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<doclint>none</doclint>
-				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<doclint>none</doclint>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 <!-- 
 			<plugin>
@@ -278,12 +295,11 @@ under the License.
 
 		</plugins>
 	</build>
- 	<reporting>
+	<reporting>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
 				<configuration>
 					<doclint>none</doclint>
 				</configuration>
