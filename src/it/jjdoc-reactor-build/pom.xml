@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-  	<groupId>org.codehaus.mojo.javacc</groupId>
+  	<groupId>org.javacc.plugin.javacc</groupId>
   	<artifactId>it</artifactId>
   	<version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.codehaus.mojo.javacc</groupId>
+  <groupId>org.javacc.plugin.javacc</groupId>
   <artifactId>reactor-build</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
@@ -27,7 +27,7 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>org.javacc.plugin</groupId>
           <artifactId>javacc-maven-plugin</artifactId>
           <version>@pom.version@</version>
         </plugin>
@@ -42,7 +42,7 @@
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>org.javacc.plugin</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
         <version>@pom.version@</version>
       </plugin>
