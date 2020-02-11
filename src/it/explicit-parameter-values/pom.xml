@@ -4,12 +4,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-      <groupId>org.javacc.plugin.javacc</groupId>
-      <artifactId>it</artifactId>
-      <version>1.0-SNAPSHOT</version>
-  </parent>
+  <groupId>>org.javacc.plugin.javacc</groupId>
   <artifactId>it-test</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <name>Integration Test</name>
   <url>http://maven.apache.org</url>
   <description>
@@ -22,13 +19,6 @@
         <groupId>org.javacc.plugin</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
         <version>@pom.version@</version>
-        <dependencies>
-            <dependency>
-              <groupId>net.java.dev.javacc</groupId>
-              <artifactId>javacc</artifactId>
-              <version>5.0</version>
-            </dependency>
-        </dependencies>
         <executions>
           <execution>
             <id>javacc</id>

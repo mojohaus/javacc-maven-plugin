@@ -4,12 +4,16 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+<<<<<<< master
   <parent>
   	<groupId>org.javacc.plugin.javacc</groupId>
   	<artifactId>it</artifactId>
   	<version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>org.javacc.plugin.javacc</groupId>
+=======
+  <groupId>org.codehaus.mojo.javacc</groupId>
+>>>>>>> e2f6cde Add org.codehaus.mojo.javacc:it:1.0-SNAPSHOT as parent pom for getting JavaCC & JTB dependencies
   <artifactId>reactor-build</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
