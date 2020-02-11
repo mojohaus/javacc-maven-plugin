@@ -25,17 +25,18 @@ under the License.
 
 	<parent>
 		<artifactId>mojo-parent</artifactId>
-		<groupId>org.javacc.plugin</groupId>
+		<groupId>org.codehaus.mojo</groupId>
 		<version>50</version>
 	</parent>
 
+	<groupId>org.javacc.plugin</groupId>
 	<artifactId>javacc-maven-plugin</artifactId>
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>JavaCC Maven Plugin</name>
 	<description>Maven 2 Plugin for processing JavaCC grammar files.</description>
-	<url>http://mojo.codehaus.org/javacc-maven-plugin/</url>
+	<url>https://github.com/javacc/javacc-maven-plugin/</url>
 	<inceptionYear>2005</inceptionYear>
 	<licenses>
 		<license>
@@ -50,14 +51,37 @@ under the License.
 	</prerequisites>
 
 	<scm>
-		<connection>scm:git:https://github.com/mojohaus/javacc-maven-plugin.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/mojohaus/javacc-maven-plugin.git</developerConnection>
-		<url>https://github.com/mojohaus/javacc-maven-plugin</url>
+		<connection>scm:git:https://github.com/javacc/javacc-maven-plugin.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/javacc/javacc-maven-plugin.git</developerConnection>
+		<url>https://github.com/javacc/javacc-maven-plugin</url>
 	</scm>
+	
 	<issueManagement>
-		<system>JIRA</system>
-		<url>http://jira.codehaus.org/browse/MJAVACC</url>
+		<system>GitHub</system>
+		<url>https://github.com/javacc/javacc-maven-plugin/issues</url>
 	</issueManagement>
+
+	<properties>
+		<ossrh-server-id>ossrh</ossrh-server-id>
+		<ossrh-staging-repository-url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</ossrh-staging-repository-url>
+		<ossrh-snapshots-repository-url>https://oss.sonatype.org/content/repositories/snapshots/</ossrh-snapshots-repository-url>
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>ossrh</id>
+			<name>Sonatype snapshot repository</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+		<repository>
+			<id>ossrh-staging</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+		<snapshotRepository>
+			<id>ossrh-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -140,6 +164,12 @@ under the License.
 			<artifactId>cobertura</artifactId>
 			<version>2.1.1</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun</groupId>
+					<artifactId>tools</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.doxia</groupId>
@@ -161,6 +191,15 @@ under the License.
 				<sitePluginVersion>3.3</sitePluginVersion>
 			</properties>
 			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-invoker-plugin</artifactId>
+							<version>3.2.1</version>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -178,6 +217,7 @@ under the License.
 							<execution>
 								<id>integration-test</id>
 								<goals>
+									<goal>install</goal>
 									<goal>run</goal>
 								</goals>
 							</execution>
@@ -188,6 +228,51 @@ under the License.
 		</profile>
 	</profiles>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<serverId>${ossrh-server-id}</serverId>
+					<nexusUrl>${ossrh-snapshots-repository-url}</nexusUrl>
+					<skipStaging>true</skipStaging>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
 	<reporting>
 		<plugins>
 			<plugin>
@@ -197,6 +282,11 @@ under the License.
 				<configuration>
 					<doclint>none</doclint>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<version>2.12.1</version>
 			</plugin>
 		</plugins>
 	</reporting>
