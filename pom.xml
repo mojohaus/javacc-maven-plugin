@@ -224,6 +224,7 @@ under the License.
 		</profile>
 	</profiles>
 
+<!-- 
 	<build>
 		<plugins>
 			<plugin>
@@ -269,7 +270,8 @@ under the License.
 
 		</plugins>
 	</build>
-	<reporting>
+ -->
+ 	<reporting>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
