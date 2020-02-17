@@ -63,13 +63,13 @@ under the License.
 
 	<properties>
 		<ossrh-server-id>ossrh</ossrh-server-id>
-		<ossrh-staging-repository-url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</ossrh-staging-repository-url>
-		<ossrh-snapshots-repository-url>https://oss.sonatype.org/content/repositories/snapshots/</ossrh-snapshots-repository-url>
+		<ossrh-staging>https://oss.sonatype.org/service/local/staging/deploy/maven2/</ossrh-staging>
+		<ossrh-snapshots>https://oss.sonatype.org/content/repositories/snapshots/</ossrh-snapshots>
 	</properties>
 
 	<distributionManagement>
 		<repository>
-			<id>ossrh</id>
+			<id>ossrh-releases</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 		<snapshotRepository>
@@ -176,15 +176,6 @@ under the License.
 
 	<profiles>
 		<profile>
-			<id>java8-doclint-disabled</id>
-			<activation>
-				<jdk>[1.8,)</jdk>
-			</activation>
-			<properties>
-				<javadoc.opts>-Xdoclint:none</javadoc.opts>
-			</properties>
-		</profile>
-		<profile>
 			<id>run-its</id>
 			<activation>
 				<property>
@@ -202,6 +193,13 @@ under the License.
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-invoker-plugin</artifactId>
 							<version>3.2.1</version>
+							<dependencies>
+								<dependency>
+									<groupId>net.sourceforge.cobertura</groupId>
+									<artifactId>cobertura</artifactId>
+									<version>2.1.1</version>
+								</dependency>
+							</dependencies>
 						</plugin>
 					</plugins>
 				</pluginManagement>
@@ -296,7 +294,7 @@ under the License.
 				</executions>
 				<configuration>
 					<serverId>${ossrh-server-id}</serverId>
-					<nexusUrl>${ossrh-snapshots-repository-url}</nexusUrl>
+					<nexusUrl>${ossrh-snapshots}</nexusUrl>
 					<skipStaging>true</skipStaging>
 				</configuration>
 			</plugin>
@@ -312,11 +310,6 @@ under the License.
 				<configuration>
 					<doclint>none</doclint>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<version>2.12.1</version>
 			</plugin>
 		</plugins>
 	</reporting>
