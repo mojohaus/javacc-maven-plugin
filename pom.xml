@@ -19,7 +19,8 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -30,7 +31,7 @@ under the License.
 
 	<groupId>org.javacc.plugin</groupId>
 	<artifactId>javacc-maven-plugin</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>JavaCC Maven Plugin</name>
@@ -51,10 +52,10 @@ under the License.
 
 	<scm>
 		<connection>scm:git:https://github.com/javacc/javacc-maven-plugin.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/javacc/javacc-maven-plugin.git</developerConnection>
+		<developerConnection>scm:git:git//github.com/javacc/javacc-maven-plugin.git</developerConnection>
 		<url>https://github.com/javacc/javacc-maven-plugin</url>
-	  <tag>javacc-maven-plugin-3.0.0</tag>
-  </scm>
+		<tag>javacc-maven-plugin-3.0.0</tag>
+	</scm>
 
 	<issueManagement>
 		<system>GitHub</system>
@@ -238,6 +239,11 @@ under the License.
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
 					<version>3.1.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
