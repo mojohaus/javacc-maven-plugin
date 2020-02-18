@@ -6,8 +6,10 @@
 	<groupId>org.javacc.plugin.javacc</groupId>
 	<artifactId>it-test-parent</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 	<name>Integration Test</name>
 	<url>http://maven.apache.org</url>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -29,5 +31,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<packaging>pom</packaging>
 </project>
