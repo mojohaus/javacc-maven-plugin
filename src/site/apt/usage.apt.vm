@@ -30,7 +30,7 @@ Usage
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>org.javacc.plugin</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
         <version>${project.version}</version>
         <executions>
@@ -73,7 +73,7 @@ mvn generate-sources
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>org.javacc.plugin</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
         <version>${project.version}</version>
       </plugin>
