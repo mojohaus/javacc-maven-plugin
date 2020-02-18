@@ -193,13 +193,6 @@ under the License.
 							<groupId>org.apache.maven.plugins</groupId>
 							<artifactId>maven-invoker-plugin</artifactId>
 							<version>3.2.1</version>
-							<dependencies>
-								<dependency>
-									<groupId>net.sourceforge.cobertura</groupId>
-									<artifactId>cobertura</artifactId>
-									<version>2.1.1</version>
-								</dependency>
-							</dependencies>
 						</plugin>
 					</plugins>
 				</pluginManagement>
@@ -207,6 +200,13 @@ under the License.
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-invoker-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>net.sourceforge.cobertura</groupId>
+								<artifactId>cobertura</artifactId>
+								<version>2.1.1</version>
+							</dependency>
+						</dependencies>
 						<configuration>
 							<ignoreFailures>true</ignoreFailures>
 							<skipInvocation>false</skipInvocation>
@@ -257,48 +257,6 @@ under the License.
 					</execution>
 				</executions>
 			</plugin>
-<!-- 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.1</version>
-				<executions>
-					<execution>
-						<id>default-deploy</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<serverId>${ossrh-server-id}</serverId>
-					<nexusUrl>${ossrh-snapshots}</nexusUrl>
-					<skipStaging>true</skipStaging>
-				</configuration>
-			</plugin>
- -->
 
 		</plugins>
 	</build>
