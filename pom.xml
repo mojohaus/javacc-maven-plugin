@@ -79,6 +79,10 @@ under the License.
 			<name>Sonatype snapshot repository</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
+		<site>
+			<id>github</id>
+			<url>scm:git:ssh://git@github.com/javacc/javacc-maven-plugin.git</url>
+		</site>
 	</distributionManagement>
 
 	<dependencies>
@@ -99,18 +103,18 @@ under the License.
 		<dependency>
 			<groupId>net.java.dev.javacc</groupId>
 			<artifactId>javacc</artifactId>
-			<version>5.0</version>
+			<version>7.0.5</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>edu.ucla.cs.compilers</groupId>
 			<artifactId>jtb</artifactId>
 			<version>1.3.2</version>
-      <!--
+     <!--
       NOTE: Only reflectively accessed to avoid dependency on Java 1.5 for compilation.
       -->
-			<scope>provided</scope>
-		</dependency>
+		<scope>provided</scope>
+	</dependency>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-utils</artifactId>
@@ -161,7 +165,6 @@ under the License.
 			<groupId>net.sourceforge.cobertura</groupId>
 			<artifactId>cobertura</artifactId>
 			<version>2.1.1</version>
-			<scope>test</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>com.sun</groupId>

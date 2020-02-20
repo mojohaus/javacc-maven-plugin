@@ -10,6 +10,9 @@
 	<name>Integration Test</name>
 	<url>http://maven.apache.org</url>
 
+	<properties>
+		<javacc>7.0.5</javacc>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
@@ -20,7 +23,7 @@
 					<dependency>
 						<groupId>net.java.dev.javacc</groupId>
 						<artifactId>javacc</artifactId>
-						<version>5.0</version>
+						<version>${javacc}</version>
 					</dependency>
 					<dependency>
 						<groupId>edu.ucla.cs.compilers</groupId>
