@@ -67,6 +67,7 @@ under the License.
 		<ossrh-server-id>ossrh</ossrh-server-id>
 		<ossrh-staging>https://oss.sonatype.org/service/local/staging/deploy/maven2/</ossrh-staging>
 		<ossrh-snapshots>https://oss.sonatype.org/content/repositories/snapshots/</ossrh-snapshots>
+		<javacc>7.0.5</javacc>
 	</properties>
 
 	<distributionManagement>
@@ -103,7 +104,7 @@ under the License.
 		<dependency>
 			<groupId>net.java.dev.javacc</groupId>
 			<artifactId>javacc</artifactId>
-			<version>7.0.5</version>
+			<version>${javacc})</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
