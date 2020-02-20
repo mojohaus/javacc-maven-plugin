@@ -104,7 +104,7 @@ under the License.
 		<dependency>
 			<groupId>net.java.dev.javacc</groupId>
 			<artifactId>javacc</artifactId>
-			<version>${javacc})</version>
+			<version>${javacc}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
