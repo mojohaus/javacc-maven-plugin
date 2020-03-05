@@ -30,7 +30,7 @@ under the License.
 
 	<groupId>org.javacc.plugin</groupId>
 	<artifactId>javacc-maven-plugin</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>3.0.0</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>JavaCC Maven Plugin</name>
@@ -56,7 +56,7 @@ under the License.
  -->
 		<developerConnection>scm:git:ssh://git@github.com/javacc/javacc-maven-plugin.git</developerConnection>
 		<url>https://github.com/javacc/javacc-maven-plugin</url>
-		<tag>HEAD</tag>
+		<tag>javacc-maven-plugin-3.0.0</tag>
 	</scm>
 
 	<issueManagement>
