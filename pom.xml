@@ -61,7 +61,7 @@ under the License.
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/javacc/javacc-maven-plugin/issues</url>
+		<url>http://jira.codehaus.org/browse/MJAVACC</url>
 	</issueManagement>
 
 	<properties>
@@ -289,6 +289,49 @@ under the License.
 						</goals>
 						<configuration>
 							<doclint>none</doclint>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>mojo-enforcer-rules</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+<!--
+								<requireProperty>
+									<property>project.scm.developerConnection</property>
+									<regex>scm:git:git://github.com/.*\.git.*</regex>
+									<regexMessage>
+										ssh (scm:git:git://github.com/.*\.git) is the preferred protocol for project.scm.developerConnection, current value:
+										${project.scm.developerConnection}
+									</regexMessage>
+								</requireProperty>
+								<requireProperty>
+									<property>project.scm.connection</property>
+									<regex>scm:git:https://github.com/.*\.git.*</regex>
+									<regexMessage>
+										https (scm:git:https://github.com/.*\.git) is the preferred protocol for project.scm.connection, current value:
+										${project.scm.connection}
+									</regexMessage>
+								</requireProperty>
+								<requireProperty>
+									<property>project.scm.url</property>
+									<regex>https://github.com/.*</regex>
+									<regexMessage>
+										Use https://github.com/.* as project.scm.url, especially using the prefix scm:git here will lead to unbrowseable links during
+										site generation, current value: ${project.scm.url}
+									</regexMessage>
+								</requireProperty>
+-->
+							</rules>
 						</configuration>
 					</execution>
 				</executions>
