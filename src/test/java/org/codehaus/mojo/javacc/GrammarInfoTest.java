@@ -69,7 +69,7 @@ public class GrammarInfoTest
         throws Exception
     {
         File grammarFile = getGrammar( "Parser1.jj" );
-        GrammarInfo info = new GrammarInfo( grammarFile.getParentFile(), grammarFile.getName(), "org.test" );
+        GrammarInfo info = new GrammarInfo( Suffix.Java, grammarFile.getParentFile(), grammarFile.getName(), "org.test" );
         assertEquals( "org.test", info.getParserPackage() );
     }
 

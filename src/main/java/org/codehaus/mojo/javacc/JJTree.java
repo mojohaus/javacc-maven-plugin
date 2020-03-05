@@ -74,6 +74,11 @@ class JJTree
     private Boolean multi;
 
     /**
+     * The option NODE_DIRECTOY.
+     */
+    private File nodeDirectory;
+
+    /**
      * The option NODE_DEFAULT_VOID.
      */
     private Boolean nodeDefaultVoid;
@@ -132,6 +137,11 @@ class JJTree
      * The option VISITOR_EXCEPTION.
      */
     private String visitorException;
+
+    /**
+     * The option CODE_GENERATOR.
+     */
+    private String codeGenerator;
 
     /**
      * Sets the absolute path to the grammar file to pass into JJTree for preprocessing.
@@ -218,6 +228,16 @@ class JJTree
     public void setBuildNodeFiles( Boolean value )
     {
         this.buildNodeFiles = value;
+    }
+
+    /**
+     * Sets the option value NODE_DIRECTORY.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setNodeDirectory( File value )
+    {
+        this.nodeDirectory = value;
     }
 
     /**
@@ -351,6 +371,16 @@ class JJTree
     }
 
     /**
+     * Sets the option CODE_GENERATOR.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setCodeGenerator( String value )
+    {
+        this.codeGenerator = value;
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected int execute()
@@ -391,6 +421,11 @@ class JJTree
         if ( this.buildNodeFiles != null )
         {
             argsList.add( "-BUILD_NODE_FILES=" + this.buildNodeFiles );
+        }
+
+        if ( this.nodeDirectory != null )
+        {
+            argsList.add( "-NODE_DIRECTORY=" + this.nodeDirectory.getPath());
         }
 
         if ( this.multi != null )
@@ -463,6 +498,11 @@ class JJTree
             argsList.add( "-VISITOR_EXCEPTION=" + this.visitorException );
         }
 
+        if ( StringUtils.isNotEmpty( this.codeGenerator ) )
+        {
+            argsList.add( "-CODE_GENERATOR=" + this.codeGenerator );
+        }
+
         if ( this.outputDirectory != null )
         {
             argsList.add( "-OUTPUT_DIRECTORY=" + this.outputDirectory.getAbsolutePath() );
@@ -485,5 +525,6 @@ class JJTree
     {
         return Arrays.asList( generateArguments() ).toString();
     }
+
 
 }

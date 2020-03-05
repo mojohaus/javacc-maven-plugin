@@ -163,7 +163,7 @@ class GrammarDirectoryScanner
         for ( int i = 0; i < includedFiles.length; i++ )
         {
             String includedFile = includedFiles[i];
-            GrammarInfo grammarInfo = new GrammarInfo( this.scanner.getBasedir(), includedFile, this.parserPackage );
+            GrammarInfo grammarInfo = new GrammarInfo( Suffix.Java, this.scanner.getBasedir(), includedFile, this.parserPackage );
             if ( this.outputDirectory != null )
             {
                 File sourceFile = grammarInfo.getGrammarFile();

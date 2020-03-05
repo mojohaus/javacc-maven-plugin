@@ -178,6 +178,12 @@ class JavaCC
     private Boolean supportClassVisibilityPublic;
 
     /**
+     * The option CODE_GENERATOR.
+     */
+    private String codeGenerator;
+
+    /**
+    /**
      * Sets the absolute path to the grammar file to pass into JavaCC for compilation.
      * 
      * @param value The absolute path to the grammar file to pass into JavaCC for compilation.
@@ -468,6 +474,16 @@ class JavaCC
     }
 
     /**
+     * Sets the option CODE_GENERATOR.
+     * 
+     * @param value The option value, may be <code>null</code> to use the value provided in the grammar or the default.
+     */
+    public void setCodeGenerator( String value )
+    {
+        this.codeGenerator = value;
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected int execute()
@@ -478,6 +494,10 @@ class JavaCC
         if ( this.outputDirectory != null && !this.outputDirectory.exists() )
         {
             this.outputDirectory.mkdirs();
+        }
+        if ( getLog().isDebugEnabled() )
+        {
+            getLog().debug( toString()  );
         }
 
         return org.javacc.parser.Main.mainProgram( args );
@@ -622,6 +642,11 @@ class JavaCC
         if ( this.supportClassVisibilityPublic != null )
         {
             argsList.add( "-SUPPORT_CLASS_VISIBILITY_PUBLIC=" + this.supportClassVisibilityPublic );
+        }
+
+        if ( StringUtils.isNotEmpty( this.codeGenerator ) )
+        {
+            argsList.add( "-CODE_GENERATOR=" + this.codeGenerator );
         }
 
         if ( this.outputDirectory != null )

@@ -4,7 +4,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.codehaus.mojo.javacc</groupId>
+  <parent>
+	<groupId>org.javacc.plugin.javacc</groupId>
+	<artifactId>it-test-parent</artifactId>
+	<version>1.0-SNAPSHOT</version>
+  </parent>
+  <groupId>org.javacc.plugin.javacc</groupId>
   <artifactId>reactor-build</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
@@ -22,7 +27,7 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>org.javacc.plugin</groupId>
           <artifactId>javacc-maven-plugin</artifactId>
           <version>@pom.version@</version>
         </plugin>
@@ -37,7 +42,7 @@
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>org.javacc.plugin</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
         <version>@pom.version@</version>
       </plugin>
