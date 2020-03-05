@@ -19,8 +19,7 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -52,15 +51,17 @@ under the License.
 
 	<scm>
 		<connection>scm:git:https://github.com/javacc/javacc-maven-plugin.git</connection>
-		<!-- developerConnection>scm:git:git//github.com/javacc/javacc-maven-plugin.git</developerConnection -->
+		<developerConnection>scm:git:git//github.com/javacc/javacc-maven-plugin.git</developerConnection>
+<!-- 
 		<developerConnection>scm:git:ssh://git@github.com/javacc/javacc-maven-plugin.git</developerConnection>
+ -->
 		<url>https://github.com/javacc/javacc-maven-plugin</url>
-		<tag>javacc-maven-plugin-3.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/javacc/javacc-maven-plugin/issues</url>
+		<url>http://jira.codehaus.org/browse/MJAVACC</url>
 	</issueManagement>
 
 	<properties>
@@ -114,8 +115,8 @@ under the License.
      <!--
       NOTE: Only reflectively accessed to avoid dependency on Java 1.5 for compilation.
       -->
-		<scope>provided</scope>
-	</dependency>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-utils</artifactId>
@@ -288,6 +289,49 @@ under the License.
 						</goals>
 						<configuration>
 							<doclint>none</doclint>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>mojo-enforcer-rules</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+<!--
+								<requireProperty>
+									<property>project.scm.developerConnection</property>
+									<regex>scm:git:git://github.com/.*\.git.*</regex>
+									<regexMessage>
+										ssh (scm:git:git://github.com/.*\.git) is the preferred protocol for project.scm.developerConnection, current value:
+										${project.scm.developerConnection}
+									</regexMessage>
+								</requireProperty>
+								<requireProperty>
+									<property>project.scm.connection</property>
+									<regex>scm:git:https://github.com/.*\.git.*</regex>
+									<regexMessage>
+										https (scm:git:https://github.com/.*\.git) is the preferred protocol for project.scm.connection, current value:
+										${project.scm.connection}
+									</regexMessage>
+								</requireProperty>
+								<requireProperty>
+									<property>project.scm.url</property>
+									<regex>https://github.com/.*</regex>
+									<regexMessage>
+										Use https://github.com/.* as project.scm.url, especially using the prefix scm:git here will lead to unbrowseable links during
+										site generation, current value: ${project.scm.url}
+									</regexMessage>
+								</requireProperty>
+-->
+							</rules>
 						</configuration>
 					</execution>
 				</executions>
