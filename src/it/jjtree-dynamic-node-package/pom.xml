@@ -28,7 +28,7 @@
             <configuration>
               <outputDirectory>target/generated-sources/jjtree</outputDirectory>
               <nodePackage>*.node</nodePackage>
-              <jdkVersion>1.4</jdkVersion>
+              <jdkVersion>1.5</jdkVersion>
             </configuration>
           </execution>
         </executions>
@@ -48,6 +48,15 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <!-- required for JTB -->
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
