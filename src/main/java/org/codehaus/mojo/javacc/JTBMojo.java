@@ -23,19 +23,21 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically builds
- * the AST.<br/><br/><strong>Note:</strong> <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires Java 1.5
+ * the AST.<strong>Note:</strong> <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires Java 1.5
  * or higher. This goal will not work with earlier versions of the JRE.
  * 
- * @goal jtb
- * @phase generate-sources
  * @since 2.2
  * @deprecated As of version 2.4, use the <code>jtb-javacc</code> goal instead.
  * @author Gregory Kick (gk5885@kickstyle.net)
- * @version $Id$
+ *
  */
+@Mojo(name = "jtb", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class JTBMojo
     extends AbstractPreprocessorMojo
 {
@@ -44,9 +46,9 @@ public class JTBMojo
      * This option is short for <code>nodePackageName</code> = <code>&lt;packageName&gt;.syntaxtree</code> and
      * <code>visitorPackageName</code> = <code>&lt;packageName&gt;.visitor</code>. Note that this option takes
      * precedence over <code>nodePackageName</code> and <code>visitorPackageName</code> if specified.
-     * 
-     * @parameter property="package"
+     *
      */
+    @Parameter(property = "javacc.packageName")
     private String packageName;
 
     /**
@@ -54,9 +56,9 @@ public class JTBMojo
      * the package of the corresponding parser. For example, if the parser package is <code>org.apache</code> and this
      * parameter is set to <code>*.demo</code>, the tree node classes will be located in the package
      * <code>org.apache.demo</code>. Default value is <code>*.syntaxtree</code>.
-     * 
-     * @parameter property="nodePackageName"
+     *
      */
+    @Parameter(property = "javacc.nodePackageName")
     private String nodePackageName;
 
     /**
@@ -64,55 +66,55 @@ public class JTBMojo
      * the package of the corresponding parser. For example, if the parser package is <code>org.apache</code> and this
      * parameter is set to <code>*.demo</code>, the visitor classes will be located in the package
      * <code>org.apache.demo</code>. Default value is <code>*.visitor</code>.
-     * 
-     * @parameter property="visitorPackageName"
+     *
      */
+    @Parameter(property = "javacc.visitorPackageName")
     private String visitorPackageName;
 
     /**
      * If <code>true</code>, JTB will suppress its semantic error checking. Default value is <code>false</code>.
-     * 
-     * @parameter property="supressErrorChecking"
+     *
      */
-    private Boolean supressErrorChecking;
+    @Parameter(property = "javacc.supressErrorChecking", defaultValue = "false")
+    private boolean supressErrorChecking;
 
     /**
      * If <code>true</code>, all generated comments will be wrapped in <code>&lt;pre&gt;</code> tags so that they
      * are formatted correctly in API docs. Default value is <code>false</code>.
-     * 
-     * @parameter property="javadocFriendlyComments"
+     *
      */
+    @Parameter(property = "javacc.javadocFriendlyComments", defaultValue = "false")
     private Boolean javadocFriendlyComments;
 
     /**
      * Setting this option to <code>true</code> causes JTB to generate field names that reflect the structure of the
      * tree instead of generic names like <code>f0</code>, <code>f1</code> etc. Default value is <code>false</code>.
-     * 
-     * @parameter property="descriptiveFieldNames"
+     *
      */
+    @Parameter(property = "javacc.descriptiveFieldNames", defaultValue = "false")
     private Boolean descriptiveFieldNames;
 
     /**
      * The qualified name of a user-defined class from which all AST nodes will inherit. By default, AST nodes will
      * inherit from the generated class <code>Node</code>.
-     * 
-     * @parameter property="nodeParentClass"
+     *
      */
+    @Parameter(property = "javacc.nodeParentClass")
     private String nodeParentClass;
 
     /**
      * If <code>true</code>, all nodes will contain fields for its parent node. Default value is <code>false</code>.
-     * 
-     * @parameter property="parentPointers"
+     *
      */
-    private Boolean parentPointers;
+    @Parameter(property = "javacc.parentPointers", defaultValue = "false")
+    private boolean parentPointers;
 
     /**
      * If <code>true</code>, JTB will include JavaCC "special tokens" in the AST. Default value is <code>false</code>.
-     * 
-     * @parameter property="specialTokens"
+     *
      */
-    private Boolean specialTokens;
+    @Parameter(property = "javacc.specialTokens", defaultValue = "false")
+    private boolean specialTokens;
 
     /**
      * If <code>true</code>, JTB will generate the following files to support the Schema programming language:
@@ -121,62 +123,61 @@ public class JTBMojo
      * <li>A Scheme tree building visitor.</li>
      * </ul>
      * Default value is <code>false</code>.
-     * 
-     * @parameter property="scheme"
+     *
      */
-    private Boolean scheme;
+    @Parameter(property = "javacc.scheme", defaultValue = "false")
+    private boolean scheme;
 
     /**
      * If <code>true</code>, JTB will generate a syntax tree dumping visitor. Default value is <code>false</code>.
-     * 
-     * @parameter property="printer"
+     *
      */
+    @Parameter(property = "javacc.printer", defaultValue = "false")
     private Boolean printer;
 
     /**
      * The directory where the JavaCC grammar files (<code>*.jtb</code>) are located. It will be recursively scanned
      * for input files to pass to JTB.
-     * 
-     * @parameter property="sourceDirectory" default-value="${basedir}/src/main/jtb"
+     *
      */
+    @Parameter(property = "javacc.sourceDirectory", defaultValue = "${basedir}/src/main/jtb")
     private File sourceDirectory;
 
     /**
      * The directory where the output Java files will be located.
-     * 
-     * @parameter property="outputDirectory" default-value="${project.build.directory}/generated-sources/jtb"
+     *
      */
+    @Parameter(property = "javacc.outputDirectory", defaultValue = "${project.build.directory}/generated-sources/jtb")
     private File outputDirectory;
 
     /**
      * The directory to store the processed input files for later detection of stale sources.
-     * 
-     * @parameter property="timestampDirectory"
-     *            default-value="${project.build.directory}/generated-sources/jtb-timestamp"
+     *
      */
+    @Parameter(property = "javacc.timestampDirectory", defaultValue = "${project.build.directory}/generated-sources/jtb-timestamp")
     private File timestampDirectory;
 
     /**
      * The granularity in milliseconds of the last modification date for testing whether a source needs recompilation.
-     * 
-     * @parameter property="lastModGranularityMs" default-value="0"
+     *
      */
+    @Parameter(property = "javacc.lastModGranularityMs", defaultValue = "0")
     private int staleMillis;
 
     /**
      * A set of Ant-like inclusion patterns used to select files from the source directory for processing. By default,
      * the patterns <code>**&#47;*.jtb</code> and <code>**&#47;*.JTB</code> are used to select grammar files.
-     * 
-     * @parameter
+     *
      */
+    @Parameter
     private String[] includes;
 
     /**
      * A set of Ant-like exclusion patterns used to prevent certain files from being processed. By default, this set is
      * empty such that no files are excluded.
-     * 
-     * @parameter
+     *
      */
+    @Parameter
     private String[] excludes;
 
     /**

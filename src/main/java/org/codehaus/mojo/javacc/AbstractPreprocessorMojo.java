@@ -25,6 +25,7 @@ import java.util.Arrays;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -32,7 +33,6 @@ import org.codehaus.plexus.util.FileUtils;
  * Provides common services for all mojos that preprocess JavaCC grammar files.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 public abstract class AbstractPreprocessorMojo
     extends AbstractMojo
@@ -40,9 +40,9 @@ public abstract class AbstractPreprocessorMojo
 
     /**
      * The current Maven project.
-     * 
-     * @component
+     *
      */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
     /**
