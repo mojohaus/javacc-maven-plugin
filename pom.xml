@@ -29,11 +29,11 @@ under the License.
   </parent>
 
   <artifactId>javacc-maven-plugin</artifactId>
-  <version>2.7-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
 
   <name>JavaCC Maven Plugin</name>
-  <description>Maven 2 Plugin for processing JavaCC grammar files.</description>
+  <description>Maven 3 Plugin for processing JavaCC grammar files.</description>
   <url>http://mojo.codehaus.org/javacc-maven-plugin/</url>
   <inceptionYear>2005</inceptionYear>
   <licenses>
