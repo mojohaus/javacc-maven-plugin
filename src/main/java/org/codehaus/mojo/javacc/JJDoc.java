@@ -31,7 +31,6 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  * Provides a facade for the mojos to invoke JJDoc.
  * 
  * @author Paul Gier, Benjamin Bentmann
- * @version $Id$
  * @see <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Reference</a>
  */
 class JJDoc

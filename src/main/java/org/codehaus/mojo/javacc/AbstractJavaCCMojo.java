@@ -29,6 +29,7 @@ import java.util.LinkedHashSet;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.SelectorUtils;
@@ -38,8 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Provides common services for all mojos that compile JavaCC grammar files.
  * 
  * @author jruiz@exist.com
- * @author jesse <jesse.mcconnell@gmail.com>
- * @version $Id$
+ * @author jesse jesse.mcconnell@gmail.com
  */
 public abstract class AbstractJavaCCMojo
     extends AbstractMojo
@@ -47,9 +47,9 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * The current Maven project.
-     * 
-     * @component
+     *
      */
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
     /**
@@ -62,78 +62,78 @@ public abstract class AbstractJavaCCMojo
     /**
      * The Java version for which to generate source code. Default value is <code>1.5</code> for plugin version 2.6+ and
      * <code>1.4</code> in older versions.
-     * 
-     * @parameter property="jdkVersion"
+     *
      * @since 2.4
      */
+    @Parameter(property = "javacc.jdkVersion", defaultValue = "1.5")
     private String jdkVersion;
 
     /**
      * The number of tokens to look ahead before making a decision at a choice point during parsing. The default value
      * is <code>1</code>.
-     * 
-     * @parameter property="lookAhead"
+     *
      */
-    private Integer lookAhead;
+    @Parameter(property = "javacc.lookAhead", defaultValue = "1")
+    private int lookAhead;
 
     /**
      * This is the number of tokens considered in checking choices of the form "A | B | ..." for ambiguity. Default
      * value is <code>2</code>.
-     * 
-     * @parameter property="choiceAmbiguityCheck"
+     *
      */
-    private Integer choiceAmbiguityCheck;
+    @Parameter(property = "javacc.choiceAmbiguityCheck", defaultValue = "2")
+    private int choiceAmbiguityCheck;
 
     /**
      * This is the number of tokens considered in checking all other kinds of choices (i.e., of the forms "(A)*",
      * "(A)+", and "(A)?") for ambiguity. Default value is <code>1</code>.
-     * 
-     * @parameter property="otherAmbiguityCheck"
+     *
      */
-    private Integer otherAmbiguityCheck;
+    @Parameter(property = "javacc.otherAmbiguityCheck", defaultValue = "1")
+    private int otherAmbiguityCheck;
 
     /**
      * If <code>true</code>, all methods and class variables are specified as static in the generated parser and
      * token manager. This allows only one parser object to be present, but it improves the performance of the parser.
      * Default value is <code>true</code>.
-     * 
-     * @parameter property="isStatic"
+     *
      */
-    private Boolean isStatic;
+    @Parameter(property = "javacc.isStatic", defaultValue = "true")
+    private boolean isStatic;
 
     /**
      * This option is used to obtain debugging information from the generated parser. Setting this option to
      * <code>true</code> causes the parser to generate a trace of its actions. Default value is <code>false</code>.
-     * 
-     * @parameter property="debugParser"
+     *
      */
-    private Boolean debugParser;
+    @Parameter(property = "javacc.debugParser", defaultValue = "false")
+    private boolean debugParser;
 
     /**
      * This is a boolean option whose default value is <code>false</code>. Setting this option to <code>true</code>
      * causes the parser to generate all the tracing information it does when the option <code>debugParser</code> is
      * <code>true</code>, and in addition, also causes it to generated a trace of actions performed during lookahead
      * operation.
-     * 
-     * @parameter property="debugLookAhead"
+     *
      */
-    private Boolean debugLookAhead;
+    @Parameter(property = "javacc.debugLookAhead", defaultValue = "false")
+    private boolean debugLookAhead;
 
     /**
      * This option is used to obtain debugging information from the generated token manager. Default value is
      * <code>false</code>.
-     * 
-     * @parameter property="debugTokenManager"
+     *
      */
-    private Boolean debugTokenManager;
+    @Parameter(property = "javacc.debugTokenManager", defaultValue = "false")
+    private boolean debugTokenManager;
 
     /**
      * Setting it to <code>false</code> causes errors due to parse errors to be reported in somewhat less detail.
      * Default value is <code>true</code>.
      * 
-     * @parameter property="errorReporting"
      */
-    private Boolean errorReporting;
+    @Parameter(property = "javacc.errorReporting", defaultValue = "true")
+    private boolean errorReporting;
 
     /**
      * When set to <code>true</code>, the generated parser uses an input stream object that processes Java Unicode
@@ -142,69 +142,70 @@ public abstract class AbstractJavaCCMojo
      * 
      * @parameter property="javaUnicodeEscape"
      */
-    private Boolean javaUnicodeEscape;
+    @Parameter(property = "javacc.javaUnicodeEscape", defaultValue = "false")
+    private boolean javaUnicodeEscape;
 
     /**
      * When set to <code>true</code>, the generated parser uses uses an input stream object that reads Unicode files.
      * By default, ASCII files are assumed. Default value is <code>false</code>.
-     * 
-     * @parameter property="unicodeInput"
+     *
      */
-    private Boolean unicodeInput;
+    @Parameter(property = "javacc.unicodeInput", defaultValue = "false")
+    private boolean unicodeInput;
 
     /**
      * Setting this option to <code>true</code> causes the generated token manager to ignore case in the token
      * specifications and the input files. Default value is <code>false</code>.
-     * 
-     * @parameter property="ignoreCase"
+     *
      */
-    private Boolean ignoreCase;
+    @Parameter(property = "javacc.ignoreCase", defaultValue = "false")
+    private boolean ignoreCase;
 
     /**
      * When set to <code>true</code>, every call to the token manager's method <code>getNextToken()</code> (see the
      * description of the <a href="https://javacc.dev.java.net/doc/apiroutines.html">Java Compiler Compiler API</a>)
      * will cause a call to a user-defined method <code>CommonTokenAction()</code> after the token has been scanned in
      * by the token manager. Default value is <code>false</code>.
-     * 
-     * @parameter property="commonTokenAction"
+     *
      */
-    private Boolean commonTokenAction;
+    @Parameter(property = "javacc.commonTokenAction", defaultValue = "false")
+    private boolean commonTokenAction;
 
     /**
      * The default action is to generate a token manager that works on the specified grammar tokens. If this option is
      * set to <code>true</code>, then the parser is generated to accept tokens from any token manager of type
      * <code>TokenManager</code> - this interface is generated into the generated parser directory. Default value is
      * <code>false</code>.
-     * 
-     * @parameter property="userTokenManager"
+     *
      */
-    private Boolean userTokenManager;
+    @Parameter(property = "javacc.userTokenManager", defaultValue = "false")
+    private boolean userTokenManager;
 
     /**
      * This flag controls whether the token manager will read characters from a character stream reader as defined by
      * the options <code>javaUnicodeEscape</code> and <code>unicodeInput</code> or whether the token manager reads
      * from a user-supplied implementation of <code>CharStream</code>. Default value is <code>false</code>.
-     * 
-     * @parameter property="userCharStream"
+     *
      */
-    private Boolean userCharStream;
+    @Parameter(property = "javacc.userCharStream", defaultValue = "false")
+    private boolean userCharStream;
 
     /**
      * A flag that controls whether the parser file (<code>*Parser.java</code>) should be generated or not. If set
      * to <code>false</code>, only the token manager is generated. Default value is <code>true</code>.
-     * 
-     * @parameter property="buildParser"
+     *
      */
-    private Boolean buildParser;
+    @Parameter(property = "javacc.buildParser", defaultValue = "true")
+    private boolean buildParser;
 
     /**
      * A flag that controls whether the token manager file (<code>*TokenManager.java</code>) should be generated or
      * not. Setting this to <code>false</code> can speed up the generation process if only the parser part of the
      * grammar changed. Default value is <code>true</code>.
-     * 
-     * @parameter property="buildTokenManager"
+     *
      */
-    private Boolean buildTokenManager;
+    @Parameter(property = "javacc.buildTokenManager", defaultValue = "true")
+    private boolean buildTokenManager;
 
     /**
      * When set to <code>true</code>, the generated token manager will include a field called <code>parser</code>
@@ -212,73 +213,75 @@ public abstract class AbstractJavaCCMojo
      * 
      * @parameter property="tokenManagerUsesParser"
      */
-    private Boolean tokenManagerUsesParser;
+    @Parameter(property = "javacc.tokenManagerUsesParser", defaultValue = "false")
+    private boolean tokenManagerUsesParser;
 
     /**
      * The name of the base class for the generated <code>Token</code> class. Default value is
      * <code>java.lang.Object</code>.
-     * 
-     * @parameter property="tokenExtends"
+     *
      * @since 2.5
      */
+    @Parameter(property = "javacc.tokenExtends")
     private String tokenExtends;
 
     /**
      * The name of a custom factory class used to create <code>Token</code> objects. This class must have a method with
      * the signature <code>public static Token newToken(int ofKind, String image)</code>. By default, tokens are created
      * by calling <code>Token.newToken()</code>.
-     * 
-     * @parameter property="tokenFactory"
+     *
      * @since 2.5
      */
+    @Parameter(property = "javacc.tokenFactory")
     private String tokenFactory;
 
     /**
      * Enables/disables many syntactic and semantic checks on the grammar file during parser generation. Default value
      * is <code>true</code>.
-     * 
-     * @parameter property="sanityCheck"
+     *
      */
-    private Boolean sanityCheck;
+    @Parameter(property = "javacc.sanityCheck", defaultValue = "true")
+    private boolean sanityCheck;
 
     /**
      * This option setting controls lookahead ambiguity checking performed by JavaCC. Default value is
      * <code>false</code>.
-     * 
-     * @parameter property="forceLaCheck"
+     *
      */
-    private Boolean forceLaCheck;
+    @Parameter(property = "javacc.forceLaCheck", defaultValue = "false")
+    private boolean forceLaCheck;
 
     /**
      * Setting this option to <code>true</code> causes the generated parser to lookahead for extra tokens ahead of
      * time. Default value is <code>false</code>.
-     * 
-     * @parameter property="cacheTokens"
+     *
      */
-    private Boolean cacheTokens;
+    @Parameter(property = "javacc.cacheTokens", defaultValue = "false")
+    private boolean cacheTokens;
 
     /**
      * A flag whether to keep line and column information along with a token. Default value is <code>true</code>.
      * 
      * @parameter property="keepLineColumn"
      */
-    private Boolean keepLineColumn;
+    @Parameter(property = "javacc.keepLineColumn", defaultValue = "true")
+    private boolean keepLineColumn;
 
     /**
      * A flag whether the generated support classes of the parser should have public or package-private visibility.
      * Default value is <code>true</code>.
-     * 
-     * @parameter property="supportClassVisibilityPublic"
+     *
      * @since 2.6
      */
+    @Parameter(property = "javacc.supportClassVisibilityPublic", defaultValue = "true")
     private Boolean supportClassVisibilityPublic;
 
     /**
      * The file encoding to use for reading the grammar files.
      * 
-     * @parameter property="grammarEncoding" default-value="${project.build.sourceEncoding}"
      * @since 2.6
      */
+    @Parameter(property = "javacc.grammarEncoding", defaultValue = "${project.build.sourceEncoding}")
     private String grammarEncoding;
 
     /**

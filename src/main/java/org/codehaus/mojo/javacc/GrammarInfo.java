@@ -31,7 +31,6 @@ import org.codehaus.plexus.util.FileUtils;
  * output location for the generated parser file.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 class GrammarInfo
 {

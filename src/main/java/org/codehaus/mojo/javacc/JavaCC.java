@@ -484,7 +484,7 @@ class JavaCC
     }
 
     /**
-     * Assembles the command line arguments for the invocation of JavaCC according to the configuration.<br/><br/>
+     * <p>Assembles the command line arguments for the invocation of JavaCC according to the configuration.</p>
      * <strong>Note:</strong> To prevent conflicts with JavaCC options that might be set directly in the grammar file,
      * only those parameters that have been explicitly set are passed on the command line.
      * 

@@ -35,7 +35,6 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  * Runs the <code>main()</code> method of some tool in a forked JVM.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  * @see <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/java.html">java - The Java Application
  *      Launcher</a>
  */
