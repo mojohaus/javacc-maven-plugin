@@ -83,7 +83,7 @@ under the License.
     <dependency>
       <groupId>net.java.dev.javacc</groupId>
       <artifactId>javacc</artifactId>
-      <version>5.0</version>
+      <version>7.0.12</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -103,7 +103,7 @@ under the License.
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
       <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.4</version>
+      <version>3.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.doxia</groupId>
