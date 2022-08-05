@@ -13,7 +13,7 @@ ${project.name}
 
   This plugin uses the JavaCC parser generator to process JavaCC 
   grammar files and generate the appropriate Java source files.  For general information about JavaCC, 
-  see the {{{http://javacc.dev.java.net/} JavaCC}} web site.
+  see the {{{https://javacc.github.io/javacc/} JavaCC}} web site.
 
   JavaCC grammar files use the extension <<<.jj>>>.  This plugin can be used to locate and 
   process all grammar files within a specified directory.  Java source files will be written to a common 
