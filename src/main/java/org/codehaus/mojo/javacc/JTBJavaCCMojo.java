@@ -74,24 +74,24 @@ public class JTBJavaCCMojo
      * If <code>true</code>, JTB will suppress its semantic error checking. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.supressErrorChecking", defaultValue = "false")
-    private boolean supressErrorChecking;
+    @Parameter(property = "javacc.supressErrorChecking")
+    private Boolean supressErrorChecking;
 
     /**
      * If <code>true</code>, all generated comments will be wrapped in <code>&lt;pre&gt;</code> tags so that they
      * are formatted correctly in API docs. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.javadocFriendlyComments", defaultValue = "false")
-    private boolean javadocFriendlyComments;
+    @Parameter(property = "javacc.javadocFriendlyComments")
+    private Boolean javadocFriendlyComments;
 
     /**
      * Setting this option to <code>true</code> causes JTB to generate field names that reflect the structure of the
      * tree instead of generic names like <code>f0</code>, <code>f1</code> etc. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.descriptiveFieldNames", defaultValue = "false")
-    private boolean descriptiveFieldNames;
+    @Parameter(property = "javacc.descriptiveFieldNames")
+    private Boolean descriptiveFieldNames;
 
     /**
      * The qualified name of a user-defined class from which all AST nodes will inherit. By default, AST nodes will
@@ -106,14 +106,14 @@ public class JTBJavaCCMojo
      *
      */
     @Parameter(property = "javacc.parentPointers")
-    private boolean parentPointers;
+    private Boolean parentPointers;
 
     /**
      * If <code>true</code>, JTB will include JavaCC "special tokens" in the AST. Default value is <code>false</code>.
      *
      */
     @Parameter(property = "javacc.specialTokens")
-    private boolean specialTokens;
+    private Boolean specialTokens;
 
     /**
      * If <code>true</code>, JTB will generate the following files to support the Schema programming language:
@@ -124,15 +124,15 @@ public class JTBJavaCCMojo
      * Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.scheme", defaultValue = "false")
-    private boolean scheme;
+    @Parameter(property = "javacc.scheme")
+    private Boolean scheme;
 
     /**
      * If <code>true</code>, JTB will generate a syntax tree dumping visitor. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.printer", defaultValue = "false")
-    private boolean printer;
+    @Parameter(property = "javacc.printer")
+    private Boolean printer;
 
     /**
      * The directory where the JavaCC grammar files (<code>*.jtb</code>) are located. It will be recursively scanned

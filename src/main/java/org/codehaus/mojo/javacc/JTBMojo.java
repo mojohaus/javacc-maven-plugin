@@ -75,15 +75,15 @@ public class JTBMojo
      * If <code>true</code>, JTB will suppress its semantic error checking. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.supressErrorChecking", defaultValue = "false")
-    private boolean supressErrorChecking;
+    @Parameter(property = "javacc.supressErrorChecking")
+    private Boolean supressErrorChecking;
 
     /**
      * If <code>true</code>, all generated comments will be wrapped in <code>&lt;pre&gt;</code> tags so that they
      * are formatted correctly in API docs. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.javadocFriendlyComments", defaultValue = "false")
+    @Parameter(property = "javacc.javadocFriendlyComments")
     private Boolean javadocFriendlyComments;
 
     /**
@@ -91,7 +91,7 @@ public class JTBMojo
      * tree instead of generic names like <code>f0</code>, <code>f1</code> etc. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.descriptiveFieldNames", defaultValue = "false")
+    @Parameter(property = "javacc.descriptiveFieldNames")
     private Boolean descriptiveFieldNames;
 
     /**
@@ -106,15 +106,15 @@ public class JTBMojo
      * If <code>true</code>, all nodes will contain fields for its parent node. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.parentPointers", defaultValue = "false")
-    private boolean parentPointers;
+    @Parameter(property = "javacc.parentPointers")
+    private Boolean parentPointers;
 
     /**
      * If <code>true</code>, JTB will include JavaCC "special tokens" in the AST. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.specialTokens", defaultValue = "false")
-    private boolean specialTokens;
+    @Parameter(property = "javacc.specialTokens")
+    private Boolean specialTokens;
 
     /**
      * If <code>true</code>, JTB will generate the following files to support the Schema programming language:
@@ -125,14 +125,14 @@ public class JTBMojo
      * Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.scheme", defaultValue = "false")
-    private boolean scheme;
+    @Parameter(property = "javacc.scheme")
+    private Boolean scheme;
 
     /**
      * If <code>true</code>, JTB will generate a syntax tree dumping visitor. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.printer", defaultValue = "false")
+    @Parameter(property = "javacc.printer")
     private Boolean printer;
 
     /**

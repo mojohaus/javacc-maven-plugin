@@ -45,24 +45,24 @@ public class JJTreeJavaCCMojo
      * grammar. Default value is <code>true</code>.
      *
      */
-    @Parameter(property = "javacc.buildNodeFiles", defaultValue = "true")
-    private boolean buildNodeFiles;
+    @Parameter(property = "javacc.buildNodeFiles")
+    private Boolean buildNodeFiles;
 
     /**
      * A flag whether to generate a multi mode parse tree or a single mode parse tree. Default value is
      * <code>false</code>.
      * 
      */
-    @Parameter(property = "javacc.multi", defaultValue = "false")
-    private boolean multi;
+    @Parameter(property = "javacc.multi")
+    private Boolean multi;
 
     /**
      * A flag whether to make each non-decorated production void instead of an indefinite node. Default value is
      * <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.nodeDefaultVoid", defaultValue = "false")
-    private boolean nodeDefaultVoid;
+    @Parameter(property = "javacc.nodeDefaultVoid")
+    private Boolean nodeDefaultVoid;
 
     /**
      * The name of a custom class that extends <code>SimpleNode</code> and will be used as the super class for the
@@ -98,7 +98,7 @@ public class JJTreeJavaCCMojo
      * <code>AST</code>.
      *
      */
-    @Parameter(property = "javacc.nodePrefix", defaultValue = "AST")
+    @Parameter(property = "javacc.nodePrefix")
     private String nodePrefix;
 
     /**
@@ -106,16 +106,16 @@ public class JJTreeJavaCCMojo
      * is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.nodeScopeHook", defaultValue = "false")
-    private boolean nodeScopeHook;
+    @Parameter(property = "javacc.nodeScopeHook")
+    private Boolean nodeScopeHook;
 
     /**
      * A flag whether the node construction routines need an additional method parameter to receive the parser object.
      * Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.nodeUsesParser", defaultValue = "false")
-    private boolean nodeUsesParser;
+    @Parameter(property = "javacc.nodeUsesParser")
+    private Boolean nodeUsesParser;
 
     /**
      * A flag whether to insert the methods <code>jjtGetFirstToken()</code>, <code>jjtSetFirstToken()</code>,
@@ -124,16 +124,16 @@ public class JJTreeJavaCCMojo
      * 
      * @since 2.5
      */
-    @Parameter(property = "javacc.trackTokens", defaultValue = "false")
-    private boolean trackTokens;
+    @Parameter(property = "javacc.trackTokens")
+    private Boolean trackTokens;
 
     /**
      * A flag whether to insert a <code>jjtAccept()</code> method in the node classes and to generate a visitor
      * implementation with an entry for every node type used in the grammar. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.visitor", defaultValue = "false")
-    private boolean visitor;
+    @Parameter(property = "javacc.visitor")
+    private Boolean visitor;
 
     /**
      * The name of a class to use for the data argument of the <code>jjtAccept()</code> and <code>visit()</code>
