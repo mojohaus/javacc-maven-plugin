@@ -146,8 +146,8 @@ public class JJDocMojo
      * unless the parameter {@link #bnf} has been set to <code>true</code>. Default value is <code>false</code>.
      *
      */
-    @Parameter(property = "javacc.text", defaultValue = "false")
-    private boolean text;
+    @Parameter(property = "javacc.text")
+    private Boolean text;
 
     /**
      * A flag whether to generate a plain text document with the unformatted BNF. Note that setting this option to
@@ -156,7 +156,7 @@ public class JJDocMojo
      *
      * @since 2.6
      */
-    @Parameter(property = "javacc.bnf", defaultValue = "false")
+    @Parameter(property = "javacc.bnf")
     private Boolean bnf;
 
     /**
