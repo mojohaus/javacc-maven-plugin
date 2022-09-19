@@ -53,24 +53,24 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     * grammar. Default value is &lt;code&gt;true&lt;/code&gt;.</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>      @Parameter(property = <span class="jxr_string">"javacc.buildNodeFiles"</span>, defaultValue = <span class="jxr_string">"true"</span>)
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> buildNodeFiles;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      @Parameter(property = <span class="jxr_string">"javacc.buildNodeFiles"</span>)
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> Boolean buildNodeFiles;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * A flag whether to generate a multi mode parse tree or a single mode parse tree. Default value is</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     * &lt;code&gt;false&lt;/code&gt;.</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      @Parameter(property = <span class="jxr_string">"javacc.multi"</span>, defaultValue = <span class="jxr_string">"false"</span>)
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> multi;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      @Parameter(property = <span class="jxr_string">"javacc.multi"</span>)
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> Boolean multi;
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>  
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * A flag whether to make each non-decorated production void instead of an indefinite node. Default value is</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * &lt;code&gt;false&lt;/code&gt;.</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      @Parameter(property = <span class="jxr_string">"javacc.nodeDefaultVoid"</span>, defaultValue = <span class="jxr_string">"false"</span>)
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> nodeDefaultVoid;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      @Parameter(property = <span class="jxr_string">"javacc.nodeDefaultVoid"</span>)
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">private</strong> Boolean nodeDefaultVoid;
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">     * The name of a custom class that extends &lt;code&gt;SimpleNode&lt;/code&gt; and will be used as the super class for the</em>
@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">     * &lt;code&gt;AST&lt;/code&gt;.</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L100" href="#L100">100</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>     @Parameter(property = <span class="jxr_string">"javacc.nodePrefix"</span>, defaultValue = <span class="jxr_string">"AST"</span>)
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>     @Parameter(property = <span class="jxr_string">"javacc.nodePrefix"</span>)
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">private</strong> String nodePrefix;
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> 
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     <em class="jxr_javadoccomment">/**</em>
@@ -114,16 +114,16 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">     * is &lt;code&gt;false&lt;/code&gt;.</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     @Parameter(property = <span class="jxr_string">"javacc.nodeScopeHook"</span>, defaultValue = <span class="jxr_string">"false"</span>)
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> nodeScopeHook;
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     @Parameter(property = <span class="jxr_string">"javacc.nodeScopeHook"</span>)
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>     <strong class="jxr_keyword">private</strong> Boolean nodeScopeHook;
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> 
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     * A flag whether the node construction routines need an additional method parameter to receive the parser object.</em>
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     * Default value is &lt;code&gt;false&lt;/code&gt;.</em>
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>     @Parameter(property = <span class="jxr_string">"javacc.nodeUsesParser"</span>, defaultValue = <span class="jxr_string">"false"</span>)
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> nodeUsesParser;
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>     @Parameter(property = <span class="jxr_string">"javacc.nodeUsesParser"</span>)
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">private</strong> Boolean nodeUsesParser;
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> 
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L121" href="#L121">121</a> <em class="jxr_javadoccomment">     * A flag whether to insert the methods &lt;code&gt;jjtGetFirstToken()&lt;/code&gt;, &lt;code&gt;jjtSetFirstToken()&lt;/code&gt;,</em>
@@ -132,16 +132,16 @@
 <a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">     * </em>
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     * @since 2.5</em>
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L127" href="#L127">127</a>     @Parameter(property = <span class="jxr_string">"javacc.trackTokens"</span>, defaultValue = <span class="jxr_string">"false"</span>)
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> trackTokens;
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     @Parameter(property = <span class="jxr_string">"javacc.trackTokens"</span>)
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">private</strong> Boolean trackTokens;
 <a class="jxr_linenumber" name="L129" href="#L129">129</a> 
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L131" href="#L131">131</a> <em class="jxr_javadoccomment">     * A flag whether to insert a &lt;code&gt;jjtAccept()&lt;/code&gt; method in the node classes and to generate a visitor</em>
 <a class="jxr_linenumber" name="L132" href="#L132">132</a> <em class="jxr_javadoccomment">     * implementation with an entry for every node type used in the grammar. Default value is &lt;code&gt;false&lt;/code&gt;.</em>
 <a class="jxr_linenumber" name="L133" href="#L133">133</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L135" href="#L135">135</a>     @Parameter(property = <span class="jxr_string">"javacc.visitor"</span>, defaultValue = <span class="jxr_string">"false"</span>)
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> visitor;
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     @Parameter(property = <span class="jxr_string">"javacc.visitor"</span>)
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">private</strong> Boolean visitor;
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> 
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">     * The name of a class to use for the data argument of the &lt;code&gt;jjtAccept()&lt;/code&gt; and &lt;code&gt;visit()&lt;/code&gt;</em>
