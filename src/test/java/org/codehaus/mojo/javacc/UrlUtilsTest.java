@@ -20,6 +20,7 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 
 import junit.framework.TestCase;
@@ -86,9 +87,7 @@ public class UrlUtilsTest
         assertMatch( "/home/a dir/t-1.jar", "jar:file:/home/a dir/t-1.jar!/org/Foo.class", "org/Foo.class" );
     }
 
-    public void testGetResourceRootNullSafe()
-        throws Exception
-    {
+    public void testGetResourceRootNullSafe() {
         assertNull( UrlUtils.getResourceRoot( null, "" ) );
     }
 
@@ -97,7 +96,7 @@ public class UrlUtilsTest
     {
         try
         {
-            UrlUtils.getResourceRoot( new URL( "http://www.foo.bar/index.html" ), "index.html" );
+            UrlUtils.getResourceRoot( URI.create( "http://www.foo.bar/index.html" ).toURL(), "index.html" );
             fail( "Missing runtime exception" );
         }
         catch ( RuntimeException e )
@@ -126,7 +125,7 @@ public class UrlUtilsTest
     public void testDecodeUrlLenient()
     {
         assertEquals( " ", UrlUtils.decodeUrl( " " ) );
-        assertEquals( "\u00E4\u00F6\u00FC\u00DF", UrlUtils.decodeUrl( "\u00E4\u00F6\u00FC\u00DF" ) );
+        assertEquals( "äöüß", UrlUtils.decodeUrl( "äöüß" ) );
         assertEquals( "%", UrlUtils.decodeUrl( "%" ) );
         assertEquals( "%2", UrlUtils.decodeUrl( "%2" ) );
         assertEquals( "%2G", UrlUtils.decodeUrl( "%2G" ) );
@@ -139,7 +138,7 @@ public class UrlUtilsTest
 
     public void testDecodeUrlEncodingUtf8()
     {
-        assertEquals( "\u00E4\u00F6\u00FC\u00DF", UrlUtils.decodeUrl( "%C3%A4%C3%B6%C3%BC%C3%9F" ) );
+        assertEquals( "äöüß", UrlUtils.decodeUrl( "%C3%A4%C3%B6%C3%BC%C3%9F" ) );
     }
 
 }

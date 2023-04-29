@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.cli.StreamConsumer;
@@ -272,7 +273,7 @@ class JTB
     {
         if ( this.packageName != null )
         {
-            return ( this.packageName.length() <= 0 ) ? SYNTAX_TREE : this.packageName + '.' + SYNTAX_TREE;
+            return (this.packageName.length() == 0) ? SYNTAX_TREE : this.packageName + '.' + SYNTAX_TREE;
         }
         else if ( this.nodePackageName != null )
         {
@@ -303,7 +304,7 @@ class JTB
     {
         if ( this.packageName != null )
         {
-            return ( this.packageName.length() <= 0 ) ? VISITOR : this.packageName + '.' + VISITOR;
+            return (this.packageName.length() == 0) ? VISITOR : this.packageName + '.' + VISITOR;
         }
         else if ( this.visitorPackageName != null )
         {
@@ -432,7 +433,7 @@ class JTB
      */
     private String[] generateArguments()
     {
-        List argsList = new ArrayList();
+        List<String> argsList = new ArrayList<>();
 
         argsList.add( "-np" );
         argsList.add( getEffectiveNodePackageName() );
@@ -440,17 +441,17 @@ class JTB
         argsList.add( "-vp" );
         argsList.add( getEffectiveVisitorPackageName() );
 
-        if ( this.supressErrorChecking != null && this.supressErrorChecking.booleanValue() )
+        if ( this.supressErrorChecking != null && this.supressErrorChecking)
         {
             argsList.add( "-e" );
         }
 
-        if ( this.javadocFriendlyComments != null && this.javadocFriendlyComments.booleanValue() )
+        if ( this.javadocFriendlyComments != null && this.javadocFriendlyComments)
         {
             argsList.add( "-jd" );
         }
 
-        if ( this.descriptiveFieldNames != null && this.descriptiveFieldNames.booleanValue() )
+        if ( this.descriptiveFieldNames != null && this.descriptiveFieldNames)
         {
             argsList.add( "-f" );
         }
@@ -461,22 +462,22 @@ class JTB
             argsList.add( this.nodeParentClass );
         }
 
-        if ( this.parentPointers != null && this.parentPointers.booleanValue() )
+        if ( this.parentPointers != null && this.parentPointers)
         {
             argsList.add( "-pp" );
         }
 
-        if ( this.specialTokens != null && this.specialTokens.booleanValue() )
+        if ( this.specialTokens != null && this.specialTokens)
         {
             argsList.add( "-tk" );
         }
 
-        if ( this.scheme != null && this.scheme.booleanValue() )
+        if ( this.scheme != null && this.scheme)
         {
             argsList.add( "-scheme" );
         }
 
-        if ( this.printer != null && this.printer.booleanValue() )
+        if ( this.printer != null && this.printer)
         {
             argsList.add( "-printer" );
         }
@@ -493,7 +494,7 @@ class JTB
             argsList.add( this.inputFile.getAbsolutePath() );
         }
 
-        return (String[]) argsList.toArray( new String[argsList.size()] );
+        return argsList.toArray(new String[0]);
     }
 
     /**
@@ -556,26 +557,19 @@ class JTB
         {
             return;
         }
-        for ( int i = 0; i < sourceFiles.length; i++ )
-        {
-            File sourceFile = sourceFiles[i];
-            if ( sourceFile.isFile() && sourceFile.getName().endsWith( ".java" ) )
-            {
-                try
-                {
-                    FileUtils.copyFileToDirectory( sourceFile, targetDir );
-                    if ( !sourceFile.delete() )
-                    {
-                        getLog().error( "Failed to delete original JTB output file: " + sourceFile );
+        for (File sourceFile : sourceFiles) {
+            if (sourceFile.isFile() && sourceFile.getName().endsWith(".java")) {
+                try {
+                    FileUtils.copyFileToDirectory(sourceFile, targetDir);
+                    if (!sourceFile.delete()) {
+                        getLog().error("Failed to delete original JTB output file: " + sourceFile);
                     }
-                }
-                catch ( Exception e )
-                {
-                    throw new IOException( "Failed to move JTB output file: " + sourceFile + " -> " + targetDir );
+                } catch (Exception e) {
+                    throw new IOException("Failed to move JTB output file: " + sourceFile + " -> " + targetDir);
                 }
             }
         }
-        if ( sourceDir.list().length <= 0 )
+        if (Objects.requireNonNull(sourceDir.list()).length == 0)
         {
             if ( !sourceDir.delete() )
             {
@@ -613,7 +607,7 @@ class JTB
         /**
          * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
          */
-        private boolean err;
+        private final boolean err;
 
         /**
          * Single param constructor.

@@ -363,8 +363,7 @@ class JJTree
             this.outputDirectory.mkdirs();
         }
 
-        org.javacc.jjtree.JJTree jjtree = new org.javacc.jjtree.JJTree();
-        return jjtree.main( args );
+        return new org.javacc.jjtree.JJTree().main( args );
     }
 
     /**
@@ -376,7 +375,7 @@ class JJTree
      */
     private String[] generateArguments()
     {
-        List argsList = new ArrayList();
+        List<String> argsList = new ArrayList<>();
 
         if ( StringUtils.isNotEmpty( this.grammarEncoding ) )
         {
@@ -473,7 +472,7 @@ class JJTree
             argsList.add( this.inputFile.getAbsolutePath() );
         }
 
-        return (String[]) argsList.toArray( new String[argsList.size()] );
+        return argsList.toArray(new String[0]);
     }
 
     /**

@@ -23,7 +23,8 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Assists in handling of URLs.
@@ -33,11 +34,6 @@ import java.nio.charset.Charset;
  */
 class UrlUtils
 {
-
-    /**
-     * The UTF-8 character set, used to decode octets in URLs.
-     */
-    private static final Charset UTF8 = Charset.forName( "UTF-8" );
 
     /**
      * The protocol prefix for "jar:" URLs.
@@ -112,7 +108,7 @@ class UrlUtils
         if ( url != null && url.indexOf( '%' ) >= 0 )
         {
             int n = url.length();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             ByteBuffer bytes = ByteBuffer.allocate( n );
             for ( int i = 0; i < n; )
             {
@@ -138,7 +134,7 @@ class UrlUtils
                         if ( bytes.position() > 0 )
                         {
                             bytes.flip();
-                            buffer.append( UTF8.decode( bytes ).toString() );
+                            buffer.append(UTF_8.decode( bytes ));
                             bytes.clear();
                         }
                     }

@@ -184,7 +184,7 @@ class JJDoc
      */
     private String[] generateArguments()
     {
-        List argsList = new ArrayList();
+        List<String> argsList = new ArrayList<>();
 
         if ( StringUtils.isNotEmpty( this.grammarEncoding ) )
         {
@@ -221,7 +221,7 @@ class JJDoc
             argsList.add( this.inputFile.getAbsolutePath() );
         }
 
-        return (String[]) argsList.toArray( new String[argsList.size()] );
+        return argsList.toArray(new String[0]);
     }
 
     /**
@@ -254,7 +254,7 @@ class JJDoc
         /**
          * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
          */
-        private boolean err;
+        private final boolean err;
 
         /**
          * Single param constructor.

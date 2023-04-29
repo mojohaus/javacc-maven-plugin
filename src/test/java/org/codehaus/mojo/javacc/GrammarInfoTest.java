@@ -22,6 +22,8 @@ package org.codehaus.mojo.javacc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
+import java.util.Objects;
 
 import junit.framework.TestCase;
 
@@ -35,9 +37,7 @@ public class GrammarInfoTest
     extends TestCase
 {
 
-    public void testInvalidFile()
-        throws Exception
-    {
+    public void testInvalidFile() {
         try
         {
             new GrammarInfo( new File( "" ).getAbsoluteFile(), "bad" );
@@ -151,7 +151,9 @@ public class GrammarInfoTest
     private File getGrammar( String resource )
         throws Exception
     {
-        return new File( new URI( getClass().getResource( '/' + resource ).toString() ) );
+        URL res = getClass().getResource('/' + resource);
+        Objects.requireNonNull( res );
+        return new File( new URI( res.toString() ) );
     }
 
 }

@@ -112,7 +112,7 @@ public abstract class AbstractPreprocessorMojo
             getLog().info( "Skipping non-existing source directory: " + getSourceDirectory() );
             return;
         }
-        else if ( grammarInfos.length <= 0 )
+        else if (grammarInfos.length == 0)
         {
             getLog().info( "Skipping - all parsers are up to date" );
         }
@@ -123,9 +123,8 @@ public abstract class AbstractPreprocessorMojo
                 getTimestampDirectory().mkdirs();
             }
 
-            for ( int i = 0; i < grammarInfos.length; i++ )
-            {
-                processGrammar( grammarInfos[i] );
+            for (GrammarInfo grammarInfo : grammarInfos) {
+                processGrammar(grammarInfo);
             }
             getLog().info( "Processed " + grammarInfos.length + " grammar" + ( grammarInfos.length != 1 ? "s" : "" ) );
         }

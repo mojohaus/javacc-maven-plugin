@@ -33,18 +33,14 @@ public class JJTreeTest
     extends TestCase
 {
 
-    public void testToStringNullSafe()
-        throws Exception
-    {
+    public void testToStringNullSafe() {
         JJTree tool = new JJTree();
         String string = tool.toString();
         assertNotNull( string );
-        assertTrue( string.indexOf( "null" ) < 0 );
+        assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe()
-        throws Exception
-    {
+    public void testSettersNullSafe() {
         JJTree tool = new JJTree();
         tool.setInputFile( null );
         tool.setOutputDirectory( null );
@@ -63,9 +59,7 @@ public class JJTreeTest
         tool.setLog( null );
     }
 
-    public void testGetOutputFile()
-        throws Exception
-    {
+    public void testGetOutputFile() {
         File input = new File( "Test.jjt" ).getAbsoluteFile();
         File outdir = new File( "dir" ).getAbsoluteFile();
 

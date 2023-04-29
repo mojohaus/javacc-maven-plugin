@@ -33,18 +33,14 @@ public class JTBTest
     extends TestCase
 {
 
-    public void testToStringNullSafe()
-        throws Exception
-    {
+    public void testToStringNullSafe() {
         JTB tool = new JTB();
         String string = tool.toString();
         assertNotNull( string );
-        assertTrue( string.indexOf( "null" ) < 0 );
+        assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe()
-        throws Exception
-    {
+    public void testSettersNullSafe() {
         JTB tool = new JTB();
         tool.setInputFile( null );
         tool.setOutputDirectory( null );
@@ -64,9 +60,7 @@ public class JTBTest
         tool.setLog( null );
     }
 
-    public void testGetOutputFile()
-        throws Exception
-    {
+    public void testGetOutputFile() {
         File input = new File( "Test.jtb" ).getAbsoluteFile();
         File outdir = new File( "dir" ).getAbsoluteFile();
 

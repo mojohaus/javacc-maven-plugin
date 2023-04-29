@@ -26,14 +26,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
  * Runs the <code>main()</code> method of some tool in a forked JVM.
- * 
+ *
  * @author Benjamin Bentmann
  * @see <a href="http://java.sun.com/javase/6/docs/technotes/tools/windows/java.html">java - The Java Application
  *      Launcher</a>
@@ -54,7 +53,7 @@ class ForkedJvm
     /**
      * The executable used to fork the JVM.
      */
-    private String executable;
+    private final String executable;
 
     /**
      * The working directory for the forked JVM.
@@ -64,7 +63,7 @@ class ForkedJvm
     /**
      * The class path entries for the forked JVM, given as strings.
      */
-    private Set classPathEntries = new LinkedHashSet();
+    private final Set<String> classPathEntries = new LinkedHashSet<>();
 
     /**
      * The qualified name of the class on which to invoke the <code>main()</code> method.
@@ -74,7 +73,7 @@ class ForkedJvm
     /**
      * The command line arguments to pass to the <code>main()</code> method, given as strings.
      */
-    private List cmdLineArgs = new ArrayList();
+    private final List<String> cmdLineArgs = new ArrayList<>();
 
     /**
      * Creates a new configuration to fork a JVM.
@@ -126,16 +125,6 @@ class ForkedJvm
     }
 
     /**
-     * Gets the class path for the forked JVM.
-     * 
-     * @return The class path for the forked JVM.
-     */
-    private String getClassPath()
-    {
-        return StringUtils.join( this.classPathEntries.iterator(), File.pathSeparator );
-    }
-
-    /**
      * Adds the specified path to the class path of the forked JVM.
      * 
      * @param path The path to add, may be <code>null</code>.
@@ -166,7 +155,7 @@ class ForkedJvm
      * 
      * @param type The class/interface to add, may be <code>null</code>.
      */
-    public void addClassPathEntry( Class type )
+    public void addClassPathEntry( Class<?> type )
     {
         addClassPathEntry( getClassSource( type ) );
     }
@@ -177,7 +166,7 @@ class ForkedJvm
      * @param type The class/interface to find, may be <code>null</code>.
      * @return The absolute path to the class source location or <code>null</code> if unknown.
      */
-    private static File getClassSource( Class type )
+    private static File getClassSource( Class<?> type )
     {
         if ( type != null )
         {
@@ -246,7 +235,7 @@ class ForkedJvm
      * 
      * @param type The class on which to invoke the <code>main()</code> method, may be <code>null</code>.
      */
-    public void setMainClass( Class type )
+    public void setMainClass( Class<?> type )
     {
         this.mainClass = ( type != null ) ? type.getName() : null;
         addClassPathEntry( type );
@@ -259,7 +248,7 @@ class ForkedJvm
      */
     private String[] getArguments()
     {
-        return (String[]) this.cmdLineArgs.toArray( new String[this.cmdLineArgs.size()] );
+        return this.cmdLineArgs.toArray(new String[0]);
     }
 
     /**
@@ -297,9 +286,8 @@ class ForkedJvm
     {
         if ( arguments != null )
         {
-            for ( int i = 0; i < arguments.length; i++ )
-            {
-                addArgument( arguments[i] );
+            for (String argument : arguments) {
+                addArgument(argument);
             }
         }
     }
@@ -326,8 +314,8 @@ class ForkedJvm
             cli.setWorkingDirectory( this.workingDirectory.getAbsolutePath() );
         }
 
-        String classPath = getClassPath();
-        if ( classPath != null && classPath.length() > 0 )
+        String classPath = String.join(File.pathSeparator, classPathEntries);
+        if (classPath.length() > 0)
         {
             cli.addArguments( new String[] { "-cp", classPath } );
         }

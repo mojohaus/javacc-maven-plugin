@@ -35,45 +35,39 @@ public class ForkedJvmTest
     extends TestCase
 {
 
-    public void testToStringNullSafe()
-        throws Exception
-    {
+    public void testToStringNullSafe() {
         ForkedJvm jvm = new ForkedJvm();
         String string = jvm.toString();
         assertNotNull( string );
-        assertTrue( string.indexOf( "null" ) < 0 );
+        assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe()
-        throws Exception
-    {
+    public void testSettersNullSafe() {
         ForkedJvm jvm = new ForkedJvm();
         jvm.addArgument( (File) null );
         jvm.addArgument( (String) null );
         jvm.addArguments( null );
         jvm.addArguments( new String[] { null } );
-        jvm.addClassPathEntry( (Class) null );
+        jvm.addClassPathEntry( (Class<?>) null );
         jvm.addClassPathEntry( (File) null );
         jvm.addClassPathEntry( (String) null );
-        jvm.setMainClass( (Class) null );
+        jvm.setMainClass( (Class<?>) null );
         jvm.setMainClass( (String) null );
         jvm.setWorkingDirectory( null );
         jvm.setSystemOut( null );
         jvm.setSystemErr( null );
     }
 
-    public void testSetMainClass()
-        throws Exception
-    {
+    public void testSetMainClass() {
         ForkedJvm jvm1 = new ForkedJvm();
         jvm1.setMainClass( MainStub.class );
         String cmd1 = jvm1.toString();
-        assertTrue( cmd1.indexOf( MainStub.class.getName() ) >= 0 );
+        assertTrue(cmd1.contains(MainStub.class.getName()));
 
         ForkedJvm jvm2 = new ForkedJvm();
         jvm2.setMainClass( MainStub.class.getName() );
         String cmd2 = jvm2.toString();
-        assertTrue( cmd2.indexOf( MainStub.class.getName() ) >= 0 );
+        assertTrue(cmd2.contains(MainStub.class.getName()));
 
         assertEquals( cmd1, cmd2 );
     }

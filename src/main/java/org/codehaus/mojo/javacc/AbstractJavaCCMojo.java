@@ -22,9 +22,9 @@ package org.codehaus.mojo.javacc;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -57,7 +57,7 @@ public abstract class AbstractJavaCCMojo
      * reside somewhere below "${basedir}/src" in the project structure. Files in these source roots are owned by the
      * user and must not be overwritten with generated files.
      */
-    private Collection nonGeneratedSourceRoots;
+    private Set<File> nonGeneratedSourceRoots;
 
     /**
      * The Java version for which to generate source code. Default value is <code>1.5</code> for plugin version 2.6+ and
@@ -140,7 +140,6 @@ public abstract class AbstractJavaCCMojo
      * escapes (<code>\</code><code>u</code><i>xxxx</i>) before sending characters to the token manager. Default
      * value is <code>false</code>.
      * 
-     * @parameter property="javaUnicodeEscape"
      */
     @Parameter(property = "javacc.javaUnicodeEscape")
     private Boolean javaUnicodeEscape;
@@ -211,7 +210,6 @@ public abstract class AbstractJavaCCMojo
      * When set to <code>true</code>, the generated token manager will include a field called <code>parser</code>
      * that references the instantiating parser instance. Default value is <code>false</code>.
      * 
-     * @parameter property="tokenManagerUsesParser"
      */
     @Parameter(property = "javacc.tokenManagerUsesParser")
     private Boolean tokenManagerUsesParser;
@@ -262,7 +260,6 @@ public abstract class AbstractJavaCCMojo
     /**
      * A flag whether to keep line and column information along with a token. Default value is <code>true</code>.
      * 
-     * @parameter property="keepLineColumn"
      */
     @Parameter(property = "javacc.keepLineColumn")
     private Boolean keepLineColumn;
@@ -392,7 +389,7 @@ public abstract class AbstractJavaCCMojo
             getLog().info( "Skipping non-existing source directory: " + getSourceDirectory() );
             return;
         }
-        else if ( grammarInfos.length <= 0 )
+        else if (grammarInfos.length == 0)
         {
             getLog().info( "Skipping - all parsers are up to date" );
         }
@@ -407,18 +404,15 @@ public abstract class AbstractJavaCCMojo
                                    + ", using platform default encoding, i.e. build is platform dependent!" );
             }
 
-            for ( int i = 0; i < grammarInfos.length; i++ )
-            {
-                processGrammar( grammarInfos[i] );
+            for (GrammarInfo grammarInfo : grammarInfos) {
+                processGrammar(grammarInfo);
             }
 
             getLog().info( "Processed " + grammarInfos.length + " grammar" + ( grammarInfos.length != 1 ? "s" : "" ) );
         }
 
-        Collection compileSourceRoots = new LinkedHashSet( Arrays.asList( getCompileSourceRoots() ) );
-        for ( Iterator it = compileSourceRoots.iterator(); it.hasNext(); )
-        {
-            addSourceRoot( (File) it.next() );
+        for (File compileSourceRoot : getCompileSourceRoots()) {
+            addSourceRoot(compileSourceRoot);
         }
     }
 
@@ -519,50 +513,36 @@ public abstract class AbstractJavaCCMojo
     {
         try
         {
-            Collection tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
-            for ( Iterator it = tempFiles.iterator(); it.hasNext(); )
-            {
-                File tempFile = (File) it.next();
-
+            List<File> tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
+            for (File tempFile : tempFiles) {
                 String outputPath = "";
-                if ( packageName.length() > 0 )
-                {
-                    outputPath = packageName.replace( '.', '/' ) + '/';
+                if (packageName.length() > 0) {
+                    outputPath = packageName.replace('.', '/') + '/';
                 }
                 outputPath += tempFile.getName();
-                File outputFile = new File( sourceRoot, outputPath );
+                File outputFile = new File(sourceRoot, outputPath);
 
-                File sourceFile = findSourceFile( outputPath );
+                File sourceFile = findSourceFile(outputPath);
 
                 boolean alwaysUpdate = false;
-                if ( updatePattern != null && sourceFile != null )
-                {
-                    if ( updatePattern.startsWith( "!" ) )
-                    {
-                        alwaysUpdate = !SelectorUtils.match( updatePattern.substring( 1 ), tempFile.getName() );
-                    }
-                    else
-                    {
-                        alwaysUpdate = SelectorUtils.match( updatePattern, tempFile.getName() );
+                if (updatePattern != null && sourceFile != null) {
+                    if (updatePattern.startsWith("!")) {
+                        alwaysUpdate = !SelectorUtils.match(updatePattern.substring(1), tempFile.getName());
+                    } else {
+                        alwaysUpdate = SelectorUtils.match(updatePattern, tempFile.getName());
                     }
                 }
 
-                if ( sourceFile == null || ( alwaysUpdate && sourceFile.equals( outputFile ) ) )
-                {
-                    getLog().debug( "Copying generated file: " + outputPath );
-                    try
-                    {
-                        FileUtils.copyFile( tempFile, outputFile );
+                if (sourceFile == null || (alwaysUpdate && sourceFile.equals(outputFile))) {
+                    getLog().debug("Copying generated file: " + outputPath);
+                    try {
+                        FileUtils.copyFile(tempFile, outputFile);
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Failed to copy generated source file to output directory:"
+                                + tempFile + " -> " + outputFile, e);
                     }
-                    catch ( IOException e )
-                    {
-                        throw new MojoExecutionException( "Failed to copy generated source file to output directory:"
-                            + tempFile + " -> " + outputFile, e );
-                    }
-                }
-                else
-                {
-                    getLog().debug( "Skipping customized file: " + outputPath );
+                } else {
+                    getLog().debug("Skipping customized file: " + outputPath);
                 }
             }
         }
@@ -582,28 +562,23 @@ public abstract class AbstractJavaCCMojo
     private void determineNonGeneratedSourceRoots()
         throws MojoExecutionException
     {
-        this.nonGeneratedSourceRoots = new LinkedHashSet();
+        this.nonGeneratedSourceRoots = new LinkedHashSet<>();
         try
         {
             String targetPrefix =
                 new File( this.project.getBuild().getDirectory() ).getCanonicalPath() + File.separator;
-            Collection sourceRoots = this.project.getCompileSourceRoots();
-            for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
-            {
-                File sourceRoot = new File( it.next().toString() );
-                if ( !sourceRoot.isAbsolute() )
-                {
-                    sourceRoot = new File( this.project.getBasedir(), sourceRoot.getPath() );
+            List<String> sourceRoots = this.project.getCompileSourceRoots();
+            for (String root : sourceRoots) {
+                File sourceRoot = new File(root);
+                if (!sourceRoot.isAbsolute()) {
+                    sourceRoot = new File(this.project.getBasedir(), sourceRoot.getPath());
                 }
                 String sourcePath = sourceRoot.getCanonicalPath();
-                if ( !sourcePath.startsWith( targetPrefix ) )
-                {
-                    this.nonGeneratedSourceRoots.add( sourceRoot );
-                    getLog().debug( "Non-generated compile source root: " + sourceRoot );
-                }
-                else
-                {
-                    getLog().debug( "Generated compile source root: " + sourceRoot );
+                if (!sourcePath.startsWith(targetPrefix)) {
+                    this.nonGeneratedSourceRoots.add(sourceRoot);
+                    getLog().debug("Non-generated compile source root: " + sourceRoot);
+                } else {
+                    getLog().debug("Generated compile source root: " + sourceRoot);
                 }
             }
         }
@@ -622,17 +597,11 @@ public abstract class AbstractJavaCCMojo
      */
     private File findSourceFile( String filename )
     {
-        Collection sourceRoots = this.nonGeneratedSourceRoots;
-        for ( Iterator it = sourceRoots.iterator(); it.hasNext(); )
-        {
-            File sourceRoot = (File) it.next();
-            File sourceFile = new File( sourceRoot, filename );
-            if ( sourceFile.exists() )
-            {
-                return sourceFile;
-            }
-        }
-        return null;
+        return this.nonGeneratedSourceRoots.stream()
+                .map(sourceRoot -> new File(sourceRoot, filename))
+                .filter(File::exists)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
