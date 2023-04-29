@@ -31,18 +31,14 @@ public class JJDocTest
     extends TestCase
 {
 
-    public void testToStringNullSafe()
-        throws Exception
-    {
+    public void testToStringNullSafe() {
         JJDoc tool = new JJDoc();
         String string = tool.toString();
         assertNotNull( string );
-        assertTrue( string.indexOf( "null" ) < 0 );
+        assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe()
-        throws Exception
-    {
+    public void testSettersNullSafe() {
         JJDoc tool = new JJDoc();
         tool.setInputFile( null );
         tool.setOutputFile( null );

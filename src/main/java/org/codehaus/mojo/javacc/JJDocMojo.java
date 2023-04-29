@@ -180,7 +180,7 @@ public class JJDocMojo
      */
     private File[] getSourceDirectories()
     {
-        Set directories = new LinkedHashSet();
+        Set<File> directories = new LinkedHashSet<>();
         if ( this.sourceDirectories != null && this.sourceDirectories.length > 0 )
         {
             directories.addAll( Arrays.asList( this.sourceDirectories ) );
@@ -200,7 +200,7 @@ public class JJDocMojo
                 directories.add( this.defaultGrammarDirectoryJTB );
             }
         }
-        return (File[]) directories.toArray( new File[directories.size()] );
+        return directories.toArray(new File[0]);
     }
 
     // ----------------------------------------------------------------------
@@ -242,17 +242,9 @@ public class JJDocMojo
      */
     public boolean canGenerateReport()
     {
-        File sourceDirs[] = getSourceDirectories();
-        for ( int i = 0; i < sourceDirs.length; i++ )
-        {
-            File sourceDir = sourceDirs[i];
-            String[] files = sourceDir.list();
-            if ( files != null && files.length > 0 )
-            {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(getSourceDirectories())
+                .map(File::list)
+                .anyMatch(files -> files != null && files.length > 0);
     }
 
     /**
@@ -371,7 +363,7 @@ public class JJDocMojo
         jjdoc.setCssHref( this.cssHref );
         jjdoc.setText( this.text );
         jjdoc.setBnf( this.bnf );
-        jjdoc.setOneTable( Boolean.valueOf( this.oneTable ) );
+        jjdoc.setOneTable(this.oneTable);
         return jjdoc;
     }
 
@@ -427,7 +419,7 @@ public class JJDocMojo
      * Compares grammar infos using their relative grammar file paths as the sort key.
      */
     private static class GrammarInfoComparator
-        implements Comparator
+        implements Comparator<GrammarInfo>
     {
 
         /**
@@ -453,15 +445,13 @@ public class JJDocMojo
          * @return A negative integer if the first grammar is considered "smaller", a positive integer if it is
          *         considered "greater" and zero otherwise.
          */
-        public int compare( Object o1, Object o2 )
+        public int compare( GrammarInfo o1, GrammarInfo o2 )
         {
             int rel;
 
-            GrammarInfo info1 = (GrammarInfo) o1;
-            String[] paths1 = info1.getRelativeGrammarFile().split( "\\" + File.separatorChar );
+            String[] paths1 = o1.getRelativeGrammarFile().split( "\\" + File.separatorChar );
 
-            GrammarInfo info2 = (GrammarInfo) o2;
-            String[] paths2 = info2.getRelativeGrammarFile().split( "\\" + File.separatorChar );
+            String[] paths2 = o2.getRelativeGrammarFile().split( "\\" + File.separatorChar );
 
             int dirs = Math.min( paths1.length, paths2.length ) - 1;
             for ( int i = 0; i < dirs; i++ )
@@ -488,42 +478,32 @@ public class JJDocMojo
         createReportHeader( getBundle( locale ), sink );
 
         File[] sourceDirs = getSourceDirectories();
-        for ( int j = 0; j < sourceDirs.length; j++ )
-        {
-            File sourceDir = sourceDirs[j];
-            GrammarInfo[] grammarInfos = scanForGrammars( sourceDir );
+        for (File sourceDir : sourceDirs) {
+            GrammarInfo[] grammarInfos = scanForGrammars(sourceDir);
 
-            if ( grammarInfos == null )
-            {
-                getLog().debug( "Skipping non-existing source directory: " + sourceDir );
-            }
-            else
-            {
-                Arrays.sort( grammarInfos, GrammarInfoComparator.getInstance() );
-                for ( int i = 0; i < grammarInfos.length; i++ )
-                {
-                    GrammarInfo grammarInfo = grammarInfos[i];
+            if (grammarInfos == null) {
+                getLog().debug("Skipping non-existing source directory: " + sourceDir);
+            } else {
+                Arrays.sort(grammarInfos, GrammarInfoComparator.getInstance());
+                for (GrammarInfo grammarInfo : grammarInfos) {
                     File grammarFile = grammarInfo.getGrammarFile();
 
                     String relativeOutputFileName = grammarInfo.getRelativeGrammarFile();
                     relativeOutputFileName =
-                            relativeOutputFileName.replaceAll( "(?i)\\.(jj|jjt|jtb)$", getOutputFileExtension() );
+                            relativeOutputFileName.replaceAll("(?i)\\.(jj|jjt|jtb)$", getOutputFileExtension());
 
-                    File jjdocOutputFile = new File( getJJDocOutputDirectory(), relativeOutputFileName );
+                    File jjdocOutputFile = new File(getJJDocOutputDirectory(), relativeOutputFileName);
 
                     JJDoc jjdoc = newJJDoc();
-                    jjdoc.setInputFile( grammarFile );
-                    jjdoc.setOutputFile( jjdocOutputFile );
-                    try
-                    {
+                    jjdoc.setInputFile(grammarFile);
+                    jjdoc.setOutputFile(jjdocOutputFile);
+                    try {
                         jjdoc.run();
-                    }
-                    catch ( Exception e )
-                    {
-                        throw new MavenReportException( "Failed to create BNF documentation: " + grammarFile, e );
+                    } catch (Exception e) {
+                        throw new MavenReportException("Failed to create BNF documentation: " + grammarFile, e);
                     }
 
-                    createReportLink( sink, sourceDir, grammarFile, relativeOutputFileName );
+                    createReportLink(sink, sourceDir, grammarFile, relativeOutputFileName);
                 }
             }
         }

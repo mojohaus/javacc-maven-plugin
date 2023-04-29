@@ -492,7 +492,7 @@ class JavaCC
      */
     private String[] generateArguments()
     {
-        List argsList = new ArrayList();
+        List<String> argsList = new ArrayList<>();
 
         if ( StringUtils.isNotEmpty( this.grammarEncoding ) )
         {
@@ -634,7 +634,7 @@ class JavaCC
             argsList.add( this.inputFile.getAbsolutePath() );
         }
 
-        return (String[]) argsList.toArray( new String[argsList.size()] );
+        return argsList.toArray(new String[0]);
     }
 
     /**

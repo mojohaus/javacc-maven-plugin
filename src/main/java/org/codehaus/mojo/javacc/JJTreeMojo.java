@@ -106,8 +106,8 @@ public class JJTreeMojo
      * The prefix used to construct node class names from node identifiers in multi mode. Default value is
      * <code>AST</code>.
      * 
-     * @parameter property="nodePrefix"
      */
+    @Parameter(property = "javacc.nodePrefix")
     private String nodePrefix;
 
     /**

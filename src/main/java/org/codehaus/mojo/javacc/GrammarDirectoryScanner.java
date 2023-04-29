@@ -38,7 +38,7 @@ class GrammarDirectoryScanner
     /**
      * The directory scanner used to scan the source directory for files.
      */
-    private DirectoryScanner scanner;
+    private final DirectoryScanner scanner;
 
     /**
      * The absolute path to the output directory used to detect stale target files by timestamp checking, may be
@@ -62,7 +62,7 @@ class GrammarDirectoryScanner
     /**
      * A set of grammar infos describing the included grammar files, must never be <code>null</code>.
      */
-    private List includedGrammars;
+    private final List<GrammarInfo> includedGrammars;
 
     /**
      * Creates a new grammar directory scanner.
@@ -71,7 +71,7 @@ class GrammarDirectoryScanner
     {
         this.scanner = new DirectoryScanner();
         this.scanner.setFollowSymlinks( true );
-        this.includedGrammars = new ArrayList();
+        this.includedGrammars = new ArrayList<>();
     }
 
     /**
@@ -160,28 +160,20 @@ class GrammarDirectoryScanner
         this.scanner.scan();
 
         String[] includedFiles = this.scanner.getIncludedFiles();
-        for ( int i = 0; i < includedFiles.length; i++ )
-        {
-            String includedFile = includedFiles[i];
-            GrammarInfo grammarInfo = new GrammarInfo( this.scanner.getBasedir(), includedFile, this.parserPackage );
-            if ( this.outputDirectory != null )
-            {
+        for (String includedFile : includedFiles) {
+            GrammarInfo grammarInfo = new GrammarInfo(this.scanner.getBasedir(), includedFile, this.parserPackage);
+            if (this.outputDirectory != null) {
                 File sourceFile = grammarInfo.getGrammarFile();
-                File[] targetFiles = getTargetFiles( this.outputDirectory, includedFile, grammarInfo );
-                for ( int j = 0; j < targetFiles.length; j++ )
-                {
-                    File targetFile = targetFiles[j];
-                    if ( !targetFile.exists()
-                        || targetFile.lastModified() + this.staleMillis < sourceFile.lastModified() )
-                    {
-                        this.includedGrammars.add( grammarInfo );
+                File[] targetFiles = getTargetFiles(this.outputDirectory, includedFile, grammarInfo);
+                for (File targetFile : targetFiles) {
+                    if (!targetFile.exists()
+                            || targetFile.lastModified() + this.staleMillis < sourceFile.lastModified()) {
+                        this.includedGrammars.add(grammarInfo);
                         break;
                     }
                 }
-            }
-            else
-            {
-                this.includedGrammars.add( grammarInfo );
+            } else {
+                this.includedGrammars.add(grammarInfo);
             }
         }
     }
@@ -210,7 +202,7 @@ class GrammarDirectoryScanner
      */
     public GrammarInfo[] getIncludedGrammars()
     {
-        return (GrammarInfo[]) this.includedGrammars.toArray( new GrammarInfo[this.includedGrammars.size()] );
+        return this.includedGrammars.toArray(new GrammarInfo[0]);
     }
 
 }

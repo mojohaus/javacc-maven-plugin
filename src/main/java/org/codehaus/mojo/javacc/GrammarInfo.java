@@ -128,7 +128,7 @@ class GrammarInfo
         this.parserDirectory = this.parserPackage.replace( '.', File.separatorChar );
 
         String name = findParserName( grammar );
-        if ( name.length() <= 0 )
+        if (name.length() == 0)
         {
             this.parserName = FileUtils.removeExtension( inFile.getName() );
         }
