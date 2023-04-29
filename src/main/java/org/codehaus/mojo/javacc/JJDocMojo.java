@@ -28,13 +28,10 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.apache.maven.doxia.sink.Sink;
-import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
@@ -58,20 +55,6 @@ public class JJDocMojo
     // ----------------------------------------------------------------------
     // Mojo Parameters
     // ----------------------------------------------------------------------
-
-    /**
-     * The current Maven project.
-     *
-     */
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
-
-    /**
-     * The site renderer.
-     *
-     */
-    @Component
-    private Renderer siteRenderer;
 
     /**
      * The directories where the JavaCC grammar files (<code>*.jj</code>) are located. By default, the directories
@@ -167,28 +150,6 @@ public class JJDocMojo
      */
     @Parameter(property = "javacc.oneTable", defaultValue = "true")
     private boolean oneTable;
-
-    /**
-     * Get the maven project.
-     * 
-     * @see org.apache.maven.reporting.AbstractMavenReport#getProject()
-     * @return The current Maven project.
-     */
-    protected MavenProject getProject()
-    {
-        return this.project;
-    }
-
-    /**
-     * Get the site renderer.
-     * 
-     * @see org.apache.maven.reporting.AbstractMavenReport#getSiteRenderer()
-     * @return The site renderer.
-     */
-    protected Renderer getSiteRenderer()
-    {
-        return this.siteRenderer;
-    }
 
     /**
      * Get the output directory of the report if run directly from the command line.
