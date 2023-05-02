@@ -50,7 +50,7 @@ under the License.
 
   <properties>
     <sitePluginVersion>${maven-site-plugin.version}</sitePluginVersion>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>3.9.1</mavenVersion>
     <skipTests>false</skipTests>
   </properties>
 
