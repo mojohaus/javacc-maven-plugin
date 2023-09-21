@@ -25,7 +25,7 @@ under the License.
   <parent>
     <artifactId>mojo-parent</artifactId>
     <groupId>org.codehaus.mojo</groupId>
-    <version>70</version>
+    <version>76</version>
   </parent>
 
   <artifactId>javacc-maven-plugin</artifactId>
@@ -34,7 +34,7 @@ under the License.
 
   <name>JavaCC Maven Plugin</name>
   <description>Maven 3 Plugin for processing JavaCC grammar files.</description>
-  <url>https://mojo.codehaus.org/javacc-maven-plugin/</url>
+  <url>https://www.mojohaus.org/javacc-maven-plugin/</url>
   <inceptionYear>2005</inceptionYear>
   <licenses>
     <license>
@@ -60,10 +60,16 @@ under the License.
     <url>https://github.com/mojohaus/javacc-maven-plugin</url>
     <tag>HEAD</tag>
   </scm>
+
   <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MJAVACC</url>
+    <system>GitHub</system>
+    <url>https://github.com/mojohaus/javacc-maven-plugin/issues</url>
   </issueManagement>
+
+  <ciManagement>
+    <system>GitHub</system>
+    <url>https://github.com/mojohaus/javacc-maven-plugin/actions</url>
+  </ciManagement>
 
   <dependencies>
     <dependency>
@@ -162,7 +168,6 @@ under the License.
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>3.6.0</version>
         <configuration>
           <skipInvocation>${skipTests}</skipInvocation>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
