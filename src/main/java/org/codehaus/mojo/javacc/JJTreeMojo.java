@@ -2,20 +2,20 @@ package org.codehaus.mojo.javacc;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file 
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, 
+ *
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
- * KIND, either express or implied.  See the License for the 
- * specific language governing permissions and limitations 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
  * under the License.
  */
 
@@ -37,9 +37,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author jesse jesse.mcconnell@gmail.com
  */
 @Mojo(name = "jjtree", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class JJTreeMojo
-    extends AbstractPreprocessorMojo
-{
+public class JJTreeMojo extends AbstractPreprocessorMojo {
 
     /**
      * The Java version for which to generate source code. Default value is <code>1.4</code>.
@@ -52,7 +50,7 @@ public class JJTreeMojo
     /**
      * A flag whether to generate sample implementations for <code>SimpleNode</code> and any other nodes used in the
      * grammar. Default value is <code>true</code>.
-     * 
+     *
      */
     @Parameter(property = "javacc.buildNodeFiles")
     private Boolean buildNodeFiles;
@@ -105,7 +103,7 @@ public class JJTreeMojo
     /**
      * The prefix used to construct node class names from node identifiers in multi mode. Default value is
      * <code>AST</code>.
-     * 
+     *
      */
     @Parameter(property = "javacc.nodePrefix")
     private String nodePrefix;
@@ -190,14 +188,18 @@ public class JJTreeMojo
      * Directory where the output Java files for the node classes and the JavaCC grammar file will be located.
      *
      */
-    @Parameter(property = "javacc.outputDirectory", defaultValue = "${project.build.directory}/generated-sources/jjtree")
+    @Parameter(
+            property = "javacc.outputDirectory",
+            defaultValue = "${project.build.directory}/generated-sources/jjtree")
     private File outputDirectory;
 
     /**
      * The directory to store the processed input files for later detection of stale sources.
      *
      */
-    @Parameter(property = "javacc.timestampDirectory", defaultValue = "${project.build.directory}/generated-sources/jjtree-timestamp")
+    @Parameter(
+            property = "javacc.timestampDirectory",
+            defaultValue = "${project.build.directory}/generated-sources/jjtree-timestamp")
     private File timestampDirectory;
 
     /**
@@ -226,116 +228,101 @@ public class JJTreeMojo
     /**
      * {@inheritDoc}
      */
-    protected File getSourceDirectory()
-    {
+    protected File getSourceDirectory() {
         return this.sourceDirectory;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String[] getIncludes()
-    {
-        if ( this.includes != null )
-        {
+    protected String[] getIncludes() {
+        if (this.includes != null) {
             return this.includes;
-        }
-        else
-        {
-            return new String[] { "**/*.jjt", "**/*.JJT" };
+        } else {
+            return new String[] {"**/*.jjt", "**/*.JJT"};
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String[] getExcludes()
-    {
+    protected String[] getExcludes() {
         return this.excludes;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected File getOutputDirectory()
-    {
+    protected File getOutputDirectory() {
         return this.outputDirectory;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected File getTimestampDirectory()
-    {
+    protected File getTimestampDirectory() {
         return this.timestampDirectory;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected int getStaleMillis()
-    {
+    protected int getStaleMillis() {
         return this.staleMillis;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void processGrammar( GrammarInfo grammarInfo )
-        throws MojoExecutionException, MojoFailureException
-    {
+    protected void processGrammar(GrammarInfo grammarInfo) throws MojoExecutionException, MojoFailureException {
         File jjtFile = grammarInfo.getGrammarFile();
 
         // determine target directory for tree node files
-        String nodePackageName = grammarInfo.resolvePackageName( this.nodePackage );
+        String nodePackageName = grammarInfo.resolvePackageName(this.nodePackage);
         File nodeDirectory;
-        if ( nodePackageName != null )
-        {
-            nodeDirectory = new File( nodePackageName.replace( '.', File.separatorChar ) );
+        if (nodePackageName != null) {
+            nodeDirectory = new File(nodePackageName.replace('.', File.separatorChar));
+        } else {
+            nodeDirectory = new File(grammarInfo.getParserDirectory());
         }
-        else
-        {
-            nodeDirectory = new File( grammarInfo.getParserDirectory() );
-        }
-        nodeDirectory = new File( getOutputDirectory(), nodeDirectory.getPath() );
+        nodeDirectory = new File(getOutputDirectory(), nodeDirectory.getPath());
 
         // generate final grammar file and node files
         JJTree jjtree = newJJTree();
-        jjtree.setInputFile( jjtFile );
-        jjtree.setOutputDirectory( nodeDirectory );
-        jjtree.setNodePackage( nodePackageName );
+        jjtree.setInputFile(jjtFile);
+        jjtree.setOutputDirectory(nodeDirectory);
+        jjtree.setNodePackage(nodePackageName);
         jjtree.run();
 
         // create timestamp file
-        createTimestamp( grammarInfo );
+        createTimestamp(grammarInfo);
     }
 
     /**
      * Creates a new facade to invoke JJTree. Most options for the invocation are derived from the current values of the
      * corresponding mojo parameters. The caller is responsible to set the input file, output directory and package on
      * the returned facade.
-     * 
+     *
      * @return The facade for the tool invocation, never <code>null</code>.
      */
-    protected JJTree newJJTree()
-    {
+    protected JJTree newJJTree() {
         JJTree jjtree = new JJTree();
-        jjtree.setLog( getLog() );
-        jjtree.setJdkVersion( this.jdkVersion );
-        jjtree.setStatic( this.isStatic );
-        jjtree.setBuildNodeFiles( this.buildNodeFiles );
-        jjtree.setMulti( this.multi );
-        jjtree.setNodeDefaultVoid( this.nodeDefaultVoid );
-        jjtree.setNodeClass( this.nodeClass );
-        jjtree.setNodeFactory( this.nodeFactory );
-        jjtree.setNodePrefix( this.nodePrefix );
-        jjtree.setNodeScopeHook( this.nodeScopeHook );
-        jjtree.setNodeUsesParser( this.nodeUsesParser );
-        jjtree.setTrackTokens( this.trackTokens );
-        jjtree.setVisitor( this.visitor );
-        jjtree.setVisitorDataType( this.visitorDataType );
-        jjtree.setVisitorReturnType( this.visitorReturnType );
-        jjtree.setVisitorException( this.visitorException );
+        jjtree.setLog(getLog());
+        jjtree.setJdkVersion(this.jdkVersion);
+        jjtree.setStatic(this.isStatic);
+        jjtree.setBuildNodeFiles(this.buildNodeFiles);
+        jjtree.setMulti(this.multi);
+        jjtree.setNodeDefaultVoid(this.nodeDefaultVoid);
+        jjtree.setNodeClass(this.nodeClass);
+        jjtree.setNodeFactory(this.nodeFactory);
+        jjtree.setNodePrefix(this.nodePrefix);
+        jjtree.setNodeScopeHook(this.nodeScopeHook);
+        jjtree.setNodeUsesParser(this.nodeUsesParser);
+        jjtree.setTrackTokens(this.trackTokens);
+        jjtree.setVisitor(this.visitor);
+        jjtree.setVisitorDataType(this.visitorDataType);
+        jjtree.setVisitorReturnType(this.visitorReturnType);
+        jjtree.setVisitorException(this.visitorException);
         return jjtree;
     }
 
@@ -343,9 +330,7 @@ public class JJTreeMojo
      * Prevents registration of our output or a following invocation of the javacc mojo will cause duplicate sources
      * which in turn will make compilation fail.
      */
-    protected void addCompileSourceRoot()
-    {
+    protected void addCompileSourceRoot() {
         // do nothing
     }
-
 }

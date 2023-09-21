@@ -2,20 +2,20 @@ package org.codehaus.mojo.javacc;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file 
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, 
+ *
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
- * KIND, either express or implied.  See the License for the 
- * specific language governing permissions and limitations 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
  * under the License.
  */
 
@@ -31,16 +31,14 @@ import org.apache.maven.plugins.annotations.Parameter;
  * Parses a JTB file and transforms it into source files for an AST and a JavaCC grammar file which automatically builds
  * the AST.<strong>Note:</strong> <a href="http://compilers.cs.ucla.edu/jtb/">JTB</a> requires Java 1.5
  * or higher. This goal will not work with earlier versions of the JRE.
- * 
+ *
  * @since 2.2
  * @deprecated As of version 2.4, use the <code>jtb-javacc</code> goal instead.
  * @author Gregory Kick (gk5885@kickstyle.net)
  *
  */
 @Mojo(name = "jtb", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class JTBMojo
-    extends AbstractPreprocessorMojo
-{
+public class JTBMojo extends AbstractPreprocessorMojo {
 
     /**
      * This option is short for <code>nodePackageName</code> = <code>&lt;packageName&gt;.syntaxtree</code> and
@@ -154,7 +152,9 @@ public class JTBMojo
      * The directory to store the processed input files for later detection of stale sources.
      *
      */
-    @Parameter(property = "javacc.timestampDirectory", defaultValue = "${project.build.directory}/generated-sources/jtb-timestamp")
+    @Parameter(
+            property = "javacc.timestampDirectory",
+            defaultValue = "${project.build.directory}/generated-sources/jtb-timestamp")
     private File timestampDirectory;
 
     /**
@@ -183,125 +183,102 @@ public class JTBMojo
     /**
      * {@inheritDoc}
      */
-    protected File getSourceDirectory()
-    {
+    protected File getSourceDirectory() {
         return this.sourceDirectory;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String[] getIncludes()
-    {
-        if ( this.includes != null )
-        {
+    protected String[] getIncludes() {
+        if (this.includes != null) {
             return this.includes;
-        }
-        else
-        {
-            return new String[] { "**/*.jtb", "**/*.JTB" };
+        } else {
+            return new String[] {"**/*.jtb", "**/*.JTB"};
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    protected String[] getExcludes()
-    {
+    protected String[] getExcludes() {
         return this.excludes;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected File getOutputDirectory()
-    {
+    protected File getOutputDirectory() {
         return this.outputDirectory;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected File getTimestampDirectory()
-    {
+    protected File getTimestampDirectory() {
         return this.timestampDirectory;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected int getStaleMillis()
-    {
+    protected int getStaleMillis() {
         return this.staleMillis;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected void processGrammar( GrammarInfo grammarInfo )
-        throws MojoExecutionException, MojoFailureException
-    {
+    protected void processGrammar(GrammarInfo grammarInfo) throws MojoExecutionException, MojoFailureException {
         File jtbFile = grammarInfo.getGrammarFile();
-        File jjDirectory = new File( getOutputDirectory(), grammarInfo.getParserDirectory() );
+        File jjDirectory = new File(getOutputDirectory(), grammarInfo.getParserDirectory());
 
-        String nodePackage = grammarInfo.resolvePackageName( getNodePackageName() );
-        File nodeDirectory = new File( getOutputDirectory(), nodePackage.replace( '.', File.separatorChar ) );
+        String nodePackage = grammarInfo.resolvePackageName(getNodePackageName());
+        File nodeDirectory = new File(getOutputDirectory(), nodePackage.replace('.', File.separatorChar));
 
-        String visitorPackage = grammarInfo.resolvePackageName( getVisitorPackageName() );
-        File visitorDirectory = new File( getOutputDirectory(), visitorPackage.replace( '.', File.separatorChar ) );
+        String visitorPackage = grammarInfo.resolvePackageName(getVisitorPackageName());
+        File visitorDirectory = new File(getOutputDirectory(), visitorPackage.replace('.', File.separatorChar));
 
         // generate final grammar file and the node/visitor files
         JTB jtb = newJTB();
-        jtb.setInputFile( jtbFile );
-        jtb.setOutputDirectory( jjDirectory );
-        jtb.setNodeDirectory( nodeDirectory );
-        jtb.setVisitorDirectory( visitorDirectory );
-        jtb.setNodePackageName( nodePackage );
-        jtb.setVisitorPackageName( visitorPackage );
+        jtb.setInputFile(jtbFile);
+        jtb.setOutputDirectory(jjDirectory);
+        jtb.setNodeDirectory(nodeDirectory);
+        jtb.setVisitorDirectory(visitorDirectory);
+        jtb.setNodePackageName(nodePackage);
+        jtb.setVisitorPackageName(visitorPackage);
         jtb.run();
 
         // create timestamp file
-        createTimestamp( grammarInfo );
+        createTimestamp(grammarInfo);
     }
 
     /**
      * Gets the effective package name for the AST node files.
-     * 
+     *
      * @return The effective package name for the AST node files, never <code>null</code>.
      */
-    private String getNodePackageName()
-    {
-        if ( this.packageName != null )
-        {
+    private String getNodePackageName() {
+        if (this.packageName != null) {
             return this.packageName + ".syntaxtree";
-        }
-        else if ( this.nodePackageName != null )
-        {
+        } else if (this.nodePackageName != null) {
             return this.nodePackageName;
-        }
-        else
-        {
+        } else {
             return "*.syntaxtree";
         }
     }
 
     /**
      * Gets the effective package name for the visitor files.
-     * 
+     *
      * @return The effective package name for the visitor files, never <code>null</code>.
      */
-    private String getVisitorPackageName()
-    {
-        if ( this.packageName != null )
-        {
+    private String getVisitorPackageName() {
+        if (this.packageName != null) {
             return this.packageName + ".visitor";
-        }
-        else if ( this.visitorPackageName != null )
-        {
+        } else if (this.visitorPackageName != null) {
             return this.visitorPackageName;
-        }
-        else
-        {
+        } else {
             return "*.visitor";
         }
     }
@@ -310,22 +287,20 @@ public class JTBMojo
      * Creates a new facade to invoke JTB. Most options for the invocation are derived from the current values of the
      * corresponding mojo parameters. The caller is responsible to set the input file, output directories and packages
      * on the returned facade.
-     * 
+     *
      * @return The facade for the tool invocation, never <code>null</code>.
      */
-    private JTB newJTB()
-    {
+    private JTB newJTB() {
         JTB jtb = new JTB();
-        jtb.setLog( getLog() );
-        jtb.setDescriptiveFieldNames( this.descriptiveFieldNames );
-        jtb.setJavadocFriendlyComments( this.javadocFriendlyComments );
-        jtb.setNodeParentClass( this.nodeParentClass );
-        jtb.setParentPointers( this.parentPointers );
-        jtb.setPrinter( this.printer );
-        jtb.setScheme( this.scheme );
-        jtb.setSpecialTokens( this.specialTokens );
-        jtb.setSupressErrorChecking( this.supressErrorChecking );
+        jtb.setLog(getLog());
+        jtb.setDescriptiveFieldNames(this.descriptiveFieldNames);
+        jtb.setJavadocFriendlyComments(this.javadocFriendlyComments);
+        jtb.setNodeParentClass(this.nodeParentClass);
+        jtb.setParentPointers(this.parentPointers);
+        jtb.setPrinter(this.printer);
+        jtb.setScheme(this.scheme);
+        jtb.setSpecialTokens(this.specialTokens);
+        jtb.setSupressErrorChecking(this.supressErrorChecking);
         return jtb;
     }
-
 }

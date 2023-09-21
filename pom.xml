@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
@@ -18,13 +17,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>mojo-parent</artifactId>
     <groupId>org.codehaus.mojo</groupId>
+    <artifactId>mojo-parent</artifactId>
     <version>76</version>
   </parent>
 
@@ -48,18 +46,11 @@ under the License.
     <maven>${mavenVersion}</maven>
   </prerequisites>
 
-  <properties>
-    <recommendedJavaBuildVersion>11</recommendedJavaBuildVersion>
-    <sitePluginVersion>${maven-site-plugin.version}</sitePluginVersion>
-    <mavenVersion>3.2.5</mavenVersion>
-    <skipTests>false</skipTests>
-  </properties>
-
   <scm>
     <connection>scm:git:https://github.com/mojohaus/javacc-maven-plugin.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/mojohaus/javacc-maven-plugin.git</developerConnection>
-    <url>https://github.com/mojohaus/javacc-maven-plugin</url>
     <tag>HEAD</tag>
+    <url>https://github.com/mojohaus/javacc-maven-plugin</url>
   </scm>
 
   <issueManagement>
@@ -71,6 +62,13 @@ under the License.
     <system>GitHub</system>
     <url>https://github.com/mojohaus/javacc-maven-plugin/actions</url>
   </ciManagement>
+
+  <properties>
+    <recommendedJavaBuildVersion>11</recommendedJavaBuildVersion>
+    <sitePluginVersion>${maven-site-plugin.version}</sitePluginVersion>
+    <mavenVersion>3.2.5</mavenVersion>
+    <skipTests>false</skipTests>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -129,8 +127,8 @@ under the License.
       <version>3.2.0</version>
       <exclusions>
         <exclusion>
-          <artifactId>plexus-container-default</artifactId>
           <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -140,8 +138,8 @@ under the License.
       <version>1.12.0</version>
       <exclusions>
         <exclusion>
-          <artifactId>plexus-container-default</artifactId>
           <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -151,8 +149,8 @@ under the License.
       <version>1.11.1</version>
       <exclusions>
         <exclusion>
-          <artifactId>plexus-container-default</artifactId>
           <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
