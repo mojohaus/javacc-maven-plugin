@@ -2,20 +2,20 @@ package org.codehaus.mojo.javacc;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file 
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, 
+ *
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
- * KIND, either express or implied.  See the License for the 
- * specific language governing permissions and limitations 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
  * under the License.
  */
 
@@ -48,9 +48,7 @@ import org.apache.maven.reporting.MavenReportException;
  */
 @Mojo(name = "jjdoc")
 @Execute(phase = LifecyclePhase.GENERATE_SOURCES)
-public class JJDocMojo
-    extends AbstractMavenReport
-{
+public class JJDocMojo extends AbstractMavenReport {
 
     // ----------------------------------------------------------------------
     // Mojo Parameters
@@ -67,7 +65,7 @@ public class JJDocMojo
 
     /**
      * The default source directory for hand-crafted grammar files.
-     * 
+     *
      */
     @Parameter(defaultValue = "${basedir}/src/main/javacc")
     private File defaultGrammarDirectoryJavaCC;
@@ -153,51 +151,42 @@ public class JJDocMojo
 
     /**
      * Get the output directory of the report if run directly from the command line.
-     * 
+     *
      * @see org.apache.maven.reporting.AbstractMavenReport#getOutputDirectory()
      * @return The report output directory.
      */
-    protected String getOutputDirectory()
-    {
+    protected String getOutputDirectory() {
         return this.outputDirectory.getAbsolutePath();
     }
 
     /**
      * Get the output directory of the JJDoc files, i.e. the sub directory in the report output directory as specified
      * by the {@link #jjdocDirectory} parameter.
-     * 
+     *
      * @return The report output directory of the JJDoc files.
      */
-    private File getJJDocOutputDirectory()
-    {
-        return new File( getReportOutputDirectory(), this.jjdocDirectory );
+    private File getJJDocOutputDirectory() {
+        return new File(getReportOutputDirectory(), this.jjdocDirectory);
     }
 
     /**
      * Get the source directories that should be scanned for grammar files.
-     * 
+     *
      * @return The source directories that should be scanned for grammar files, never <code>null</code>.
      */
-    private File[] getSourceDirectories()
-    {
+    private File[] getSourceDirectories() {
         Set<File> directories = new LinkedHashSet<>();
-        if ( this.sourceDirectories != null && this.sourceDirectories.length > 0 )
-        {
-            directories.addAll( Arrays.asList( this.sourceDirectories ) );
-        }
-        else
-        {
-            if ( this.defaultGrammarDirectoryJavaCC != null )
-            {
-                directories.add( this.defaultGrammarDirectoryJavaCC );
+        if (this.sourceDirectories != null && this.sourceDirectories.length > 0) {
+            directories.addAll(Arrays.asList(this.sourceDirectories));
+        } else {
+            if (this.defaultGrammarDirectoryJavaCC != null) {
+                directories.add(this.defaultGrammarDirectoryJavaCC);
             }
-            if ( this.defaultGrammarDirectoryJJTree != null )
-            {
-                directories.add( this.defaultGrammarDirectoryJJTree );
+            if (this.defaultGrammarDirectoryJJTree != null) {
+                directories.add(this.defaultGrammarDirectoryJJTree);
             }
-            if ( this.defaultGrammarDirectoryJTB != null )
-            {
-                directories.add( this.defaultGrammarDirectoryJTB );
+            if (this.defaultGrammarDirectoryJTB != null) {
+                directories.add(this.defaultGrammarDirectoryJTB);
             }
         }
         return directories.toArray(new File[0]);
@@ -212,9 +201,8 @@ public class JJDocMojo
      * @param locale The locale to use for this report.
      * @return The name of this report.
      */
-    public String getName( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.jjdoc.name" );
+    public String getName(Locale locale) {
+        return getBundle(locale).getString("report.jjdoc.name");
     }
 
     /**
@@ -222,17 +210,15 @@ public class JJDocMojo
      * @param locale The locale to use for this report.
      * @return The description of this report.
      */
-    public String getDescription( Locale locale )
-    {
-        return getBundle( locale ).getString( "report.jjdoc.short.description" );
+    public String getDescription(Locale locale) {
+        return getBundle(locale).getString("report.jjdoc.short.description");
     }
 
     /**
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
      * @return The name of the main report file.
      */
-    public String getOutputName()
-    {
+    public String getOutputName() {
         return this.jjdocDirectory + "/index";
     }
 
@@ -240,8 +226,7 @@ public class JJDocMojo
      * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
      * @return <code>true</code> if the configured source directories are not empty, <code>false</code> otherwise.
      */
-    public boolean canGenerateReport()
-    {
+    public boolean canGenerateReport() {
         return Arrays.stream(getSourceDirectories())
                 .map(File::list)
                 .anyMatch(files -> files != null && files.length > 0);
@@ -249,45 +234,38 @@ public class JJDocMojo
 
     /**
      * Run the actual report.
-     * 
+     *
      * @param locale The locale to use for this report.
      * @throws MavenReportException If the report generation failed.
      */
-    public void executeReport( Locale locale )
-        throws MavenReportException
-    {
+    public void executeReport(Locale locale) throws MavenReportException {
         generate(getSink(), locale);
     }
 
     /**
      * The JJDoc output file will have a <code>.html</code> or <code>.txt</code> extension depending on the value of
      * the parameters {@link #text} and {@link #bnf}.
-     * 
+     *
      * @return The file extension (including the leading period) to be used for the JJDoc output files.
      */
-    private String getOutputFileExtension()
-    {
-        if ( Boolean.TRUE.equals( this.text ) || Boolean.TRUE.equals( this.bnf ) )
-        {
+    private String getOutputFileExtension() {
+        if (Boolean.TRUE.equals(this.text) || Boolean.TRUE.equals(this.bnf)) {
             return ".txt";
-        }
-        else
-        {
+        } else {
             return ".html";
         }
     }
 
     /**
      * Create the header and title for the HTML report page.
-     * 
+     *
      * @param bundle The resource bundle with the text.
      * @param sink The sink for writing to the main report file.
      */
-    private void createReportHeader( ResourceBundle bundle, Sink sink )
-    {
+    private void createReportHeader(ResourceBundle bundle, Sink sink) {
         sink.head();
         sink.title();
-        sink.text( bundle.getString( "report.jjdoc.title" ) );
+        sink.text(bundle.getString("report.jjdoc.title"));
         sink.title_();
         sink.head_();
 
@@ -295,43 +273,41 @@ public class JJDocMojo
 
         sink.section1();
         sink.sectionTitle1();
-        sink.text( bundle.getString( "report.jjdoc.title" ) );
+        sink.text(bundle.getString("report.jjdoc.title"));
         sink.sectionTitle1_();
-        sink.text( bundle.getString( "report.jjdoc.description" ) );
+        sink.text(bundle.getString("report.jjdoc.description"));
         sink.section1_();
 
         sink.lineBreak();
         sink.table();
         sink.tableRow();
         sink.tableHeaderCell();
-        sink.text( bundle.getString( "report.jjdoc.table.heading" ) );
+        sink.text(bundle.getString("report.jjdoc.table.heading"));
         sink.tableHeaderCell_();
         sink.tableRow_();
     }
 
     /**
      * Create a table row containing a link to the JJDoc report for a grammar file.
-     * 
+     *
      * @param sink The sink to write the report
      * @param sourceDirectory The source directory of the grammar file.
      * @param grammarFile The JavaCC grammar file.
      * @param linkPath The path to the JJDoc output.
      */
-    private void createReportLink( Sink sink, File sourceDirectory, File grammarFile, String linkPath )
-    {
+    private void createReportLink(Sink sink, File sourceDirectory, File grammarFile, String linkPath) {
         sink.tableRow();
         sink.tableCell();
-        if ( linkPath.startsWith( "/" ) )
-        {
-            linkPath = linkPath.substring( 1 );
+        if (linkPath.startsWith("/")) {
+            linkPath = linkPath.substring(1);
         }
-        sink.link( linkPath );
-        String grammarFileRelativePath = sourceDirectory.toURI().relativize( grammarFile.toURI() ).toString();
-        if ( grammarFileRelativePath.startsWith( "/" ) )
-        {
-            grammarFileRelativePath = grammarFileRelativePath.substring( 1 );
+        sink.link(linkPath);
+        String grammarFileRelativePath =
+                sourceDirectory.toURI().relativize(grammarFile.toURI()).toString();
+        if (grammarFileRelativePath.startsWith("/")) {
+            grammarFileRelativePath = grammarFileRelativePath.substring(1);
         }
-        sink.text( grammarFileRelativePath );
+        sink.text(grammarFileRelativePath);
         sink.link_();
         sink.tableCell_();
         sink.tableRow_();
@@ -339,11 +315,10 @@ public class JJDocMojo
 
     /**
      * Create the HTML footer for the report page.
-     * 
+     *
      * @param sink The sink to write the HTML report page.
      */
-    private void createReportFooter( Sink sink )
-    {
+    private void createReportFooter(Sink sink) {
         sink.table_();
         sink.body_();
     }
@@ -352,75 +327,65 @@ public class JJDocMojo
      * Creates a new facade to invoke JJDoc. Most options for the invocation are derived from the current values of the
      * corresponding mojo parameters. The caller is responsible to set the input file and output file on the returned
      * facade.
-     * 
+     *
      * @return The facade for the tool invocation, never <code>null</code>.
      */
-    private JJDoc newJJDoc()
-    {
+    private JJDoc newJJDoc() {
         JJDoc jjdoc = new JJDoc();
-        jjdoc.setLog( getLog() );
-        jjdoc.setGrammarEncoding( this.grammarEncoding );
-        jjdoc.setCssHref( this.cssHref );
-        jjdoc.setText( this.text );
-        jjdoc.setBnf( this.bnf );
+        jjdoc.setLog(getLog());
+        jjdoc.setGrammarEncoding(this.grammarEncoding);
+        jjdoc.setCssHref(this.cssHref);
+        jjdoc.setText(this.text);
+        jjdoc.setBnf(this.bnf);
         jjdoc.setOneTable(this.oneTable);
         return jjdoc;
     }
 
     /**
      * Searches the specified source directory to find grammar files that can be documented.
-     * 
+     *
      * @param sourceDirectory The source directory to scan for grammar files.
      * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
      *         directory does not exist.
      * @throws MavenReportException If there is a problem while scanning for .jj files.
      */
-    private GrammarInfo[] scanForGrammars( File sourceDirectory )
-        throws MavenReportException
-    {
-        if ( !sourceDirectory.isDirectory() )
-        {
+    private GrammarInfo[] scanForGrammars(File sourceDirectory) throws MavenReportException {
+        if (!sourceDirectory.isDirectory()) {
             return null;
         }
 
         GrammarInfo[] grammarInfos;
 
-        getLog().debug( "Scanning for grammars: " + sourceDirectory );
-        try
-        {
-            String[] includes = { "**/*.jj", "**/*.JJ", "**/*.jjt", "**/*.JJT", "**/*.jtb", "**/*.JTB" };
+        getLog().debug("Scanning for grammars: " + sourceDirectory);
+        try {
+            String[] includes = {"**/*.jj", "**/*.JJ", "**/*.jjt", "**/*.JJT", "**/*.jtb", "**/*.JTB"};
             GrammarDirectoryScanner scanner = new GrammarDirectoryScanner();
-            scanner.setSourceDirectory( sourceDirectory );
-            scanner.setIncludes( includes );
+            scanner.setSourceDirectory(sourceDirectory);
+            scanner.setIncludes(includes);
             scanner.scan();
             grammarInfos = scanner.getIncludedGrammars();
+        } catch (Exception e) {
+            throw new MavenReportException("Failed to scan for grammars: " + sourceDirectory, e);
         }
-        catch ( Exception e )
-        {
-            throw new MavenReportException( "Failed to scan for grammars: " + sourceDirectory, e );
-        }
-        getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
+        getLog().debug("Found grammars: " + Arrays.asList(grammarInfos));
 
         return grammarInfos;
     }
 
     /**
      * Get the resource bundle for the report text.
-     * 
+     *
      * @param locale The locale to use for this report.
      * @return The resource bundle.
      */
-    private ResourceBundle getBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "jjdoc-report", locale, getClass().getClassLoader() );
+    private ResourceBundle getBundle(Locale locale) {
+        return ResourceBundle.getBundle("jjdoc-report", locale, getClass().getClassLoader());
     }
 
     /**
      * Compares grammar infos using their relative grammar file paths as the sort key.
      */
-    private static class GrammarInfoComparator
-        implements Comparator<GrammarInfo>
-    {
+    private static class GrammarInfoComparator implements Comparator<GrammarInfo> {
 
         /**
          * The singleton instance of this comparator.
@@ -429,53 +394,47 @@ public class JJDocMojo
 
         /**
          * Gets the singleton instance of this class.
-         * 
+         *
          * @return The singleton instance of this class.
          */
-        public static GrammarInfoComparator getInstance()
-        {
+        public static GrammarInfoComparator getInstance() {
             return INSTANCE;
         }
 
         /**
          * Compares the path of two grammar files lexicographically.
-         * 
+         *
          * @param o1 The first grammar info.
          * @param o2 The second grammar info.
          * @return A negative integer if the first grammar is considered "smaller", a positive integer if it is
          *         considered "greater" and zero otherwise.
          */
-        public int compare( GrammarInfo o1, GrammarInfo o2 )
-        {
+        public int compare(GrammarInfo o1, GrammarInfo o2) {
             int rel;
 
-            String[] paths1 = o1.getRelativeGrammarFile().split( "\\" + File.separatorChar );
+            String[] paths1 = o1.getRelativeGrammarFile().split("\\" + File.separatorChar);
 
-            String[] paths2 = o2.getRelativeGrammarFile().split( "\\" + File.separatorChar );
+            String[] paths2 = o2.getRelativeGrammarFile().split("\\" + File.separatorChar);
 
-            int dirs = Math.min( paths1.length, paths2.length ) - 1;
-            for ( int i = 0; i < dirs; i++ )
-            {
-                rel = paths1[i].compareToIgnoreCase( paths2[i] );
-                if ( rel != 0 )
-                {
+            int dirs = Math.min(paths1.length, paths2.length) - 1;
+            for (int i = 0; i < dirs; i++) {
+                rel = paths1[i].compareToIgnoreCase(paths2[i]);
+                if (rel != 0) {
                     return rel;
                 }
             }
 
             rel = paths1.length - paths2.length;
-            if ( rel != 0 )
-            {
+            if (rel != 0) {
                 return rel;
             }
 
-            return paths1[paths1.length - 1].compareToIgnoreCase( paths2[paths1.length - 1] );
+            return paths1[paths1.length - 1].compareToIgnoreCase(paths2[paths1.length - 1]);
         }
-
     }
 
     public void generate(Sink sink, Locale locale) throws MavenReportException {
-        createReportHeader( getBundle( locale ), sink );
+        createReportHeader(getBundle(locale), sink);
 
         File[] sourceDirs = getSourceDirectories();
         for (File sourceDir : sourceDirs) {
@@ -508,9 +467,8 @@ public class JJDocMojo
             }
         }
 
-        createReportFooter( sink );
+        createReportFooter(sink);
         sink.flush();
         sink.close();
     }
-
 }

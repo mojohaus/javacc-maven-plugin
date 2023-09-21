@@ -2,20 +2,20 @@ package org.codehaus.mojo.javacc;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file 
+ * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, 
+ *
+ * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY 
- * KIND, either express or implied.  See the License for the 
- * specific language governing permissions and limitations 
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
  * under the License.
  */
 
@@ -37,13 +37,11 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Provides common services for all mojos that compile JavaCC grammar files.
- * 
+ *
  * @author jruiz@exist.com
  * @author jesse jesse.mcconnell@gmail.com
  */
-public abstract class AbstractJavaCCMojo
-    extends AbstractMojo
-{
+public abstract class AbstractJavaCCMojo extends AbstractMojo {
 
     /**
      * The current Maven project.
@@ -130,7 +128,7 @@ public abstract class AbstractJavaCCMojo
     /**
      * Setting it to <code>false</code> causes errors due to parse errors to be reported in somewhat less detail.
      * Default value is <code>true</code>.
-     * 
+     *
      */
     @Parameter(property = "javacc.errorReporting")
     private Boolean errorReporting;
@@ -139,7 +137,7 @@ public abstract class AbstractJavaCCMojo
      * When set to <code>true</code>, the generated parser uses an input stream object that processes Java Unicode
      * escapes (<code>\</code><code>u</code><i>xxxx</i>) before sending characters to the token manager. Default
      * value is <code>false</code>.
-     * 
+     *
      */
     @Parameter(property = "javacc.javaUnicodeEscape")
     private Boolean javaUnicodeEscape;
@@ -209,7 +207,7 @@ public abstract class AbstractJavaCCMojo
     /**
      * When set to <code>true</code>, the generated token manager will include a field called <code>parser</code>
      * that references the instantiating parser instance. Default value is <code>false</code>.
-     * 
+     *
      */
     @Parameter(property = "javacc.tokenManagerUsesParser")
     private Boolean tokenManagerUsesParser;
@@ -259,7 +257,7 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * A flag whether to keep line and column information along with a token. Default value is <code>true</code>.
-     * 
+     *
      */
     @Parameter(property = "javacc.keepLineColumn")
     private Boolean keepLineColumn;
@@ -275,7 +273,7 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * The file encoding to use for reading the grammar files.
-     * 
+     *
      * @since 2.6
      */
     @Parameter(property = "javacc.grammarEncoding", defaultValue = "${project.build.sourceEncoding}")
@@ -283,47 +281,44 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * Gets the file encoding of the grammar files.
-     * 
+     *
      * @return The file encoding of the grammar files or <code>null</code> if the user did not specify this mojo
      *         parameter.
      */
-    protected String getGrammarEncoding()
-    {
+    protected String getGrammarEncoding() {
         return this.grammarEncoding;
     }
 
     /**
      * Gets the Java version for which to generate source code.
-     * 
+     *
      * @return The Java version for which to generate source code, will be <code>null</code> if the user did not specify
      *         this mojo parameter.
      */
-    protected String getJdkVersion()
-    {
+    protected String getJdkVersion() {
         return this.jdkVersion;
     }
 
     /**
      * Gets the flag whether to generate static parser.
-     * 
+     *
      * @return The flag whether to generate static parser, will be <code>null</code> if the user did not specify this
      *         mojo parameter.
      */
-    protected Boolean getIsStatic()
-    {
+    protected Boolean getIsStatic() {
         return this.isStatic;
     }
 
     /**
      * Gets the absolute path to the directory where the grammar files are located.
-     * 
+     *
      * @return The absolute path to the directory where the grammar files are located, never <code>null</code>.
      */
     protected abstract File getSourceDirectory();
 
     /**
      * Gets a set of Ant-like inclusion patterns used to select files from the source directory for processing.
-     * 
+     *
      * @return A set of Ant-like inclusion patterns used to select files from the source directory for processing, can
      *         be <code>null</code> if all files should be included.
      */
@@ -331,7 +326,7 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * Gets a set of Ant-like exclusion patterns used to unselect files from the source directory for processing.
-     * 
+     *
      * @return A set of Ant-like inclusion patterns used to unselect files from the source directory for processing, can
      *         be <code>null</code> if no files should be excluded.
      */
@@ -339,7 +334,7 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * Gets the absolute path to the directory where the generated Java files for the parser will be stored.
-     * 
+     *
      * @return The absolute path to the directory where the generated Java files for the parser will be stored, never
      *         <code>null</code>.
      */
@@ -348,7 +343,7 @@ public abstract class AbstractJavaCCMojo
     /**
      * Gets the granularity in milliseconds of the last modification date for testing whether a source needs
      * recompilation.
-     * 
+     *
      * @return The granularity in milliseconds of the last modification date for testiintng whether a source needs
      *         recompilation.
      */
@@ -356,59 +351,49 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * Gets all the output directories to register with the project for compilation.
-     * 
+     *
      * @return The compile source roots to register with the project, never <code>null</code>.
      */
     protected abstract File[] getCompileSourceRoots();
 
     /**
      * Gets the package into which the generated parser files should be stored.
-     * 
+     *
      * @return The package into which the generated parser files should be stored, can be <code>null</code> to use the
      *         package declaration from the grammar file.
      */
     // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove this method, too.
-    protected String getParserPackage()
-    {
+    protected String getParserPackage() {
         return null;
     }
 
     /**
      * Execute the tool.
-     * 
+     *
      * @throws MojoExecutionException If the invocation of the tool failed.
      * @throws MojoFailureException If the tool reported a non-zero exit code.
      */
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         GrammarInfo[] grammarInfos = scanForGrammars();
 
-        if ( grammarInfos == null )
-        {
-            getLog().info( "Skipping non-existing source directory: " + getSourceDirectory() );
+        if (grammarInfos == null) {
+            getLog().info("Skipping non-existing source directory: " + getSourceDirectory());
             return;
-        }
-        else if (grammarInfos.length == 0)
-        {
-            getLog().info( "Skipping - all parsers are up to date" );
-        }
-        else
-        {
+        } else if (grammarInfos.length == 0) {
+            getLog().info("Skipping - all parsers are up to date");
+        } else {
             determineNonGeneratedSourceRoots();
 
-            if ( StringUtils.isEmpty( grammarEncoding ) )
-            {
-                getLog().warn(
-                               "File encoding for grammars has not been configured"
-                                   + ", using platform default encoding, i.e. build is platform dependent!" );
+            if (StringUtils.isEmpty(grammarEncoding)) {
+                getLog().warn("File encoding for grammars has not been configured"
+                        + ", using platform default encoding, i.e. build is platform dependent!");
             }
 
             for (GrammarInfo grammarInfo : grammarInfos) {
                 processGrammar(grammarInfo);
             }
 
-            getLog().info( "Processed " + grammarInfos.length + " grammar" + ( grammarInfos.length != 1 ? "s" : "" ) );
+            getLog().info("Processed " + grammarInfos.length + " grammar" + (grammarInfos.length != 1 ? "s" : ""));
         }
 
         for (File compileSourceRoot : getCompileSourceRoots()) {
@@ -418,77 +403,65 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * Passes the specified grammar file through the tool.
-     * 
+     *
      * @param grammarInfo The grammar info describing the grammar file to process, must not be <code>null</code>.
      * @throws MojoExecutionException If the invocation of the tool failed.
      * @throws MojoFailureException If the tool reported a non-zero exit code.
      */
-    protected abstract void processGrammar( GrammarInfo grammarInfo )
-        throws MojoExecutionException, MojoFailureException;
+    protected abstract void processGrammar(GrammarInfo grammarInfo) throws MojoExecutionException, MojoFailureException;
 
     /**
      * Scans the configured source directory for grammar files which need processing.
-     * 
+     *
      * @return An array of grammar infos describing the found grammar files or <code>null</code> if the source
      *         directory does not exist.
      * @throws MojoExecutionException If the source directory could not be scanned.
      */
-    private GrammarInfo[] scanForGrammars()
-        throws MojoExecutionException
-    {
-        if ( !getSourceDirectory().isDirectory() )
-        {
+    private GrammarInfo[] scanForGrammars() throws MojoExecutionException {
+        if (!getSourceDirectory().isDirectory()) {
             return null;
         }
 
         GrammarInfo[] grammarInfos;
 
-        getLog().debug( "Scanning for grammars: " + getSourceDirectory() );
-        try
-        {
+        getLog().debug("Scanning for grammars: " + getSourceDirectory());
+        try {
             GrammarDirectoryScanner scanner = new GrammarDirectoryScanner();
-            scanner.setSourceDirectory( getSourceDirectory() );
-            scanner.setIncludes( getIncludes() );
-            scanner.setExcludes( getExcludes() );
-            scanner.setOutputDirectory( getOutputDirectory() );
-            scanner.setParserPackage( getParserPackage() );
-            scanner.setStaleMillis( getStaleMillis() );
+            scanner.setSourceDirectory(getSourceDirectory());
+            scanner.setIncludes(getIncludes());
+            scanner.setExcludes(getExcludes());
+            scanner.setOutputDirectory(getOutputDirectory());
+            scanner.setParserPackage(getParserPackage());
+            scanner.setStaleMillis(getStaleMillis());
             scanner.scan();
             grammarInfos = scanner.getIncludedGrammars();
+        } catch (Exception e) {
+            throw new MojoExecutionException("Failed to scan for grammars: " + getSourceDirectory(), e);
         }
-        catch ( Exception e )
-        {
-            throw new MojoExecutionException( "Failed to scan for grammars: " + getSourceDirectory(), e );
-        }
-        getLog().debug( "Found grammars: " + Arrays.asList( grammarInfos ) );
+        getLog().debug("Found grammars: " + Arrays.asList(grammarInfos));
 
         return grammarInfos;
     }
 
     /**
      * Gets a temporary directory within the project's build directory.
-     * 
+     *
      * @return The path to the temporary directory, never <code>null</code>.
      */
-    protected File getTempDirectory()
-    {
-        return new File( this.project.getBuild().getDirectory(), "javacc-" + System.currentTimeMillis() );
+    protected File getTempDirectory() {
+        return new File(this.project.getBuild().getDirectory(), "javacc-" + System.currentTimeMillis());
     }
 
     /**
      * Deletes the specified temporary directory.
-     * 
+     *
      * @param tempDirectory The directory to delete, must not be <code>null</code>.
      */
-    protected void deleteTempDirectory( File tempDirectory )
-    {
-        try
-        {
-            FileUtils.deleteDirectory( tempDirectory );
-        }
-        catch ( IOException e )
-        {
-            getLog().warn( "Failed to delete temporary directory: " + tempDirectory, e );
+    protected void deleteTempDirectory(File tempDirectory) {
+        try {
+            FileUtils.deleteDirectory(tempDirectory);
+        } catch (IOException e) {
+            getLog().warn("Failed to delete temporary directory: " + tempDirectory, e);
         }
     }
 
@@ -497,7 +470,7 @@ public abstract class AbstractJavaCCMojo
      * only copied to the compile source root if it doesn't already exist in another compile source root. This prevents
      * duplicate class errors during compilation in case the user provided customized files in
      * <code>src/main/java</code> or similar.
-     * 
+     *
      * @param packageName The name of the destination package for the output files, must not be <code>null</code>.
      * @param sourceRoot The (absolute) path to the compile source root into which the output files should eventually be
      *            copied, must not be <code>null</code>.
@@ -508,12 +481,10 @@ public abstract class AbstractJavaCCMojo
      *            leading "!" may be used to negate the pattern.
      * @throws MojoExecutionException If the output files could not be copied.
      */
-    protected void copyGrammarOutput( File sourceRoot, String packageName, File tempDirectory, String updatePattern )
-        throws MojoExecutionException
-    {
-        try
-        {
-            List<File> tempFiles = FileUtils.getFiles( tempDirectory, "*.java", null );
+    protected void copyGrammarOutput(File sourceRoot, String packageName, File tempDirectory, String updatePattern)
+            throws MojoExecutionException {
+        try {
+            List<File> tempFiles = FileUtils.getFiles(tempDirectory, "*.java", null);
             for (File tempFile : tempFiles) {
                 String outputPath = "";
                 if (packageName.length() > 0) {
@@ -538,17 +509,17 @@ public abstract class AbstractJavaCCMojo
                     try {
                         FileUtils.copyFile(tempFile, outputFile);
                     } catch (IOException e) {
-                        throw new MojoExecutionException("Failed to copy generated source file to output directory:"
-                                + tempFile + " -> " + outputFile, e);
+                        throw new MojoExecutionException(
+                                "Failed to copy generated source file to output directory:" + tempFile + " -> "
+                                        + outputFile,
+                                e);
                     }
                 } else {
                     getLog().debug("Skipping customized file: " + outputPath);
                 }
             }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to copy generated source files", e );
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to copy generated source files", e);
         }
     }
 
@@ -556,17 +527,13 @@ public abstract class AbstractJavaCCMojo
      * Determines those compile source roots of the project that do not reside below the project's build directories.
      * These compile source roots are assumed to contain hand-crafted sources that must not be overwritten with
      * generated files. In most cases, this is simply "${project.build.sourceDirectory}".
-     * 
+     *
      * @throws MojoExecutionException If the compile source rotos could not be determined.
      */
-    private void determineNonGeneratedSourceRoots()
-        throws MojoExecutionException
-    {
+    private void determineNonGeneratedSourceRoots() throws MojoExecutionException {
         this.nonGeneratedSourceRoots = new LinkedHashSet<>();
-        try
-        {
-            String targetPrefix =
-                new File( this.project.getBuild().getDirectory() ).getCanonicalPath() + File.separator;
+        try {
+            String targetPrefix = new File(this.project.getBuild().getDirectory()).getCanonicalPath() + File.separator;
             List<String> sourceRoots = this.project.getCompileSourceRoots();
             for (String root : sourceRoots) {
                 File sourceRoot = new File(root);
@@ -581,22 +548,19 @@ public abstract class AbstractJavaCCMojo
                     getLog().debug("Generated compile source root: " + sourceRoot);
                 }
             }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to determine non-generated source roots", e );
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to determine non-generated source roots", e);
         }
     }
 
     /**
      * Determines whether the specified source file is already present in any of the compile source roots registered
      * with the current Maven project.
-     * 
+     *
      * @param filename The source filename to check, relative to a source root, must not be <code>null</code>.
      * @return The (absolute) path to the existing source file if any, <code>null</code> otherwise.
      */
-    private File findSourceFile( String filename )
-    {
+    private File findSourceFile(String filename) {
         return this.nonGeneratedSourceRoots.stream()
                 .map(sourceRoot -> new File(sourceRoot, filename))
                 .filter(File::exists)
@@ -606,27 +570,24 @@ public abstract class AbstractJavaCCMojo
 
     /**
      * Determines whether the specified directory denotes a compile source root of the current project.
-     * 
+     *
      * @param directory The directory to check, must not be <code>null</code>.
      * @return <code>true</code> if the specified directory is a compile source root of the project, <code>false</code>
      *         otherwise.
      */
-    protected boolean isSourceRoot( File directory )
-    {
-        return this.nonGeneratedSourceRoots.contains( directory );
+    protected boolean isSourceRoot(File directory) {
+        return this.nonGeneratedSourceRoots.contains(directory);
     }
 
     /**
      * Registers the specified directory as a compile source root for the current project.
-     * 
+     *
      * @param directory The absolute path to the source root, must not be <code>null</code>.
      */
-    private void addSourceRoot( File directory )
-    {
-        if ( this.project != null )
-        {
-            getLog().debug( "Adding compile source root: " + directory );
-            this.project.addCompileSourceRoot( directory.getAbsolutePath() );
+    private void addSourceRoot(File directory) {
+        if (this.project != null) {
+            getLog().debug("Adding compile source root: " + directory);
+            this.project.addCompileSourceRoot(directory.getAbsolutePath());
         }
     }
 
@@ -634,40 +595,38 @@ public abstract class AbstractJavaCCMojo
      * Creates a new facade to invoke JavaCC. Most options for the invocation are derived from the current values of the
      * corresponding mojo parameters. The caller is responsible to set the input file and output directory on the
      * returned facade.
-     * 
+     *
      * @return The facade for the tool invocation, never <code>null</code>.
      */
-    protected JavaCC newJavaCC()
-    {
+    protected JavaCC newJavaCC() {
         JavaCC javacc = new JavaCC();
-        javacc.setLog( getLog() );
-        javacc.setGrammarEncoding( this.grammarEncoding );
-        javacc.setJdkVersion( this.jdkVersion );
-        javacc.setStatic( this.isStatic );
-        javacc.setBuildParser( this.buildParser );
-        javacc.setBuildTokenManager( this.buildTokenManager );
-        javacc.setCacheTokens( this.cacheTokens );
-        javacc.setChoiceAmbiguityCheck( this.choiceAmbiguityCheck );
-        javacc.setCommonTokenAction( this.commonTokenAction );
-        javacc.setDebugLookAhead( this.debugLookAhead );
-        javacc.setDebugParser( this.debugParser );
-        javacc.setDebugTokenManager( this.debugTokenManager );
-        javacc.setErrorReporting( this.errorReporting );
-        javacc.setForceLaCheck( this.forceLaCheck );
-        javacc.setIgnoreCase( this.ignoreCase );
-        javacc.setJavaUnicodeEscape( this.javaUnicodeEscape );
-        javacc.setKeepLineColumn( this.keepLineColumn );
-        javacc.setLookAhead( this.lookAhead );
-        javacc.setOtherAmbiguityCheck( this.otherAmbiguityCheck );
-        javacc.setSanityCheck( this.sanityCheck );
-        javacc.setTokenManagerUsesParser( this.tokenManagerUsesParser );
-        javacc.setTokenExtends( this.tokenExtends );
-        javacc.setTokenFactory( this.tokenFactory );
-        javacc.setUnicodeInput( this.unicodeInput );
-        javacc.setUserCharStream( this.userCharStream );
-        javacc.setUserTokenManager( this.userTokenManager );
-        javacc.setSupportClassVisibilityPublic( this.supportClassVisibilityPublic );
+        javacc.setLog(getLog());
+        javacc.setGrammarEncoding(this.grammarEncoding);
+        javacc.setJdkVersion(this.jdkVersion);
+        javacc.setStatic(this.isStatic);
+        javacc.setBuildParser(this.buildParser);
+        javacc.setBuildTokenManager(this.buildTokenManager);
+        javacc.setCacheTokens(this.cacheTokens);
+        javacc.setChoiceAmbiguityCheck(this.choiceAmbiguityCheck);
+        javacc.setCommonTokenAction(this.commonTokenAction);
+        javacc.setDebugLookAhead(this.debugLookAhead);
+        javacc.setDebugParser(this.debugParser);
+        javacc.setDebugTokenManager(this.debugTokenManager);
+        javacc.setErrorReporting(this.errorReporting);
+        javacc.setForceLaCheck(this.forceLaCheck);
+        javacc.setIgnoreCase(this.ignoreCase);
+        javacc.setJavaUnicodeEscape(this.javaUnicodeEscape);
+        javacc.setKeepLineColumn(this.keepLineColumn);
+        javacc.setLookAhead(this.lookAhead);
+        javacc.setOtherAmbiguityCheck(this.otherAmbiguityCheck);
+        javacc.setSanityCheck(this.sanityCheck);
+        javacc.setTokenManagerUsesParser(this.tokenManagerUsesParser);
+        javacc.setTokenExtends(this.tokenExtends);
+        javacc.setTokenFactory(this.tokenFactory);
+        javacc.setUnicodeInput(this.unicodeInput);
+        javacc.setUserCharStream(this.userCharStream);
+        javacc.setUserTokenManager(this.userTokenManager);
+        javacc.setSupportClassVisibilityPublic(this.supportClassVisibilityPublic);
         return javacc;
     }
-
 }
