@@ -49,6 +49,7 @@ under the License.
   </prerequisites>
 
   <properties>
+    <recommendedJavaBuildVersion>11</recommendedJavaBuildVersion>
     <sitePluginVersion>${maven-site-plugin.version}</sitePluginVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <skipTests>false</skipTests>
@@ -188,5 +189,22 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>java11+</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
