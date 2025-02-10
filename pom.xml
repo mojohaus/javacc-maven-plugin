@@ -23,7 +23,7 @@ under the License.
   <parent>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>mojo-parent</artifactId>
-    <version>86</version>
+    <version>87</version>
   </parent>
 
   <artifactId>javacc-maven-plugin</artifactId>
