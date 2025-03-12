@@ -36,7 +36,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @since 2.4
  * @author Benjamin Bentmann
  */
-@Mojo(name = "jtb-javacc", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "jtb-javacc", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JTBJavaCCMojo extends AbstractJavaCCMojo {
 
     /**

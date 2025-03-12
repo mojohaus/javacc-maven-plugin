@@ -36,7 +36,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @deprecated As of version 2.4, use the <code>jjtree-javacc</code> goal instead.
  * @author jesse jesse.mcconnell@gmail.com
  */
-@Mojo(name = "jjtree", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "jjtree", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JJTreeMojo extends AbstractPreprocessorMojo {
 
     /**

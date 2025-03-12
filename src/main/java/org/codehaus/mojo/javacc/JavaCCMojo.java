@@ -36,7 +36,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author jesse jesse.mcconnell@gmail.com
  *
  */
-@Mojo(name = "javacc", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "javacc", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JavaCCMojo extends AbstractJavaCCMojo {
 
     /**

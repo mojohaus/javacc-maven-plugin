@@ -46,7 +46,7 @@ import org.apache.maven.reporting.MavenReportException;
  * @author <a href="mailto:pgier@redhat.com">Paul Gier</a>
  * @see <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>
  */
-@Mojo(name = "jjdoc")
+@Mojo(name = "jjdoc", threadSafe = true)
 @Execute(phase = LifecyclePhase.GENERATE_SOURCES)
 public class JJDocMojo extends AbstractMavenReport {
 
