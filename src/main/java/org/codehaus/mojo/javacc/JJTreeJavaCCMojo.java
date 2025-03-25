@@ -35,7 +35,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author Benjamin Bentmann
  *
  */
-@Mojo(name = "jjtree-javacc", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "jjtree-javacc", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JJTreeJavaCCMojo extends AbstractJavaCCMojo {
 
     /**

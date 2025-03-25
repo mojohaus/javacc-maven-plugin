@@ -37,7 +37,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * @author Gregory Kick (gk5885@kickstyle.net)
  *
  */
-@Mojo(name = "jtb", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "jtb", defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JTBMojo extends AbstractPreprocessorMojo {
 
     /**
