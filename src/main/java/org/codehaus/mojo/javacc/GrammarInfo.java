@@ -73,7 +73,7 @@ class GrammarInfo {
      * @throws IOException If reading the grammar file failed.
      */
     public GrammarInfo(File sourceDir, String inputFile) throws IOException {
-        this(sourceDir, inputFile, null);
+        this(sourceDir, inputFile, null, null);
     }
 
     /**
@@ -87,6 +87,23 @@ class GrammarInfo {
      * @throws IOException If reading the grammar file failed.
      */
     public GrammarInfo(File sourceDir, String inputFile, String packageName) throws IOException {
+        this(sourceDir, inputFile, packageName, null);
+    }
+
+    /**
+     * Creates a new info from the specified grammar file.
+     *
+     * @param sourceDir The absolute path to the base directory in which the grammar file resides, must not be
+     *            <code>null</code>.
+     * @param inputFile The path to the grammar file (relative to the source directory), must not be <code>null</code>.
+     * @param packageName The package name for the generated parser, may be <code>null</code> to use the package
+     *            declaration from the grammar file.
+     * @param grammarEncoding The file encoding to use for reading the grammar file, may be <code>null</code> to use
+     *            the platform default encoding.
+     * @throws IOException If reading the grammar file failed.
+     */
+    public GrammarInfo(File sourceDir, String inputFile, String packageName, String grammarEncoding)
+            throws IOException {
         if (!sourceDir.isAbsolute()) {
             throw new IllegalArgumentException("source directory is not absolute: " + sourceDir);
         }
@@ -101,8 +118,13 @@ class GrammarInfo {
             throw new IllegalArgumentException("input file is not relative to source directory:" + inputFile);
         }
 
-        // NOTE: JavaCC uses the platform default encoding to read files, so must we
-        String grammar = FileUtils.fileRead(getGrammarFile());
+        // Read the grammar file using the specified encoding, or platform default if not specified
+        String grammar;
+        if (grammarEncoding != null) {
+            grammar = FileUtils.fileRead(getGrammarFile(), grammarEncoding);
+        } else {
+            grammar = FileUtils.fileRead(getGrammarFile());
+        }
 
         // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove our parameter, too.
         if (packageName == null) {

@@ -432,6 +432,7 @@ public abstract class AbstractJavaCCMojo extends AbstractMojo {
             scanner.setExcludes(getExcludes());
             scanner.setOutputDirectory(getOutputDirectory());
             scanner.setParserPackage(getParserPackage());
+            scanner.setGrammarEncoding(this.grammarEncoding);
             scanner.setStaleMillis(getStaleMillis());
             scanner.scan();
             grammarInfos = scanner.getIncludedGrammars();
