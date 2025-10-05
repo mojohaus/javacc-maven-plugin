@@ -201,6 +201,7 @@ public class JJDocMojo extends AbstractMavenReport {
      * @param locale The locale to use for this report.
      * @return The name of this report.
      */
+    @Override
     public String getName(Locale locale) {
         return getBundle(locale).getString("report.jjdoc.name");
     }
@@ -210,6 +211,7 @@ public class JJDocMojo extends AbstractMavenReport {
      * @param locale The locale to use for this report.
      * @return The description of this report.
      */
+    @Override
     public String getDescription(Locale locale) {
         return getBundle(locale).getString("report.jjdoc.short.description");
     }
@@ -218,6 +220,7 @@ public class JJDocMojo extends AbstractMavenReport {
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
      * @return The name of the main report file.
      */
+    @Override
     public String getOutputName() {
         return this.jjdocDirectory + "/index";
     }
@@ -226,6 +229,7 @@ public class JJDocMojo extends AbstractMavenReport {
      * @see org.apache.maven.reporting.MavenReport#canGenerateReport()
      * @return <code>true</code> if the configured source directories are not empty, <code>false</code> otherwise.
      */
+    @Override
     public boolean canGenerateReport() {
         return Arrays.stream(getSourceDirectories())
                 .map(File::list)
@@ -238,8 +242,45 @@ public class JJDocMojo extends AbstractMavenReport {
      * @param locale The locale to use for this report.
      * @throws MavenReportException If the report generation failed.
      */
-    public void executeReport(Locale locale) throws MavenReportException {
-        generate(getSink(), locale);
+    @Override
+    protected void executeReport(Locale locale) throws MavenReportException {
+        Sink sink = getSink();
+        createReportHeader(getBundle(locale), sink);
+
+        File[] sourceDirs = getSourceDirectories();
+        for (File sourceDir : sourceDirs) {
+            GrammarInfo[] grammarInfos = scanForGrammars(sourceDir);
+
+            if (grammarInfos == null) {
+                getLog().debug("Skipping non-existing source directory: " + sourceDir);
+            } else {
+                Arrays.sort(grammarInfos, GrammarInfoComparator.getInstance());
+                for (GrammarInfo grammarInfo : grammarInfos) {
+                    File grammarFile = grammarInfo.getGrammarFile();
+
+                    String relativeOutputFileName = grammarInfo.getRelativeGrammarFile();
+                    relativeOutputFileName =
+                            relativeOutputFileName.replaceAll("(?i)\\.(jj|jjt|jtb)$", getOutputFileExtension());
+
+                    File jjdocOutputFile = new File(getJJDocOutputDirectory(), relativeOutputFileName);
+
+                    JJDoc jjdoc = newJJDoc();
+                    jjdoc.setInputFile(grammarFile);
+                    jjdoc.setOutputFile(jjdocOutputFile);
+                    try {
+                        jjdoc.run();
+                    } catch (Exception e) {
+                        throw new MavenReportException("Failed to create BNF documentation: " + grammarFile, e);
+                    }
+
+                    createReportLink(sink, sourceDir, grammarFile, relativeOutputFileName);
+                }
+            }
+        }
+
+        createReportFooter(sink);
+        sink.flush();
+        sink.close();
     }
 
     /**
@@ -431,44 +472,5 @@ public class JJDocMojo extends AbstractMavenReport {
 
             return paths1[paths1.length - 1].compareToIgnoreCase(paths2[paths1.length - 1]);
         }
-    }
-
-    public void generate(Sink sink, Locale locale) throws MavenReportException {
-        createReportHeader(getBundle(locale), sink);
-
-        File[] sourceDirs = getSourceDirectories();
-        for (File sourceDir : sourceDirs) {
-            GrammarInfo[] grammarInfos = scanForGrammars(sourceDir);
-
-            if (grammarInfos == null) {
-                getLog().debug("Skipping non-existing source directory: " + sourceDir);
-            } else {
-                Arrays.sort(grammarInfos, GrammarInfoComparator.getInstance());
-                for (GrammarInfo grammarInfo : grammarInfos) {
-                    File grammarFile = grammarInfo.getGrammarFile();
-
-                    String relativeOutputFileName = grammarInfo.getRelativeGrammarFile();
-                    relativeOutputFileName =
-                            relativeOutputFileName.replaceAll("(?i)\\.(jj|jjt|jtb)$", getOutputFileExtension());
-
-                    File jjdocOutputFile = new File(getJJDocOutputDirectory(), relativeOutputFileName);
-
-                    JJDoc jjdoc = newJJDoc();
-                    jjdoc.setInputFile(grammarFile);
-                    jjdoc.setOutputFile(jjdocOutputFile);
-                    try {
-                        jjdoc.run();
-                    } catch (Exception e) {
-                        throw new MavenReportException("Failed to create BNF documentation: " + grammarFile, e);
-                    }
-
-                    createReportLink(sink, sourceDir, grammarFile, relativeOutputFileName);
-                }
-            }
-        }
-
-        createReportFooter(sink);
-        sink.flush();
-        sink.close();
     }
 }
