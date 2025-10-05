@@ -53,6 +53,12 @@ class GrammarDirectoryScanner {
     private String parserPackage;
 
     /**
+     * The file encoding to use for reading the grammar files, may be <code>null</code> to use the platform default
+     * encoding.
+     */
+    private String grammarEncoding;
+
+    /**
      * The granularity in milliseconds of the last modification date for testing whether a grammar file needs
      * recompilation because its corresponding target file is stale.
      */
@@ -93,6 +99,16 @@ class GrammarDirectoryScanner {
      */
     public void setParserPackage(String packageName) {
         this.parserPackage = packageName;
+    }
+
+    /**
+     * Sets the file encoding to use for reading the grammar files.
+     *
+     * @param encoding The file encoding to use for reading the grammar files, may be <code>null</code> to use the
+     *            platform default encoding.
+     */
+    public void setGrammarEncoding(String encoding) {
+        this.grammarEncoding = encoding;
     }
 
     /**
@@ -149,7 +165,8 @@ class GrammarDirectoryScanner {
 
         String[] includedFiles = this.scanner.getIncludedFiles();
         for (String includedFile : includedFiles) {
-            GrammarInfo grammarInfo = new GrammarInfo(this.scanner.getBasedir(), includedFile, this.parserPackage);
+            GrammarInfo grammarInfo =
+                    new GrammarInfo(this.scanner.getBasedir(), includedFile, this.parserPackage, this.grammarEncoding);
             if (this.outputDirectory != null) {
                 File sourceFile = grammarInfo.getGrammarFile();
                 File[] targetFiles = getTargetFiles(this.outputDirectory, includedFile, grammarInfo);
