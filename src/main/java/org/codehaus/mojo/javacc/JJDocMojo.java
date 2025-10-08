@@ -217,12 +217,23 @@ public class JJDocMojo extends AbstractMavenReport {
     }
 
     /**
+     * @see org.apache.maven.reporting.MavenReport#getOutputPath()
+     * @return The path of the main report file.
+     */
+    @Override
+    public String getOutputPath() {
+        return this.jjdocDirectory + "/index";
+    }
+
+    /**
+     * @deprecated Use {@link #getOutputPath()} instead.
      * @see org.apache.maven.reporting.MavenReport#getOutputName()
      * @return The name of the main report file.
      */
+    @Deprecated
     @Override
     public String getOutputName() {
-        return this.jjdocDirectory + "/index";
+        return getOutputPath();
     }
 
     /**
