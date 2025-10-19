@@ -134,6 +134,16 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     private Boolean printer;
 
     /**
+     * If <code>true</code>, an ObjectDepthFirst visitor class will be generated that extends
+     * GJDepthFirst&lt;Object, Object&gt;. This provides a convenience class for users who prefer
+     * to work with a non-generic depth-first visitor. Default value is <code>false</code>.
+     *
+     * @since 3.1.2
+     */
+    @Parameter(property = "javacc.generateObjectDepthFirst")
+    private Boolean generateObjectDepthFirst;
+
+    /**
      * The directory where the JavaCC grammar files (<code>*.jtb</code>) are located. It will be recursively scanned
      * for input files to pass to JTB.
      *
@@ -301,6 +311,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
         jtb.setScheme(this.scheme);
         jtb.setSpecialTokens(this.specialTokens);
         jtb.setSupressErrorChecking(this.supressErrorChecking);
+        jtb.setGenerateObjectDepthFirst(this.generateObjectDepthFirst);
         return jtb;
     }
 }
