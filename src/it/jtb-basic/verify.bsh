@@ -6,14 +6,14 @@ try
 {
     File outputFolder = new File( basedir, "target/generated-sources/jtb" );
     
-    File nodeFile = new File( outputFolder, "org/syntaxtree/Node.java");
+    File nodeFile = new File( outputFolder, "org/syntaxtree/INode.java");
     if ( !nodeFile.exists() || nodeFile.isDirectory() )
     {
         System.err.println( "Could not find generated node file: " + nodeFile );
         return false;
     }
     
-    File visitorFile = new File( outputFolder, "org/visitor/Visitor.java");
+    File visitorFile = new File( outputFolder, "org/visitor/IVoidVisitor.java");
     if ( !visitorFile.exists() || nodeFile.isDirectory() )
     {
         System.err.println( "Could not find generated visitor file: " + visitorFile );

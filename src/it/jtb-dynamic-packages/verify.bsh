@@ -7,14 +7,14 @@ try
     File outputFolder = new File( basedir, "target/generated-sources/jtb" );
 
     {
-        File nodeFile = new File( outputFolder, "parser1/ast/Node.java");
+        File nodeFile = new File( outputFolder, "parser1/ast/INode.java");
         if ( !nodeFile.exists() || nodeFile.isDirectory() )
         {
             System.err.println( "Could not find generated node file: " + nodeFile );
             return false;
         }
         
-        File visitorFile = new File( outputFolder, "parser1/visit/Visitor.java");
+        File visitorFile = new File( outputFolder, "parser1/visit/IVoidVisitor.java");
         if ( !visitorFile.exists() || nodeFile.isDirectory() )
         {
             System.err.println( "Could not find generated visitor file: " + visitorFile );
@@ -30,14 +30,14 @@ try
     }    
 
     {
-        File nodeFile = new File( outputFolder, "parser2/ast/Node.java");
+        File nodeFile = new File( outputFolder, "parser2/ast/INode.java");
         if ( !nodeFile.exists() || nodeFile.isDirectory() )
         {
             System.err.println( "Could not find generated node file: " + nodeFile );
             return false;
         }
         
-        File visitorFile = new File( outputFolder, "parser2/visit/Visitor.java");
+        File visitorFile = new File( outputFolder, "parser2/visit/IVoidVisitor.java");
         if ( !visitorFile.exists() || nodeFile.isDirectory() )
         {
             System.err.println( "Could not find generated visitor file: " + visitorFile );

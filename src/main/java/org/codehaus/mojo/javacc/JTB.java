@@ -461,11 +461,33 @@ class JTB extends ToolFacade {
      * @throws IOException If the move failed.
      */
     private void moveJavaFiles() throws IOException {
+        // Try old JTB behavior (output in current working directory)
         File nodeSrcDir = new File(getLastPackageName(getEffectiveNodePackageName())).getAbsoluteFile();
+        // Try new JTB behavior (output in input file directory)
+        if (!nodeSrcDir.exists() && this.inputFile != null) {
+            File inputDir = this.inputFile.getParentFile();
+            nodeSrcDir = new File(inputDir, getLastPackageName(getEffectiveNodePackageName())).getAbsoluteFile();
+        }
+        // Try new JTB 1.4.12 behavior (always uses "syntaxtree" directory name)
+        if (!nodeSrcDir.exists() && this.inputFile != null) {
+            File inputDir = this.inputFile.getParentFile();
+            nodeSrcDir = new File(inputDir, SYNTAX_TREE).getAbsoluteFile();
+        }
         File nodeDstDir = getEffectiveNodeDirectory();
         moveDirectory(nodeSrcDir, nodeDstDir);
 
+        // Try old JTB behavior (output in current working directory)
         File visitorSrcDir = new File(getLastPackageName(getEffectiveVisitorPackageName())).getAbsoluteFile();
+        // Try new JTB behavior (output in input file directory)
+        if (!visitorSrcDir.exists() && this.inputFile != null) {
+            File inputDir = this.inputFile.getParentFile();
+            visitorSrcDir = new File(inputDir, getLastPackageName(getEffectiveVisitorPackageName())).getAbsoluteFile();
+        }
+        // Try new JTB 1.4.12 behavior (always uses "visitor" directory name)
+        if (!visitorSrcDir.exists() && this.inputFile != null) {
+            File inputDir = this.inputFile.getParentFile();
+            visitorSrcDir = new File(inputDir, VISITOR).getAbsoluteFile();
+        }
         File visitorDstDir = getEffectiveVisitorDirectory();
         moveDirectory(visitorSrcDir, visitorDstDir);
     }

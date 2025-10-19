@@ -7,14 +7,14 @@ try
     File javaccDir = new File( basedir, "target/generated-sources/javacc" );
     File jtbDir = new File( basedir, "target/generated-sources/jtb" );
     
-    File nodeFile = new File( jtbDir, "org/syntaxtree/Node.java");
+    File nodeFile = new File( jtbDir, "org/syntaxtree/INode.java");
     if ( nodeFile.length() <= 0 )
     {
         System.err.println( "Could not find generated java file: " + nodeFile );
         return false;
     }
     
-    File visitorFile = new File( jtbDir, "org/visitor/Visitor.java");
+    File visitorFile = new File( jtbDir, "org/visitor/IVoidVisitor.java");
     if ( visitorFile.length() <= 0 )
     {
         System.err.println( "Could not find generated java file: " + visitorFile );

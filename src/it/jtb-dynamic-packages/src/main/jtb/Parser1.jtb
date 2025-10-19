@@ -13,9 +13,9 @@ public class SubScheme {
     parser = new SubScheme(System.in);
 
     try {
-      Node root = parser.Unit();
+      INode root = parser.Unit();
       System.out.println("Parsed successfully.");
-      root.accept(new DepthFirstVisitor());
+      root.accept(new DepthFirstVoidVisitor());
     } catch (ParseException e) {
       System.out.println(e.getMessage());
       System.out.println("Encountered errors during parse.");
