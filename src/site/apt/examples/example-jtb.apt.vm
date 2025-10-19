@@ -61,3 +61,28 @@ mvn javacc:jtb-javacc
   <<Note:>> If you want to use the later call you need to put the <<<\<configuration\>>>> element directly into the
   <<<\<plugin\>>>> element. That is because the configuration inside the <<<\<execution\>>>> element only applies if
   the goal is run as part of a lifecycle phase.
+
+* {Generating ObjectDepthFirst Visitor}
+
+  Since version 3.1.2, you can optionally generate an <<<ObjectDepthFirst>>> convenience visitor class that extends
+  <<<GJDepthFirst\<Object, Object\>>>>. This provides a non-generic depth-first visitor interface for users who prefer
+  to work with Object types. To enable this feature, set the <<<generateObjectDepthFirst>>> parameter to <<<true>>>:
+
+-------------------
+<configuration>
+  <generateObjectDepthFirst>true</generateObjectDepthFirst>
+</configuration>
+-------------------
+
+  When enabled, an <<<ObjectDepthFirst.java>>> class will be generated in the visitor package alongside other visitor
+  classes like <<<DepthFirstVisitor>>> and <<<GJDepthFirst>>>. You can then extend this class in your own custom visitors:
+
+-------------------
+public class MyVisitor extends ObjectDepthFirst {
+    @Override
+    public Object visit(MyNode n, Object argu) {
+        // Your custom logic here
+        return super.visit(n, argu);
+    }
+}
+-------------------
