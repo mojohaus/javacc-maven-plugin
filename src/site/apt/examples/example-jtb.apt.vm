@@ -64,7 +64,7 @@ mvn javacc:jtb-javacc
 
 * {Generating ObjectDepthFirst Visitor}
 
-  Since version 3.1.2, you can optionally generate an <<<ObjectDepthFirst>>> convenience visitor class that extends
+  You can optionally generate an <<<ObjectDepthFirst>>> convenience visitor class that extends
   <<<GJDepthFirst\<Object, Object\>>>>. This provides a non-generic depth-first visitor interface for users who prefer
   to work with Object types. To enable this feature, set the <<<generateObjectDepthFirst>>> parameter to <<<true>>>:
 
@@ -74,7 +74,7 @@ mvn javacc:jtb-javacc
 </configuration>
 -------------------
 
-  When enabled, an <<<ObjectDepthFirst.java>>> class will be generated in the visitor package alongside other visitor
+  When enabled, an <<<ObjectDepthFirst.java>>> class will be generated in the same visitor package as other visitor
   classes like <<<DepthFirstVisitor>>> and <<<GJDepthFirst>>>. You can then extend this class in your own custom visitors:
 
 -------------------
