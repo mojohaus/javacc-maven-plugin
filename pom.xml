@@ -122,9 +122,9 @@ under the License.
       <version>3.0.1</version>
     </dependency>
     <dependency>
-      <groupId>edu.purdue.cs</groupId>
+      <groupId>edu.purdue.jtb</groupId>
       <artifactId>jtb</artifactId>
-      <version>1.4.12</version>
+      <version>1.5.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.reporting</groupId>
