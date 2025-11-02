@@ -21,8 +21,13 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 
-import junit.framework.TestCase;
 import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests <code>ForkedJvm</code>.
@@ -30,16 +35,18 @@ import org.codehaus.plexus.util.cli.CommandLineUtils.StringStreamConsumer;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class ForkedJvmTest extends TestCase {
+class ForkedJvmTest {
 
-    public void testToStringNullSafe() {
+    @Test
+    void toStringNullSafe() {
         ForkedJvm jvm = new ForkedJvm();
         String string = jvm.toString();
         assertNotNull(string);
         assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe() {
+    @Test
+    void settersNullSafe() {
         ForkedJvm jvm = new ForkedJvm();
         jvm.addArgument((File) null);
         jvm.addArgument((String) null);
@@ -55,7 +62,8 @@ public class ForkedJvmTest extends TestCase {
         jvm.setSystemErr(null);
     }
 
-    public void testSetMainClass() {
+    @Test
+    void setMainClass() {
         ForkedJvm jvm1 = new ForkedJvm();
         jvm1.setMainClass(MainStub.class);
         String cmd1 = jvm1.toString();
@@ -69,7 +77,8 @@ public class ForkedJvmTest extends TestCase {
         assertEquals(cmd1, cmd2);
     }
 
-    public void testFork() throws Exception {
+    @Test
+    void fork() throws Exception {
         File workDir = new File(System.getProperty("user.home")).getCanonicalFile();
         File file = new File("test").getAbsoluteFile();
         String nonce = Integer.toString(hashCode());

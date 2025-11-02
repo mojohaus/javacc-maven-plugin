@@ -23,7 +23,11 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Tests <code>UrlUtils</code>.
@@ -31,9 +35,10 @@ import junit.framework.TestCase;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class UrlUtilsTest extends TestCase {
+class UrlUtilsTest {
 
-    public void testGetResourceRootFileWin() throws Exception {
+    @Test
+    void getResourceRootFileWin() throws Exception {
         assertMatch("/C:/a dir", "file:/C:/a%20dir/org/Foo.class", "org/Foo.class");
         assertMatch("/C:/a dir", "file://localhost/C:/a%20dir/org/Foo.class", "org/Foo.class");
         assertMatch("/C:/a dir", "file:///C:/a%20dir/org/Foo.class", "org/Foo.class");
@@ -41,7 +46,8 @@ public class UrlUtilsTest extends TestCase {
         assertMatch("/C:/a dir", "file:/C:/a dir/org/Foo.class", "org/Foo.class");
     }
 
-    public void testGetResourceRootJarFileWin() throws Exception {
+    @Test
+    void getResourceRootJarFileWin() throws Exception {
         assertMatch("/C:/a dir/t-1.jar", "jar:file:/C:/a%20dir/t-1.jar!/org/Foo.class", "org/Foo.class");
         assertMatch("/C:/a dir/t-1.jar", "jar:file://localhost/C:/a%20dir/t-1.jar!/org/Foo.class", "org/Foo.class");
         assertMatch("/C:/a dir/t-1.jar", "jar:file:///C:/a%20dir/t-1.jar!/org/Foo.class", "org/Foo.class");
@@ -49,15 +55,18 @@ public class UrlUtilsTest extends TestCase {
         assertMatch("/C:/a dir/t-1.jar", "jar:file:/C:/a dir/t-1.jar!/org/Foo.class", "org/Foo.class");
     }
 
-    public void testGetResourceRootFileWinUnc() throws Exception {
+    @Test
+    void getResourceRootFileWinUnc() throws Exception {
         assertMatch("//host/a dir", "file:////host/a%20dir/org/Foo.class", "org/Foo.class");
     }
 
-    public void testGetResourceRootJarFileWinUnc() throws Exception {
+    @Test
+    void getResourceRootJarFileWinUnc() throws Exception {
         assertMatch("//host/a dir/t-1.jar", "jar:file:////host/a%20dir/t-1.jar!/org/Foo.class", "org/Foo.class");
     }
 
-    public void testGetResourceRootFileUnix() throws Exception {
+    @Test
+    void getResourceRootFileUnix() throws Exception {
         assertMatch("/home/a dir", "file:/home/a%20dir/org/Foo.class", "org/Foo.class");
         assertMatch("/home/a dir", "file://localhost/home/a%20dir/org/Foo.class", "org/Foo.class");
         assertMatch("/home/a dir", "file:///home/a%20dir/org/Foo.class", "org/Foo.class");
@@ -65,7 +74,8 @@ public class UrlUtilsTest extends TestCase {
         assertMatch("/home/a dir", "file:/home/a dir/org/Foo.class", "org/Foo.class");
     }
 
-    public void testGetResourceRootJarFileUnix() throws Exception {
+    @Test
+    void getResourceRootJarFileUnix() throws Exception {
         assertMatch("/home/a dir/t-1.jar", "jar:file:/home/a%20dir/t-1.jar!/org/Foo.class", "org/Foo.class");
         assertMatch("/home/a dir/t-1.jar", "jar:file://localhost/home/a%20dir/t-1.jar!/org/Foo.class", "org/Foo.class");
         assertMatch("/home/a dir/t-1.jar", "jar:file:///home/a%20dir/t-1.jar!/org/Foo.class", "org/Foo.class");
@@ -73,16 +83,17 @@ public class UrlUtilsTest extends TestCase {
         assertMatch("/home/a dir/t-1.jar", "jar:file:/home/a dir/t-1.jar!/org/Foo.class", "org/Foo.class");
     }
 
-    public void testGetResourceRootNullSafe() {
+    @Test
+    void getResourceRootNullSafe() {
         assertNull(UrlUtils.getResourceRoot(null, ""));
     }
 
-    public void testGetResourceRootUnknownProtocal() throws Exception {
+    @Test
+    void getResourceRootUnknownProtocal() throws Exception {
         try {
             UrlUtils.getResourceRoot(URI.create("http://www.foo.bar/index.html").toURL(), "index.html");
             fail("Missing runtime exception");
         } catch (RuntimeException e) {
-            assertTrue(true);
         }
     }
 
@@ -90,7 +101,8 @@ public class UrlUtilsTest extends TestCase {
         assertEquals(new File(expectedFile), UrlUtils.getResourceRoot(new URL(url), resource));
     }
 
-    public void testDecodeUrl() {
+    @Test
+    void decodeUrl() {
         assertEquals("", UrlUtils.decodeUrl(""));
         assertEquals("foo", UrlUtils.decodeUrl("foo"));
         assertEquals("+", UrlUtils.decodeUrl("+"));
@@ -101,7 +113,8 @@ public class UrlUtilsTest extends TestCase {
                 UrlUtils.decodeUrl("jar:file:/C:/dir/sub%20dir/1.0/foo-1.0.jar!/org/Bar.class"));
     }
 
-    public void testDecodeUrlLenient() {
+    @Test
+    void decodeUrlLenient() {
         assertEquals(" ", UrlUtils.decodeUrl(" "));
         assertEquals("äöüß", UrlUtils.decodeUrl("äöüß"));
         assertEquals("%", UrlUtils.decodeUrl("%"));
@@ -109,11 +122,13 @@ public class UrlUtilsTest extends TestCase {
         assertEquals("%2G", UrlUtils.decodeUrl("%2G"));
     }
 
-    public void testDecodeUrlNullSafe() {
+    @Test
+    void decodeUrlNullSafe() {
         assertNull(UrlUtils.decodeUrl(null));
     }
 
-    public void testDecodeUrlEncodingUtf8() {
+    @Test
+    void decodeUrlEncodingUtf8() {
         assertEquals("äöüß", UrlUtils.decodeUrl("%C3%A4%C3%B6%C3%BC%C3%9F"));
     }
 }

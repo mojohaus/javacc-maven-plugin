@@ -21,7 +21,11 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests <code>JTB</code> facade.
@@ -29,16 +33,18 @@ import junit.framework.TestCase;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class JTBTest extends TestCase {
+class JTBTest {
 
-    public void testToStringNullSafe() {
+    @Test
+    void toStringNullSafe() {
         JTB tool = new JTB();
         String string = tool.toString();
         assertNotNull(string);
         assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe() {
+    @Test
+    void settersNullSafe() {
         JTB tool = new JTB();
         tool.setInputFile(null);
         tool.setOutputDirectory(null);
@@ -58,7 +64,8 @@ public class JTBTest extends TestCase {
         tool.setLog(null);
     }
 
-    public void testGetOutputFile() {
+    @Test
+    void getOutputFile() {
         File input = new File("Test.jtb").getAbsoluteFile();
         File outdir = new File("dir").getAbsoluteFile();
 
