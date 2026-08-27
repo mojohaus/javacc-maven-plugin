@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
  * Provides a facade for the mojos to invoke JavaCC.
@@ -444,8 +445,15 @@ class JavaCC extends ToolFacade {
         if (this.outputDirectory != null && !this.outputDirectory.exists()) {
             this.outputDirectory.mkdirs();
         }
-
-        return org.javacc.parser.Main.mainProgram(args);
+        ForkedJvm jvm = new ForkedJvm();
+        jvm.setMainClass(org.javacc.parser.Main.class);
+        jvm.addArguments(args);
+        jvm.setSystemOut(new MojoLogStreamConsumer(false));
+        jvm.setSystemErr(new MojoLogStreamConsumer(true));
+        if (getLog().isDebugEnabled()) {
+            getLog().debug("Forking: " + jvm);
+        }
+        return jvm.run();
     }
 
     /**
@@ -580,5 +588,39 @@ class JavaCC extends ToolFacade {
      */
     public String toString() {
         return Arrays.asList(generateArguments()).toString();
+    }
+
+    class MojoLogStreamConsumer implements StreamConsumer {
+
+        /**
+         * Determines if the stream consumer is being used for <code>System.out</code> or <code>System.err</code>.
+         */
+        private final boolean err;
+
+        /**
+         * Single param constructor.
+         *
+         * @param error If set to <code>true</code>, all consumed lines will be logged at the error level.
+         */
+        public MojoLogStreamConsumer(boolean error) {
+            this.err = error;
+        }
+
+        /**
+         * Consume a line of text.
+         *
+         * @param line The line to consume.
+         */
+        public void consumeLine(String line) {
+            if (line.startsWith("Error:")) {
+                getLog().error(line);
+            } else if (line.startsWith("Warning:")) {
+                getLog().warn(line);
+            } else if (this.err && line.length() > 0) {
+                getLog().error(line);
+            } else {
+                getLog().info(line);
+            }
+        }
     }
 }
