@@ -179,7 +179,7 @@ under the License.
         <configuration>
           <skipInvocation>${skipTests}</skipInvocation>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-          <postBuildHookScript>verify.bsh</postBuildHookScript>
+          <postBuildHookScript>verify</postBuildHookScript>
           <settingsFile>src/it/settings.xml</settingsFile>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <debug>true</debug>
