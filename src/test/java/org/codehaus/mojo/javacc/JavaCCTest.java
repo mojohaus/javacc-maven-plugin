@@ -1,5 +1,10 @@
 package org.codehaus.mojo.javacc;
 
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,24 +24,24 @@ package org.codehaus.mojo.javacc;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
 /**
  * Tests <code>JavaCC</code> facade.
  *
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class JavaCCTest extends TestCase {
+public class JavaCCTest {
 
-    public void testToStringNullSafe() {
+    @Test
+    void testToStringNullSafe() {
         JavaCC tool = new JavaCC();
         String string = tool.toString();
         assertNotNull(string);
         assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe() {
+    @Test
+    void testSettersNullSafe() {
         JavaCC tool = new JavaCC();
         tool.setInputFile(null);
         tool.setOutputDirectory(null);
