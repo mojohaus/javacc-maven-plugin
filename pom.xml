@@ -43,7 +43,7 @@ under the License.
   </licenses>
 
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>3.9.0</maven>
   </prerequisites>
 
   <scm>
@@ -66,6 +66,8 @@ under the License.
   <properties>
     <!-- run the ITs in parallel -->
     <invoker.parallelThreads>1C</invoker.parallelThreads>
+    <mavenVersion>3.9.16</mavenVersion>
+    <minimalMavenBuildVersion>3.9.0</minimalMavenBuildVersion>
     <sitePluginVersion>${maven-site-plugin.version}</sitePluginVersion>
     <skipTests>false</skipTests>
   </properties>
