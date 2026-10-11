@@ -21,7 +21,11 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests <code>JJTree</code> facade.
@@ -29,16 +33,18 @@ import junit.framework.TestCase;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class JJTreeTest extends TestCase {
+public class JJTreeTest {
 
-    public void testToStringNullSafe() {
+    @Test
+    void testToStringNullSafe() {
         JJTree tool = new JJTree();
         String string = tool.toString();
         assertNotNull(string);
         assertFalse(string.contains("null"));
     }
 
-    public void testSettersNullSafe() {
+    @Test
+    void testSettersNullSafe() {
         JJTree tool = new JJTree();
         tool.setInputFile(null);
         tool.setOutputDirectory(null);
@@ -57,7 +63,8 @@ public class JJTreeTest extends TestCase {
         tool.setLog(null);
     }
 
-    public void testGetOutputFile() {
+    @Test
+    void testGetOutputFile() {
         File input = new File("Test.jjt").getAbsoluteFile();
         File outdir = new File("dir").getAbsoluteFile();
 
