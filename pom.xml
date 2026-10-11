@@ -65,7 +65,7 @@ under the License.
 
   <properties>
     <!-- run the ITs in parallel -->
-    <invoker.parallelThreads>0.75C</invoker.parallelThreads>
+    <invoker.parallelThreads>1C</invoker.parallelThreads>
     <sitePluginVersion>${maven-site-plugin.version}</sitePluginVersion>
     <skipTests>false</skipTests>
   </properties>
