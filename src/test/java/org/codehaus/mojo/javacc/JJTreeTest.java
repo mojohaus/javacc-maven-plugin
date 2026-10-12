@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class JJTreeTest {
+class JJTreeTest {
 
     @Test
-    void testToStringNullSafe() {
+    void toStringNullSafe() {
         JJTree tool = new JJTree();
         String string = tool.toString();
         assertNotNull(string);
@@ -44,7 +44,7 @@ public class JJTreeTest {
     }
 
     @Test
-    void testSettersNullSafe() {
+    void settersNullSafe() {
         JJTree tool = new JJTree();
         tool.setInputFile(null);
         tool.setOutputDirectory(null);
@@ -64,7 +64,7 @@ public class JJTreeTest {
     }
 
     @Test
-    void testGetOutputFile() {
+    void getOutputFile() {
         File input = new File("Test.jjt").getAbsoluteFile();
         File outdir = new File("dir").getAbsoluteFile();
 

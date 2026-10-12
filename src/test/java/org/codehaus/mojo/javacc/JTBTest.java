@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class JTBTest {
+class JTBTest {
 
     @Test
-    void testToStringNullSafe() {
+    void toStringNullSafe() {
         JTB tool = new JTB();
         String string = tool.toString();
         assertNotNull(string);
@@ -44,7 +44,7 @@ public class JTBTest {
     }
 
     @Test
-    void testSettersNullSafe() {
+    void settersNullSafe() {
         JTB tool = new JTB();
         tool.setInputFile(null);
         tool.setOutputDirectory(null);
@@ -65,7 +65,7 @@ public class JTBTest {
     }
 
     @Test
-    void testGetOutputFile() {
+    void getOutputFile() {
         File input = new File("Test.jtb").getAbsoluteFile();
         File outdir = new File("dir").getAbsoluteFile();
 
