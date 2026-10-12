@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class JJDocTest {
+class JJDocTest {
 
     @Test
-    void testToStringNullSafe() {
+    void toStringNullSafe() {
         JJDoc tool = new JJDoc();
         String string = tool.toString();
         assertNotNull(string);
@@ -41,7 +41,7 @@ public class JJDocTest {
     }
 
     @Test
-    void testSettersNullSafe() {
+    void settersNullSafe() {
         JJDoc tool = new JJDoc();
         tool.setInputFile(null);
         tool.setOutputFile(null);

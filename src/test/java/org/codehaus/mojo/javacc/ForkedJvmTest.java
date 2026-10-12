@@ -35,10 +35,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class ForkedJvmTest {
+class ForkedJvmTest {
 
     @Test
-    void testToStringNullSafe() {
+    void toStringNullSafe() {
         ForkedJvm jvm = new ForkedJvm();
         String string = jvm.toString();
         assertNotNull(string);
@@ -46,7 +46,7 @@ public class ForkedJvmTest {
     }
 
     @Test
-    void testSettersNullSafe() {
+    void settersNullSafe() {
         ForkedJvm jvm = new ForkedJvm();
         jvm.addArgument((File) null);
         jvm.addArgument((String) null);
@@ -63,7 +63,7 @@ public class ForkedJvmTest {
     }
 
     @Test
-    void testSetMainClass() {
+    void setMainClass() {
         ForkedJvm jvm1 = new ForkedJvm();
         jvm1.setMainClass(MainStub.class);
         String cmd1 = jvm1.toString();
@@ -78,7 +78,7 @@ public class ForkedJvmTest {
     }
 
     @Test
-    void testFork() throws Exception {
+    void fork() throws Exception {
         File workDir = new File(System.getProperty("user.home")).getCanonicalFile();
         File file = new File("test").getAbsoluteFile();
         String nonce = Integer.toString(hashCode());

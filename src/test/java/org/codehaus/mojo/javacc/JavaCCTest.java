@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author Benjamin Bentmann
  * @version $Id$
  */
-public class JavaCCTest {
+class JavaCCTest {
 
     @Test
-    void testToStringNullSafe() {
+    void toStringNullSafe() {
         JavaCC tool = new JavaCC();
         String string = tool.toString();
         assertNotNull(string);
@@ -41,7 +41,7 @@ public class JavaCCTest {
     }
 
     @Test
-    void testSettersNullSafe() {
+    void settersNullSafe() {
         JavaCC tool = new JavaCC();
         tool.setInputFile(null);
         tool.setOutputDirectory(null);
