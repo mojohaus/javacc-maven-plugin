@@ -30,6 +30,8 @@ This is the [javacc-maven-plugin](http://www.mojohaus.org/javacc-maven-plugin/).
 </build>
 ```
 
+Contributor and agent notes are in [AGENTS.md](AGENTS.md).
+
 ## Releasing
 
 * Make sure `gpg-agent` is running.
