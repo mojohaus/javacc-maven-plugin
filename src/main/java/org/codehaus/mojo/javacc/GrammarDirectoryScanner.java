@@ -22,6 +22,7 @@ package org.codehaus.mojo.javacc;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -75,6 +76,7 @@ class GrammarDirectoryScanner {
     public GrammarDirectoryScanner() {
         this.scanner = new DirectoryScanner();
         this.scanner.setFollowSymlinks(true);
+        this.scanner.setFilenameComparator(Comparator.naturalOrder());
         this.includedGrammars = new ArrayList<>();
     }
 
