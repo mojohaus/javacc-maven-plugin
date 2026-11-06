@@ -1,18 +1,13 @@
- ------
- JJTree Examples
- ------
- Paul Gier <pgier at redhat.com>
- ------
- January 04 2008
- ------
+title: JJTree Examples
+author:
+  - Paul Gier <pgier at redhat.com>
+date: January 04 2008
 
-JJTree Examples
+# JJTree Examples
 
-  If you want to use JavaCC in combination with JJTree, simply copy the following snippet into your POM and adjust the
-  goal configuration where the default values do not fit your needs. A list of all configuration options can be seen on
-  the <<<{{{../jjtree-javacc-mojo.html}jjtree-javacc}}>>> goal page.
+If you want to use JavaCC in combination with JJTree, simply copy the following snippet into your POM and adjust the goal configuration where the default values do not fit your needs. A list of all configuration options can be seen on the [`jjtree-javacc`](../jjtree-javacc-mojo.html) goal page.
 
--------------------
+```xml
 <project>
   ...
   <build>
@@ -39,26 +34,20 @@ JJTree Examples
   </build>
   ...
 </project>
--------------------
+```
 
-  If you know older versions of the plugin you might be glad to notice that you no longer need to setup two executions
-  to have JJTree and JavaCC run in a pipeline. The <<<jjtree-javacc>>> goal automatically runs both tools.
-  
-  Once the plugin is properly configured, you can generate the parser along with the tree nodes files by executing the
-  <<<generate-sources>>> lifecycle phase:
+If you know older versions of the plugin you might be glad to notice that you no longer need to setup two executions to have JJTree and JavaCC run in a pipeline. The `jjtree-javacc` goal automatically runs both tools.
 
-+-----+
+Once the plugin is properly configured, you can generate the parser along with the tree nodes files by executing the `generate-sources` lifecycle phase:
+
+```sh
 mvn generate-sources
-+-----+
+```
 
-  Alternatively, you can invoke the <<<jjtree-javacc>>> goal directly from the command line, i.e. without having any other
-  goals run that might be bound to lifecycle phases of your build:
+Alternatively, you can invoke the `jjtree-javacc` goal directly from the command line, i.e. without having any other goals run that might be bound to lifecycle phases of your build:
 
-+-----+
+```sh
 mvn javacc:jjtree-javacc
-+-----+
+```
 
-  <<Note:>> If you want to use the later call you need to put the <<<\<configuration\>>>> element directly into the
-  <<<\<plugin\>>>> element. That is because the configuration inside the <<<\<execution\>>>> element only applies if
-  the goal is run as part of a lifecycle phase.
- 
+**Note:** If you want to use the later call you need to put the `<configuration>` element directly into the `<plugin>` element. That is because the configuration inside the `<execution>` element only applies if the goal is run as part of a lifecycle phase.
