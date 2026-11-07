@@ -168,6 +168,10 @@ under the License.
           <postBuildHookScript>verify</postBuildHookScript>
           <settingsFile>src/it/settings.xml</settingsFile>
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+          <properties>
+            <!-- reuse the prefix file the main build cached instead of fetching it again in every fork -->
+            <aether.remoteRepositoryFilter.prefixes.basedir>${settings.localRepository}/.meta</aether.remoteRepositoryFilter.prefixes.basedir>
+          </properties>
           <debug>true</debug>
         </configuration>
         <executions>
