@@ -181,6 +181,13 @@ under the License.
               <goal>install</goal>
               <goal>run</goal>
             </goals>
+            <configuration>
+              <extraArtifacts>
+                <!-- the site plugins of the jjdoc-path-with-spaces fixture: resolved by the main build, so CI caches them -->
+                <extraArtifact>org.apache.maven.plugins:maven-site-plugin:${maven-site-plugin.version}:maven-plugin</extraArtifact>
+                <extraArtifact>org.apache.maven.plugins:maven-project-info-reports-plugin:${maven-project-info-reports-plugin.version}:maven-plugin</extraArtifact>
+              </extraArtifacts>
+            </configuration>
           </execution>
         </executions>
       </plugin>
