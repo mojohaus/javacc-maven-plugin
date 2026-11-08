@@ -28,7 +28,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.10.1</version>
+        <version>@maven-compiler-plugin.version@</version>
         <configuration>
           <!-- required for JTB -->
           <source>1.8</source>
