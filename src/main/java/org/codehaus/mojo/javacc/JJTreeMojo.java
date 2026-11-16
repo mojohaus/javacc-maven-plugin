@@ -228,6 +228,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getSourceDirectory() {
         return this.sourceDirectory;
     }
@@ -235,6 +236,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String[] getIncludes() {
         if (this.includes != null) {
             return this.includes;
@@ -246,6 +248,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String[] getExcludes() {
         return this.excludes;
     }
@@ -253,6 +256,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getOutputDirectory() {
         return this.outputDirectory;
     }
@@ -260,6 +264,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getTimestampDirectory() {
         return this.timestampDirectory;
     }
@@ -267,6 +272,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int getStaleMillis() {
         return this.staleMillis;
     }
@@ -274,6 +280,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void processGrammar(GrammarInfo grammarInfo) throws MojoExecutionException, MojoFailureException {
         File jjtFile = grammarInfo.getGrammarFile();
 
@@ -330,6 +337,7 @@ public class JJTreeMojo extends AbstractPreprocessorMojo {
      * Prevents registration of our output or a following invocation of the javacc mojo will cause duplicate sources
      * which in turn will make compilation fail.
      */
+    @Override
     protected void addCompileSourceRoot() {
         // do nothing
     }

@@ -98,6 +98,7 @@ public abstract class AbstractPreprocessorMojo extends AbstractMojo {
      * @throws MojoExecutionException If the invocation of the tool failed.
      * @throws MojoFailureException If the tool reported a non-zero exit code.
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().warn("This goal has been deprecated. Please update your plugin configuration.");
 

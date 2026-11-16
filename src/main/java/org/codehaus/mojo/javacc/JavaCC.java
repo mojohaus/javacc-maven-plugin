@@ -436,6 +436,7 @@ class JavaCC extends ToolFacade {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int execute() throws Exception {
         String[] args = generateArguments();
 
@@ -576,6 +577,7 @@ class JavaCC extends ToolFacade {
      *
      * @return A string representation of the command line arguments.
      */
+    @Override
     public String toString() {
         return Arrays.asList(generateArguments()).toString();
     }

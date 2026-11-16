@@ -312,6 +312,7 @@ class ForkedJvm {
      *
      * @return A string representation of the command line arguments.
      */
+    @Override
     public String toString() {
         return String.valueOf(createCommandLine());
     }

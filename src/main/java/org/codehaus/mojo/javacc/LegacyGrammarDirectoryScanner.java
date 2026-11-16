@@ -35,6 +35,7 @@ class LegacyGrammarDirectoryScanner extends GrammarDirectoryScanner {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File[] getTargetFiles(File targetDirectory, String grammarFile, GrammarInfo grammarInfo) {
         File timestampFile = new File(targetDirectory, grammarFile);
         return new File[] {timestampFile};
