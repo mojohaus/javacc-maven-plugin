@@ -145,7 +145,7 @@ class JJDoc extends ToolFacade {
     protected int execute() throws Exception {
         String[] args = generateArguments();
 
-        File outputDirectory = (this.outputFile != null) ? this.outputFile.getParentFile() : null;
+        File outputDirectory = this.outputFile != null ? this.outputFile.getParentFile() : null;
         if (outputDirectory != null && !outputDirectory.exists()) {
             outputDirectory.mkdirs();
         }

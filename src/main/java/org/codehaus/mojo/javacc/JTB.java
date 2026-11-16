@@ -254,7 +254,7 @@ class JTB extends ToolFacade {
      */
     private String getEffectiveNodePackageName() {
         if (this.packageName != null) {
-            return (this.packageName.length() == 0) ? SYNTAX_TREE : this.packageName + '.' + SYNTAX_TREE;
+            return this.packageName.length() == 0 ? SYNTAX_TREE : this.packageName + '.' + SYNTAX_TREE;
         } else if (this.nodePackageName != null) {
             return this.nodePackageName;
         } else {
@@ -278,7 +278,7 @@ class JTB extends ToolFacade {
      */
     private String getEffectiveVisitorPackageName() {
         if (this.packageName != null) {
-            return (this.packageName.length() == 0) ? VISITOR : this.packageName + '.' + VISITOR;
+            return this.packageName.length() == 0 ? VISITOR : this.packageName + '.' + VISITOR;
         } else if (this.visitorPackageName != null) {
             return this.visitorPackageName;
         } else {
