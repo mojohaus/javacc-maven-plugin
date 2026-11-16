@@ -141,6 +141,7 @@ class JJDoc extends ToolFacade {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int execute() throws Exception {
         String[] args = generateArguments();
 
@@ -205,6 +206,7 @@ class JJDoc extends ToolFacade {
      *
      * @return A string representation of the command line arguments.
      */
+    @Override
     public String toString() {
         return Arrays.asList(generateArguments()).toString();
     }
@@ -243,6 +245,7 @@ class JJDoc extends ToolFacade {
          *
          * @param line The line to consume.
          */
+        @Override
         public void consumeLine(String line) {
             if (line.startsWith(ERROR_PREFIX)) {
                 getLog().error(line.substring(ERROR_PREFIX.length()));

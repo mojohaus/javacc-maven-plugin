@@ -461,6 +461,7 @@ public class JJDocMojo extends AbstractMavenReport {
          * @return A negative integer if the first grammar is considered "smaller", a positive integer if it is
          *         considered "greater" and zero otherwise.
          */
+        @Override
         public int compare(GrammarInfo o1, GrammarInfo o2) {
             int rel;
 

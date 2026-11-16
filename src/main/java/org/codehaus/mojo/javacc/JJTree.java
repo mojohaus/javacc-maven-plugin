@@ -327,6 +327,7 @@ class JJTree extends ToolFacade {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int execute() throws Exception {
         String[] args = generateArguments();
 
@@ -431,6 +432,7 @@ class JJTree extends ToolFacade {
      *
      * @return A string representation of the command line arguments.
      */
+    @Override
     public String toString() {
         return Arrays.asList(generateArguments()).toString();
     }

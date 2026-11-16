@@ -372,6 +372,7 @@ public abstract class AbstractJavaCCMojo extends AbstractMojo {
      * @throws MojoExecutionException If the invocation of the tool failed.
      * @throws MojoFailureException If the tool reported a non-zero exit code.
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         GrammarInfo[] grammarInfos = scanForGrammars();
 

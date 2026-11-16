@@ -193,6 +193,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getSourceDirectory() {
         return this.sourceDirectory;
     }
@@ -200,6 +201,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String[] getIncludes() {
         if (this.includes != null) {
             return this.includes;
@@ -211,6 +213,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String[] getExcludes() {
         return this.excludes;
     }
@@ -218,6 +221,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getOutputDirectory() {
         return this.outputDirectory;
     }
@@ -225,6 +229,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getTimestampDirectory() {
         return this.timestampDirectory;
     }
@@ -232,6 +237,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int getStaleMillis() {
         return this.staleMillis;
     }
@@ -239,6 +245,7 @@ public class JTBMojo extends AbstractPreprocessorMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void processGrammar(GrammarInfo grammarInfo) throws MojoExecutionException, MojoFailureException {
         File jtbFile = grammarInfo.getGrammarFile();
         File jjDirectory = new File(getOutputDirectory(), grammarInfo.getParserDirectory());

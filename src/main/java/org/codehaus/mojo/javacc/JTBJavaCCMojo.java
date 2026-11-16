@@ -199,6 +199,7 @@ public class JTBJavaCCMojo extends AbstractJavaCCMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getSourceDirectory() {
         return this.sourceDirectory;
     }
@@ -206,6 +207,7 @@ public class JTBJavaCCMojo extends AbstractJavaCCMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String[] getIncludes() {
         if (this.includes != null) {
             return this.includes;
@@ -217,6 +219,7 @@ public class JTBJavaCCMojo extends AbstractJavaCCMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected String[] getExcludes() {
         return this.excludes;
     }
@@ -224,6 +227,7 @@ public class JTBJavaCCMojo extends AbstractJavaCCMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File getOutputDirectory() {
         return this.outputDirectory;
     }
@@ -231,6 +235,7 @@ public class JTBJavaCCMojo extends AbstractJavaCCMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int getStaleMillis() {
         return this.staleMillis;
     }
@@ -247,6 +252,7 @@ public class JTBJavaCCMojo extends AbstractJavaCCMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected File[] getCompileSourceRoots() {
         return new File[] {getOutputDirectory(), getInterimDirectory()};
     }
@@ -254,6 +260,7 @@ public class JTBJavaCCMojo extends AbstractJavaCCMojo {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected void processGrammar(GrammarInfo grammarInfo) throws MojoExecutionException, MojoFailureException {
         File jtbFile = grammarInfo.getGrammarFile();
         File jtbDirectory = jtbFile.getParentFile();

@@ -271,6 +271,7 @@ class GrammarInfo {
      *
      * @return A string representation of this bean.
      */
+    @Override
     public String toString() {
         return getGrammarFile() + " -> " + getParserFile();
     }

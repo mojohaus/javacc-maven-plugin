@@ -371,6 +371,7 @@ class JTB extends ToolFacade {
     /**
      * {@inheritDoc}
      */
+    @Override
     protected int execute() throws Exception {
         String[] args = generateArguments();
 
@@ -585,6 +586,7 @@ class JTB extends ToolFacade {
      *
      * @return A string representation of the command line arguments.
      */
+    @Override
     public String toString() {
         return Arrays.asList(generateArguments()).toString();
     }
@@ -618,6 +620,7 @@ class JTB extends ToolFacade {
          *
          * @param line The line to consume.
          */
+        @Override
         public void consumeLine(String line) {
             if (line.startsWith("JTB version")) {
                 getLog().debug(line);
