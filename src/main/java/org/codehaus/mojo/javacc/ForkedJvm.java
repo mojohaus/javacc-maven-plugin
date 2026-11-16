@@ -215,7 +215,7 @@ class ForkedJvm {
      * @param type The class on which to invoke the <code>main()</code> method, may be <code>null</code>.
      */
     public void setMainClass(Class<?> type) {
-        this.mainClass = (type != null) ? type.getName() : null;
+        this.mainClass = type != null ? type.getName() : null;
         addClassPathEntry(type);
     }
 

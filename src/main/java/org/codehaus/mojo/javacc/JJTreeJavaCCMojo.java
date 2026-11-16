@@ -305,7 +305,7 @@ public class JJTreeJavaCCMojo extends AbstractJavaCCMojo {
         // copy output from JJTree
         copyGrammarOutput(
                 getInterimDirectory(),
-                (nodePackageName != null) ? nodePackageName : grammarInfo.getParserPackage(),
+                nodePackageName != null ? nodePackageName : grammarInfo.getParserPackage(),
                 jjDirectory,
                 grammarInfo.getParserName() + "TreeConstants*");
 

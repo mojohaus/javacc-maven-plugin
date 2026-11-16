@@ -63,7 +63,7 @@ class UrlUtils {
         String path = null;
         if (url != null) {
             String spec = url.toExternalForm();
-            if ((JAR_FILE).regionMatches(true, 0, spec, 0, JAR_FILE.length())) {
+            if (JAR_FILE.regionMatches(true, 0, spec, 0, JAR_FILE.length())) {
                 URL jar;
                 try {
                     jar = new URL(spec.substring(JAR.length(), spec.lastIndexOf("!/")));
@@ -78,7 +78,7 @@ class UrlUtils {
                 throw new IllegalArgumentException("Invalid class path URL: " + url);
             }
         }
-        return (path != null) ? new File(path) : null;
+        return path != null ? new File(path) : null;
     }
 
     /**
