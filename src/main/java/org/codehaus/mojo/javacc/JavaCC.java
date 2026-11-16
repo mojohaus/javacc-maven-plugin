@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * Provides a facade for the mojos to invoke JavaCC.
  *
@@ -458,11 +456,11 @@ class JavaCC extends ToolFacade {
     private String[] generateArguments() {
         List<String> argsList = new ArrayList<>();
 
-        if (StringUtils.isNotEmpty(this.grammarEncoding)) {
+        if (this.grammarEncoding != null && !this.grammarEncoding.isEmpty()) {
             argsList.add("-GRAMMAR_ENCODING=" + this.grammarEncoding);
         }
 
-        if (StringUtils.isNotEmpty(this.jdkVersion)) {
+        if (this.jdkVersion != null && !this.jdkVersion.isEmpty()) {
             argsList.add("-JDK_VERSION=" + this.jdkVersion);
         }
 
@@ -534,11 +532,11 @@ class JavaCC extends ToolFacade {
             argsList.add("-TOKEN_MANAGER_USES_PARSER=" + this.tokenManagerUsesParser);
         }
 
-        if (StringUtils.isNotEmpty(this.tokenExtends)) {
+        if (this.tokenExtends != null && !this.tokenExtends.isEmpty()) {
             argsList.add("-TOKEN_EXTENDS=" + this.tokenExtends);
         }
 
-        if (StringUtils.isNotEmpty(this.tokenFactory)) {
+        if (this.tokenFactory != null && !this.tokenFactory.isEmpty()) {
             argsList.add("-TOKEN_FACTORY=" + this.tokenFactory);
         }
 

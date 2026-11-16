@@ -33,7 +33,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.SelectorUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Provides common services for all mojos that compile JavaCC grammar files.
@@ -384,7 +383,7 @@ public abstract class AbstractJavaCCMojo extends AbstractMojo {
         } else {
             determineNonGeneratedSourceRoots();
 
-            if (StringUtils.isEmpty(grammarEncoding)) {
+            if (grammarEncoding == null || grammarEncoding.isEmpty()) {
                 getLog().warn("File encoding for grammars has not been configured"
                         + ", using platform default encoding, i.e. build is platform dependent!");
             }

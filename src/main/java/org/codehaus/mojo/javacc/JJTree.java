@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Provides a facade for the mojos to invoke JJTree.
@@ -348,11 +347,11 @@ class JJTree extends ToolFacade {
     private String[] generateArguments() {
         List<String> argsList = new ArrayList<>();
 
-        if (StringUtils.isNotEmpty(this.grammarEncoding)) {
+        if (this.grammarEncoding != null && !this.grammarEncoding.isEmpty()) {
             argsList.add("-GRAMMAR_ENCODING=" + this.grammarEncoding);
         }
 
-        if (StringUtils.isNotEmpty(jdkVersion)) {
+        if (jdkVersion != null && !jdkVersion.isEmpty()) {
             argsList.add("-JDK_VERSION=" + this.jdkVersion);
         }
 
@@ -368,19 +367,19 @@ class JJTree extends ToolFacade {
             argsList.add("-NODE_DEFAULT_VOID=" + this.nodeDefaultVoid);
         }
 
-        if (StringUtils.isNotEmpty(this.nodeClass)) {
+        if (this.nodeClass != null && !this.nodeClass.isEmpty()) {
             argsList.add("-NODE_CLASS=" + this.nodeClass);
         }
 
-        if (StringUtils.isNotEmpty(this.nodeFactory)) {
+        if (this.nodeFactory != null && !this.nodeFactory.isEmpty()) {
             argsList.add("-NODE_FACTORY=" + this.nodeFactory);
         }
 
-        if (StringUtils.isNotEmpty(this.nodePackage)) {
+        if (this.nodePackage != null && !this.nodePackage.isEmpty()) {
             argsList.add("-NODE_PACKAGE=" + this.nodePackage);
         }
 
-        if (StringUtils.isNotEmpty(this.nodePrefix)) {
+        if (this.nodePrefix != null && !this.nodePrefix.isEmpty()) {
             argsList.add("-NODE_PREFIX=" + this.nodePrefix);
         }
 
@@ -404,15 +403,15 @@ class JJTree extends ToolFacade {
             argsList.add("-VISITOR=" + this.visitor);
         }
 
-        if (StringUtils.isNotEmpty(this.visitorDataType)) {
+        if (this.visitorDataType != null && !this.visitorDataType.isEmpty()) {
             argsList.add("-VISITOR_DATA_TYPE=" + this.visitorDataType);
         }
 
-        if (StringUtils.isNotEmpty(this.visitorReturnType)) {
+        if (this.visitorReturnType != null && !this.visitorReturnType.isEmpty()) {
             argsList.add("-VISITOR_RETURN_TYPE=" + this.visitorReturnType);
         }
 
-        if (StringUtils.isNotEmpty(this.visitorException)) {
+        if (this.visitorException != null && !this.visitorException.isEmpty()) {
             argsList.add("-VISITOR_EXCEPTION=" + this.visitorException);
         }
 

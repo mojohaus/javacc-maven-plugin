@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
@@ -170,7 +169,7 @@ class JJDoc extends ToolFacade {
     private String[] generateArguments() {
         List<String> argsList = new ArrayList<>();
 
-        if (StringUtils.isNotEmpty(this.grammarEncoding)) {
+        if (this.grammarEncoding != null && !this.grammarEncoding.isEmpty()) {
             argsList.add("-GRAMMAR_ENCODING=" + this.grammarEncoding);
         }
 
@@ -190,7 +189,7 @@ class JJDoc extends ToolFacade {
             argsList.add("-OUTPUT_FILE=" + this.outputFile.getAbsolutePath());
         }
 
-        if (StringUtils.isNotEmpty(this.cssHref)) {
+        if (this.cssHref != null && !this.cssHref.isEmpty()) {
             argsList.add("-CSS=" + this.cssHref);
         }
 
