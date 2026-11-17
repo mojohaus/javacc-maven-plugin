@@ -21,6 +21,8 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -513,7 +515,7 @@ class JTB extends ToolFacade {
         content.append("}\n");
 
         try {
-            FileUtils.fileWrite(objectDepthFirstFile, "UTF-8", content.toString());
+            Files.write(objectDepthFirstFile.toPath(), content.toString().getBytes(StandardCharsets.UTF_8));
             getLog().info("Generated ObjectDepthFirst visitor: " + objectDepthFirstFile);
         } catch (IOException e) {
             getLog().error("Failed to generate ObjectDepthFirst visitor: " + e.getMessage());

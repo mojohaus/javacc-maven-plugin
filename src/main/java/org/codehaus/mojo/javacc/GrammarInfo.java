@@ -21,6 +21,8 @@ package org.codehaus.mojo.javacc;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -123,7 +125,7 @@ class GrammarInfo {
         if (grammarEncoding != null) {
             grammar = FileUtils.fileRead(getGrammarFile(), grammarEncoding);
         } else {
-            grammar = FileUtils.fileRead(getGrammarFile());
+            grammar = new String(Files.readAllBytes(getGrammarFile().toPath()), StandardCharsets.UTF_8);
         }
 
         // TODO: Once the parameter "packageName" from the javacc mojo has been deleted, remove our parameter, too.
