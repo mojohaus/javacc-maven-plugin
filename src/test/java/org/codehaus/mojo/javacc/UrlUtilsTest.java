@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests <code>UrlUtils</code>.
@@ -90,11 +90,10 @@ class UrlUtilsTest {
 
     @Test
     void getResourceRootUnknownProtocal() throws Exception {
-        try {
-            UrlUtils.getResourceRoot(URI.create("http://www.foo.bar/index.html").toURL(), "index.html");
-            fail("Missing runtime exception");
-        } catch (RuntimeException e) {
-        }
+        assertThrows(
+                RuntimeException.class,
+                () -> UrlUtils.getResourceRoot(
+                        URI.create("http://www.foo.bar/index.html").toURL(), "index.html"));
     }
 
     private void assertMatch(String expectedFile, String url, String resource) throws Exception {
