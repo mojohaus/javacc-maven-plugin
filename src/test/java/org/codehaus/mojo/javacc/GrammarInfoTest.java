@@ -28,7 +28,7 @@ import java.util.Objects;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Tests <code>GrammarInfo</code>.
@@ -40,12 +40,7 @@ class GrammarInfoTest {
 
     @Test
     void invalidFile() {
-        try {
-            new GrammarInfo(new File("").getAbsoluteFile(), "bad");
-            fail("Missing IO exception");
-        } catch (IOException e) {
-            // expected
-        }
+        assertThrows(IOException.class, () -> new GrammarInfo(new File("").getAbsoluteFile(), "bad"));
     }
 
     @Test
