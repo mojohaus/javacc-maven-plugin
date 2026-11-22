@@ -36,4 +36,4 @@ For plugin versions prior to 2.5, you will need to put any custom source files d
 
 ### Can I run the plugin in a parallel build?
 
-Yes. JavaCC itself keeps its state in static fields, so the `javacc` goal runs one grammar at a time within a Maven JVM: modules of a parallel build (`mvn -T`) wait for each other at that step instead of failing with errors such as `ConcurrentModificationException`. The `jtb` and `jjdoc` goals run their tools in a separate JVM.
+Yes. JavaCC and JJTree keep their state in static fields, so the `javacc`, `jjtree` and `jjtree-javacc` goals run one grammar at a time within a Maven JVM: modules of a parallel build (`mvn -T`) wait for each other at that step instead of failing with errors such as `ConcurrentModificationException`. The `jtb`, `jtb-javacc` and `jjdoc` goals run their tools in a separate JVM, and `jtb-javacc` serializes only its JavaCC step.

@@ -335,7 +335,10 @@ class JJTree extends ToolFacade {
             this.outputDirectory.mkdirs();
         }
 
-        return new org.javacc.jjtree.JJTree().main(args);
+        // JJTree shares the static state problem of JavaCC, see JavaCC#execute(), and uses the same lock.
+        synchronized (IN_PROCESS_LOCK) {
+            return new org.javacc.jjtree.JJTree().main(args);
+        }
     }
 
     /**

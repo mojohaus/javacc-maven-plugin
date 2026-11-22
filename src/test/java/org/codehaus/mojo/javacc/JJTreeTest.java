@@ -20,8 +20,19 @@ package org.codehaus.mojo.javacc;
  */
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -74,5 +85,57 @@ class JJTreeTest {
         File output = tool.getOutputFile();
 
         assertEquals(new File(outdir, "Test.jj"), output);
+    }
+
+    /**
+     * JJTree and JavaCC keep their state in static fields, so concurrent in-process runs of either tool, as a
+     * parallel Maven build makes them, must not overlap.
+     */
+    @Test
+    void concurrentRunsDoNotInterfere(@TempDir Path tempDir) throws Exception {
+        int threads = 8;
+        int runsPerThread = 5;
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        try {
+            CountDownLatch start = new CountDownLatch(1);
+            List<Future<String>> results = new ArrayList<>();
+            for (int t = 0; t < threads; t++) {
+                final int id = t;
+                results.add(executor.submit((Callable<String>) () -> {
+                    start.await();
+                    String failure = "";
+                    for (int r = 0; r < runsPerThread; r++) {
+                        File out = Files.createDirectories(tempDir.resolve("out-" + id + "-" + r))
+                                .toFile();
+                        try {
+                            if (id % 2 == 0) {
+                                JJTree tool = new JJTree();
+                                tool.setInputFile(Paths.get("src/test/resources/Simple.jjt")
+                                        .toAbsolutePath()
+                                        .toFile());
+                                tool.setOutputDirectory(out);
+                                tool.run();
+                            } else {
+                                JavaCC tool = new JavaCC();
+                                tool.setInputFile(Paths.get("src/test/resources/Parser1.jj")
+                                        .toAbsolutePath()
+                                        .toFile());
+                                tool.setOutputDirectory(out);
+                                tool.run();
+                            }
+                        } catch (Exception e) {
+                            failure = String.valueOf(e.getCause() != null ? e.getCause() : e);
+                        }
+                    }
+                    return failure;
+                }));
+            }
+            start.countDown();
+            for (Future<String> result : results) {
+                assertEquals("", result.get());
+            }
+        } finally {
+            executor.shutdownNow();
+        }
     }
 }
