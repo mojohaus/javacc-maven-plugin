@@ -109,6 +109,12 @@ under the License.
       <groupId>net.java.dev.javacc</groupId>
       <artifactId>javacc</artifactId>
       <version>7.0.13</version>
+      <exclusions>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
