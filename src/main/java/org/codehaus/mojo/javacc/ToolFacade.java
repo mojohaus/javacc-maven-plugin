@@ -33,6 +33,12 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 abstract class ToolFacade {
 
     /**
+     * Serializes the tools that run inside the Maven JVM, namely JavaCC and JJTree, whose parser generators keep their
+     * state in static fields. Both share one lock because the combined goals run them back to back.
+     */
+    protected static final Object IN_PROCESS_LOCK = new Object();
+
+    /**
      * The logger used to output diagnostic messages.
      */
     private Log log;
