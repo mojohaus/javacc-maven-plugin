@@ -1,7 +1,21 @@
 package org.codehaus.mojo.javacc;
 
-import org.junit.jupiter.api.Test;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -68,5 +82,49 @@ class JavaCCTest {
         tool.setUserCharStream(null);
         tool.setUserTokenManager(null);
         tool.setLog(null);
+    }
+
+    /**
+     * JavaCC keeps its state in static fields, so concurrent runs, as a parallel Maven build makes them, must not
+     * overlap.
+     */
+    @Test
+    void concurrentRunsDoNotInterfere(@TempDir Path tempDir) throws Exception {
+        int threads = 8;
+        int runsPerThread = 5;
+        String[] grammars = {"Parser1.jj", "Parser2.jj"};
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        try {
+            CountDownLatch start = new CountDownLatch(1);
+            List<Future<String>> results = new ArrayList<>();
+            for (int t = 0; t < threads; t++) {
+                final int id = t;
+                results.add(executor.submit((Callable<String>) () -> {
+                    start.await();
+                    String failure = "";
+                    for (int r = 0; r < runsPerThread; r++) {
+                        File out = Files.createDirectories(tempDir.resolve("out-" + id + "-" + r))
+                                .toFile();
+                        JavaCC tool = new JavaCC();
+                        tool.setInputFile(Paths.get("src/test/resources", grammars[id % grammars.length])
+                                .toAbsolutePath()
+                                .toFile());
+                        tool.setOutputDirectory(out);
+                        try {
+                            tool.run();
+                        } catch (Exception e) {
+                            failure = String.valueOf(e.getCause() != null ? e.getCause() : e);
+                        }
+                    }
+                    return failure;
+                }));
+            }
+            start.countDown();
+            for (Future<String> result : results) {
+                assertEquals("", result.get());
+            }
+        } finally {
+            executor.shutdownNow();
+        }
     }
 }
