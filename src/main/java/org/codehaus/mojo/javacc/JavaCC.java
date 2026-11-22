@@ -34,6 +34,11 @@ import java.util.List;
 class JavaCC extends ToolFacade {
 
     /**
+     * Serializes the in-process runs of JavaCC, whose parser generator is not thread-safe.
+     */
+    private static final Object JAVACC_LOCK = new Object();
+
+    /**
      * The input grammar.
      */
     private File inputFile;
@@ -444,7 +449,11 @@ class JavaCC extends ToolFacade {
             this.outputDirectory.mkdirs();
         }
 
-        return org.javacc.parser.Main.mainProgram(args);
+        // JavaCC keeps its state in static fields, so only one run per class loader may be active at a time. The
+        // mojo is thread-safe and a parallel build (-T) executes it for several modules at once.
+        synchronized (JAVACC_LOCK) {
+            return org.javacc.parser.Main.mainProgram(args);
+        }
     }
 
     /**
