@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.FileUtils;
  *
  * @author Benjamin Bentmann
  * @version $Id$
- * @see <a href="https://javacc.dev.java.net/doc/JJTree.html">JJTree Reference</a>
+ * @see <a href="https://javacc.github.io/javacc/documentation/jjtree.html">JJTree Reference</a>
  */
 class JJTree extends ToolFacade {
 

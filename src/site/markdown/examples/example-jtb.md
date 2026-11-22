@@ -1,6 +1,6 @@
 title: JTB Examples
 author:
-  - Paul Gier <pgier at redhat.com>
+- Paul Gier <pgier at redhat.com>
 date: January 04 2008
 
 # JTB Examples
@@ -15,7 +15,6 @@ If you want to use JavaCC in combination with JTB, simply copy the following sni
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${project.version}</version>
         <executions>
           <execution>
             <id>jtb-javacc</id>
@@ -74,3 +73,4 @@ public class MyVisitor extends ObjectDepthFirst {
     }
 }
 ```
+

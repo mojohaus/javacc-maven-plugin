@@ -39,10 +39,10 @@
       <item name="JJDoc" href="examples/example-jjdoc.html"/>
     </menu>
     <menu name="References">
-      <item name="JavaCC" href="https://javacc.dev.java.net/"/>
-      <item name="JJTree" href="https://javacc.dev.java.net/doc/JJTree.html"/>
+      <item name="JavaCC" href="https://javacc.github.io/javacc/"/>
+      <item name="JJTree" href="https://javacc.github.io/javacc/documentation/jjtree.html"/>
       <item name="JTB" href="http://compilers.cs.ucla.edu/jtb/"/>
-      <item name="JJDoc" href="https://javacc.dev.java.net/doc/JJDoc.html"/>
+      <item name="JJDoc" href="https://javacc.github.io/javacc/documentation/jjdoc.html"/>
     </menu>
   </body>
 </site>

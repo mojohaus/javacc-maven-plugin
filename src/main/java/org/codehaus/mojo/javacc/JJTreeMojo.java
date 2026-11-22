@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Parses a JJTree grammar file (<code>*.jjt</code>) and transforms it to Java source files and a JavaCC grammar
- * file. Please see the <a href="https://javacc.dev.java.net/doc/JJTree.html">JJTree Reference Documentation</a> for
+ * file. Please see the <a href="https://javacc.github.io/javacc/documentation/jjtree.html">JJTree Reference Documentation</a> for
  * more information.
  *
  * @since 2.0

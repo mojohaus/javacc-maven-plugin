@@ -1,16 +1,16 @@
 title: Usage
 author:
-  - Paul Gier <pgier at redhat.com>
+- Paul Gier <pgier at redhat.com>
 date: January 04 2008
 
 # Usage
 
-The JavaCC Plugin can both generate parsers from grammars and output a textual documentation of the grammars. The sections below should help you to get started. If you have problems using the plugin, please feel free to post your question to the [user mailing list](./mail-lists.html).
+The JavaCC Plugin can both generate parsers from grammars and output a textual documentation of the grammars. The sections below should help you to get started. If you have problems using the plugin, please feel free to post your question to the [user mailing list](./mailing-lists.html).
 
 Compiling Grammars into Parsers
 -------------------------------
 
-By default, the [`javacc`](./javacc-mojo.html) goal will search for grammar files in the directory `\${basedir}/src/main/javacc`. The [`jjtree-javacc`](./jjtree-javacc-mojo.html) goal will expect to find `*.jjt` files in `\${basedir}/src/main/jjtree` and the [`jtb-javacc`](./jtb-javacc-mojo.html) goal will expect to find `*.jtb` files in `\${basedir}/src/main/jtb`. Each of these can be configured to search other directories using the plugin configuration parameters as described in the respective goal documentation.
+By default, the [`javacc`](./javacc-mojo.html) goal will search for grammar files in the directory `${basedir}/src/main/javacc`. The [`jjtree-javacc`](./jjtree-javacc-mojo.html) goal will expect to find `*.jjt` files in `${basedir}/src/main/jjtree` and the [`jtb-javacc`](./jtb-javacc-mojo.html) goal will expect to find `*.jtb` files in `${basedir}/src/main/jtb`. Each of these can be configured to search other directories using the plugin configuration parameters as described in the respective goal documentation.
 
 The next step is to configure your POM to call the plugin. The goals will normally run during the `generate-sources` phase of the build. Examples of how to configure your POM can be found on the various examples pages, reachable via the page menu. If you stick with the default values, the snippet below will suffice:
 
@@ -22,7 +22,7 @@ The next step is to configure your POM to call the plugin. The goals will normal
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version><!-- latest release --></version>
         <executions>
           <execution>
             <id>javacc</id>
@@ -60,7 +60,6 @@ The [`jjdoc`](./jjdoc-mojo.html) goal is a tool for generating a site report. If
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${project.version}</version>
       </plugin>
     </plugins>
     ...
@@ -74,3 +73,4 @@ After the plugin is added to the reporting section of the POM, just run the foll
 ```sh
 mvn site
 ```
+

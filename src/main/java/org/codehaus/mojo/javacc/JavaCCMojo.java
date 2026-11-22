@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Parses a JavaCC grammar file (<code>*.jj</code>) and transforms it to Java source files. Detailed information
- * about the JavaCC options can be found on the <a href="https://javacc.dev.java.net/">JavaCC website</a>.
+ * about the JavaCC options can be found on the <a href="https://javacc.github.io/javacc/">JavaCC website</a>.
  *
  * @since 2.0
  * @author jruiz@exist.com

@@ -10,7 +10,8 @@ what the code and the POMs do not make obvious.
   `jjtree-javacc` (`JJTreeJavaCCMojo`) and `jtb-javacc` (`JTBJavaCCMojo`) goals. `JavaCC`, `JJTree`,
   `JTB` and `JJDoc` wrap the tools behind `ToolFacade`; `ForkedJvm` runs a tool in a separate JVM and
   `GrammarDirectoryScanner` finds the grammar files.
-- The site is built from `src/site`.
+- The site is built from `src/site`: `index.md`, `usage.md` and `faq.md` in `src/site/markdown`,
+  one page per tool under `src/site/markdown/examples`, and the menu in `src/site/site.xml`.
 
 ## Build gates
 
@@ -19,15 +20,18 @@ what the code and the POMs do not make obvious.
   build and checks it when the `CI` environment variable is set. It formats Java with
   palantir-java-format and also reformats Markdown, so run `mvn spotless:apply` after editing the
   README or this file.
-- The plugin compiles against Maven 3.9.16 (`mavenVersion`) and declares a literal
+- The plugin compiles against the Maven 3.9.x release in `mavenVersion` and declares a literal
   `<prerequisites><maven>3.9.0</maven>`; keep the two apart, so raising `mavenVersion` does not
-  raise the prerequisite. Building the plugin itself needs Maven 3.9 (`minimalMavenBuildVersion`).
-- `.github/workflows/maven.yml` calls the MojoHaus `maven-verify.yml` workflow in `mojohaus/.github`. It uses `verify` as its goal because the project has no `run-its` profile.
-  Branches in this repository build under the push event.
+  raise the prerequisite. Building the plugin itself needs the Maven version in
+  `minimalMavenBuildVersion`.
+- `.github/workflows/maven.yml` calls the MojoHaus `maven-verify.yml` workflow in `mojohaus/.github`.
+  The project has no `run-its` profile, which the workflow's optional `-P "?run-its" verify` goal
+  tolerates, so the integration tests run in every build. Branches in this repository build under
+  the push event.
 
 ## Unit tests
 
-- JUnit 5 only, in `src/test/java`; `MainStub` stands in for a tool's `Main` class and the grammars
+- Unit tests use JUnit 5, in `src/test/java`; `MainStub` stands in for a tool's `Main` class and the grammars
   are in `src/test/resources`.
 - Prefer a unit test. Add an integration test only for what needs a real Maven build: reactor
   builds, source roots added to the project, or stale-file detection.
@@ -55,6 +59,25 @@ what the code and the POMs do not make obvious.
 - Deliberate pins in `.github/dependabot.yml`: Maven artifacts stay below 3.10.0, the Maven 3.9.x
   line being the plugin baseline, and plexus-xml below 4.0.0 because 4.x depends on the Maven 4
   XML API.
+
+## Documentation updates
+
+A change that users or contributors can notice ships with the documentation it affects, in the
+same pull request. A refactor with no visible effect needs none.
+
+- A new goal or parameter, or a changed default: the mojo Javadoc, which becomes the goal page, and
+  the goal list in `src/site/markdown/index.md`.
+- New or changed usage: `src/site/markdown/usage.md` or the page for the tool under
+  `src/site/markdown/examples`; recurring questions go in `src/site/markdown/faq.md`. The site pages
+  are plain Markdown; the first plugin declaration in `usage.md` writes the version as
+  `<version><!-- latest release --></version>` and the examples leave it out, so they never go
+  stale.
+- A page added, removed or renamed: the menu in `src/site/site.xml`. Never rename a published page;
+  its URL is linked from elsewhere.
+- The Maven or Java requirement, or how to build and release: `README.md`.
+- A new convention, build gate or test fixture: this file.
+
+Check the result with `mvn site` and open `target/site/index.html`.
 
 ## Pull requests
 

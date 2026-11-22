@@ -36,7 +36,7 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
 /**
- * <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc</a> takes a JavaCC parser specification and produces
+ * <a href="https://javacc.github.io/javacc/documentation/jjdoc.html">JJDoc</a> takes a JavaCC parser specification and produces
  * documentation for the BNF grammar. This mojo will search the source directory for all <code>*.jj</code> files and
  * run JJDoc once for each file it finds. Each of these output files, along with an <code>index.html</code> file will
  * be placed in the site directory (<code>target/site/jjdoc</code>), and a link will be created in the "Project
@@ -44,7 +44,7 @@ import org.apache.maven.reporting.MavenReportException;
  *
  * @since 2.3
  * @author <a href="mailto:pgier@redhat.com">Paul Gier</a>
- * @see <a href="https://javacc.dev.java.net/doc/JJDoc.html">JJDoc Documentation</a>
+ * @see <a href="https://javacc.github.io/javacc/documentation/jjdoc.html">JJDoc Documentation</a>
  */
 @Mojo(name = "jjdoc", threadSafe = true)
 @Execute(phase = LifecyclePhase.GENERATE_SOURCES)

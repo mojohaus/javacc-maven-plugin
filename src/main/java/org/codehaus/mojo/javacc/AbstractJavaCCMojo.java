@@ -159,7 +159,7 @@ public abstract class AbstractJavaCCMojo extends AbstractMojo {
 
     /**
      * When set to <code>true</code>, every call to the token manager's method <code>getNextToken()</code> (see the
-     * description of the <a href="https://javacc.dev.java.net/doc/apiroutines.html">Java Compiler Compiler API</a>)
+     * description of the <a href="https://javacc.github.io/javacc/documentation/api.html">Java Compiler Compiler API</a>)
      * will cause a call to a user-defined method <code>CommonTokenAction()</code> after the token has been scanned in
      * by the token manager. Default value is <code>false</code>.
      *
