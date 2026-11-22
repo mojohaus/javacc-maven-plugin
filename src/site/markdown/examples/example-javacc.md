@@ -1,6 +1,6 @@
 title: JavaCC Examples
 author:
-  - Paul Gier <pgier at redhat.com>
+- Paul Gier <pgier at redhat.com>
 date: January 04 2008
 
 # JavaCC Examples
@@ -20,7 +20,6 @@ This example shows how to pass parameters to JavaCC. A list of all configuration
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${project.version}</version>
         <executions>
           <execution>
             <id>javacc</id>
@@ -55,7 +54,6 @@ Sometimes you may want to process some grammar files before others. In this case
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${project.version}</version>
         <executions>
           <execution>
             <id>javacc-step-1</id>
@@ -88,3 +86,4 @@ Sometimes you may want to process some grammar files before others. In this case
   ...
 </project>
 ```
+

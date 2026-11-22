@@ -1,6 +1,6 @@
 title: JJDoc Examples
 author:
-  - Paul Gier <pgier at redhat.com>
+- Paul Gier <pgier at redhat.com>
 date: January 04 2008
 
 # JJDoc Examples
@@ -15,7 +15,6 @@ The following example can be used to create a JJDoc site report. For a list of c
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${project.version}</version>
       </plugin>
       ...
     </plugins>
@@ -29,3 +28,4 @@ To generate the BNF documentation, simply execute the site lifecycle phase:
 ```sh
 mvn site
 ```
+

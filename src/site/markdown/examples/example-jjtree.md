@@ -1,6 +1,6 @@
 title: JJTree Examples
 author:
-  - Paul Gier <pgier at redhat.com>
+- Paul Gier <pgier at redhat.com>
 date: January 04 2008
 
 # JJTree Examples
@@ -15,7 +15,6 @@ If you want to use JavaCC in combination with JJTree, simply copy the following 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>javacc-maven-plugin</artifactId>
-        <version>${project.version}</version>
         <executions>
           <execution>
             <id>jjtree-javacc</id>

@@ -29,7 +29,7 @@ import java.util.List;
  *
  * @author Benjamin Bentmann
  * @version $Id$
- * @see <a href="https://javacc.dev.java.net/doc/commandline.html">JavaCC Command Line Syntax</a>
+ * @see <a href="https://javacc.github.io/javacc/documentation/cli.html">JavaCC Command Line Syntax</a>
  */
 class JavaCC extends ToolFacade {
 
